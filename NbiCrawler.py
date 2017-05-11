@@ -10,8 +10,13 @@ import requests
 import csv
 import json
 import pprint
+from io import BytesIO
+from zipfile import ZipFile
+import urllib.request
+import io
 
-years = [2010,2011,2012,2013,2014,2015,2016] #Global variable 
+encoding = 'utf-8'
+years = [1992,1993,1994,1995,1996,2011,2012,2013,2015,2016] #Global variable 
 dEliminater = ',' #Global variable delimeter 
 
 '''
@@ -26,28 +31,25 @@ dEliminater = ',' #Global variable delimeter
    OUTPUT: The function returns a JSON formatred string using the schema described in json.dumps() function.
 '''
 
-def nbi_encoder(data,year,Longitude, Latitude):
+def nbi_encoder(data,year):
     x = json.dumps({
-
    "year" : year,                                                                                              #item No:0  YEAR      
    "stateCode":row[0],                                                                                         #item No:1   3  /  N  State Code
-   "Structure Number":row[1],                                                                                  #item No:8  15  / AN  Structure Number
-   "Inventory Route": {                                                                                        #item No:5   9  / AN  Inventory Route
-                        "Record Type":row[2],                                                                  #item No:5A  1  / AN  Record Type
-                        "Route Signing Prefix":row[3],                                                         #item No:5B  1  /  N  Route Signing Prefix
-                        "Designated Level of Service":row[4],                                                  #item No:5C  1  /  N  Designated Level of Service
-                        "Route Number":row[5],                                                                 #item No:5D  5  / AN  Route Number
-                        "Directional Suffix":row[6]                                                            #item No:5E  1  /  N  Directional Suffi
+   "structureNumber":row[1],                                                                                   #item No:8  15  / AN  Structure Number
+   "inventoryRoute": {                                                                                         #item No:5   9  / AN  Inventory Route
+                        "recordType":row[2],                                                                   #item No:5A  1  / AN  Record Type
+                        "routeSigningPrefix":row[3],                                                           #item No:5B  1  /  N  Route Signing Prefix
+                        "designatedLevelOfService":row[4],                                                     #item No:5C  1  /  N  Designated Level of Service
+                        "routeNumber":row[5],                                                                  #item No:5D  5  / AN  Route Number
+                        "directionalSuffix":row[6]                                                             #item No:5E  1  /  N  Directional Suffi
                      }, 
-
    "highwayAgencyDistrict":row[7],                                                                             #item No:2   2  / AN  Highway Agency District
    "countyCode":row[8],                                                                                        #item No:3   3  /  N  Count (Parish) Code
    "placeCode":row[9],                                                                                         #item No:4   4  /  N  Place Code
    "featuresIntersected": {                                                                                    #item No:6  25  / AN  Features Intersected
                              "featuresInstersected":row[10],                                                   #item No:6A 25  / AN  Features Instersected
                              "criticalFacilityIndicator":row[11]                                               #item No:6B  1  / AN  Critical Facility Indicator
-                            },                                                       
-                                                                                     
+                            },                                                                                                                                         
    "facilityCarriedByStructure":row[12],                                                                       #item No:7   Facility Carried By Structure
    "location":row[13],                                                                                         #item No:9   Location
    "InventoryRTeMinVertClearance":row[14],                                                                     #item No:10  Inventory RTe, Min Vert Clearance
@@ -121,7 +123,7 @@ def nbi_encoder(data,year,Longitude, Latitude):
                                         "referenceFeature":row[61],                                            #item No:54A Reference Feature
                                         "minimumVeriticalUnderclearance":row[62]                               #item No:54B Minimum Veritical Underclearance
                                        },     
-   "mnLateralUderclearOnRight":{                                                                               #item No:55  Min Lateral underclear On Right
+   "minLateralUderclearOnRight":{                                                                               #item No:55  Min Lateral underclear On Right
                                        "referenceFeature":row[63],                                             #item No:55A Reference Feature
                                        "minimumLateralUnderclearance":row[64],                                 #item No:55B Minimum Lateral Underclearance
                                      },
@@ -192,13 +194,13 @@ def nbi_encoder(data,year,Longitude, Latitude):
    "yearOfFutureAvgDailyTraffic":row[116],                                                                     #item No:115  YEAR OF FUTURE AAVG DAILY TRAFFIC
    "minimumNavigationVerticalClearanceVerricalLiftBridge":row[117],                                            #item No:116  MINIMUM NAVIGATION VERTICAL CLEARANCE VERTICAL LIFT BRIDGE
    "federalAgencyIndicator":row[118],                                                                          #item No:117  FEDERAL AGENCY INDICATOR            
-   "loc":{
-           "type": "Point",
-           "coordinates":[
-                          Longitude,
-                          Latitude
-                          ] 
-           }  
+  # "loc":{
+          # "type": "Point",
+          # "coordinates":[
+                          #Longitude,
+                          #Latitude
+   #                       ] 
+         #  }  
              })
     return x
 
@@ -230,15 +232,20 @@ def handle_string(s):
                                                            
    OUTPUT: The function returns a custom link for every year and state. 
 '''
-
 def createURL(year):
-    yr = year
-    yr = str(yr)
-    #ste = state 
-    filename = "NE"+yr[2:]+".txt"
-    link ="https://www.fhwa.dot.gov/bridge/nbi/"+yr+"/delimited/"+filename
-    return(link)
-
+    if (year < 2009):
+        yr = year
+        yr = str(yr)
+        #filename = "NE"+yr[2:]+".txt"
+        #link ="https://www.fhwa.dot.gov/bridge/nbi/"+yr+"/delimited/"+filename
+        link = "https://www.fhwa.dot.gov/bridge/nbi/"+yr+"del.zip"
+        return(link)
+    else:
+        yr = year
+        yr = str(yr)
+        filename = "NE"+yr[2:]+".txt"
+        link ="https://www.fhwa.dot.gov/bridge/nbi/"+yr+"/delimited/"+filename
+        return(link)
 '''
    FUNCTION NAME: def convertLongLat()
    The purpose of this function to return a JSON formattd strings from a CSV file.
@@ -251,6 +258,10 @@ def createURL(year):
 
 
 def convertLongLat(longitude,latitude):
+    if(longitude or latitude == ''):
+       longitude = '00000000'
+       latitude = '000000000'
+           
     lat = latitude
     latDegree = lat[:2]
     latDegree = int(latDegree)
@@ -277,28 +288,68 @@ def convertLongLat(longitude,latitude):
 
     return longi, lat
 
+'''
+FUNCTION NAME: def convertLongLat()
+
+The purpose of this function to return a JSON formattd strings from a CSV file.
+   
+INPUT PARAMETER: input parameters for this function are 1. Longitude is an integer.
+                                                           2. Latitude is an integer.
+
+OUTPUT: The function returns a pair of integer coordinates, longitude and latitude. 
+'''
+
+def find_all(name):
+    if(name[:2] == '31'):
+        return name
 
 '''
    FUNCTION NAME:  driverProgram
  
 '''
 
+
 with requests.Session() as s:
-     for i in years:
-         csv_url = createURL(i)
-         download = s.get(csv_url)
-         decode_content = download.content.decode('utf-8')
-         cr = csv.reader(decode_content.splitlines(),delimiter = ',')
-         next(cr,None)
-         my_list = list(cr)
-         for row in my_list:
-             #print("======================================================= Line Break ===================================================")
-             temp = []
-             for r in row:
-                 r = r.strip("'")
-                 r = r.strip(" ")
-                 temp.append(r)
-             Longitude, Latitude = convertLongLat(temp[20],temp[19])
-             x = nbi_encoder(temp,i,Longitude,Latitude)
-             print(str(x))
-            
+    for year in years:
+       if(year < 2009):
+          csv_url = createURL(year)
+          url = urllib.request.urlopen(csv_url)
+          with ZipFile(BytesIO(url.read())) as zfile:
+               for name in zfile.namelist():
+                   fname = find_all(name)
+                   with zfile.open(name) as readfile:
+                       readfile = io.TextIOWrapper(readfile,encoding)
+                       cr = csv.reader(readfile,delimiter = ',')
+                       next(cr,None)
+                       my_list = list(cr)
+                       for row in my_list:
+                          #print("======================================================= Line Break ===================================================")
+                           temp = []
+                           for r in row:
+                              r = r.strip("'")
+                              r = r.strip(" ")  
+                              temp.append(r)
+                           #Longitude, Latitude = convertLongLat(temp[20],temp[19])
+                           #x = nbi_encoder(temp,year,Longitude,Latitude)
+                           #x = nbi_encoder(temp,year)
+                           print(year)
+                   
+       else:
+           csv_url = createURL(year)
+           download = s.get(csv_url)
+           decode_content = download.content.decode('utf-8')
+           cr = csv.reader(decode_content.splitlines(),delimiter = ',')
+           next(cr,None)
+           my_list = list(cr)
+           for row in my_list:
+                #print("======================================================= Line Break ===================================================")
+                temp = []
+                print(row)
+                for r in row:
+                    r = r.strip("'")
+                    r = r.strip(" ")
+                    temp.append(r)
+                #Longitude, Latitude = convertLongLat(temp[20],temp[19])
+                #x = nbi_encoder(temp,year,Longitude,Latitude)
+                #print(str(x))
+                print(year)
