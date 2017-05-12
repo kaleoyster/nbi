@@ -16,7 +16,12 @@ import urllib.request
 import io
 
 encoding = 'utf-8'
-years = [1992,1993,1994,1995,1996,2011,2012,2013,2015,2016] #Global variable 
+years = [1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016] #Global variable 
+#years = [1992]
+States =["AK","AL","AR","AZ","CA","CO","CT","DC","DE","FL","GA","HI","IA","ID","IL","IN","KS","KY","MA",'MD',"ME","MI","MN","MO","MS","MT","NC","ND","NE","NH","NJ","NM","NV","NY","OH","OK","OR","PA","PR","RI","SC","SD","TN","TX","UT","VA","VT","WA","WI","WV","WY"]
+#States =["AK"]
+
+#global array States
 dEliminater = ',' #Global variable delimeter 
 
 '''
@@ -194,13 +199,13 @@ def nbi_encoder(data,year):
    "yearOfFutureAvgDailyTraffic":row[116],                                                                     #item No:115  YEAR OF FUTURE AAVG DAILY TRAFFIC
    "minimumNavigationVerticalClearanceVerricalLiftBridge":row[117],                                            #item No:116  MINIMUM NAVIGATION VERTICAL CLEARANCE VERTICAL LIFT BRIDGE
    "federalAgencyIndicator":row[118],                                                                          #item No:117  FEDERAL AGENCY INDICATOR            
-  # "loc":{
-          # "type": "Point",
-          # "coordinates":[
-                          #Longitude,
-                          #Latitude
+   #"loc":{
+   #        "type": "Point",
+   #        "coordinates":[
+   #                       Longitude,
+   #                       Latitude
    #                       ] 
-         #  }  
+   #        }  
              })
     return x
 
@@ -232,20 +237,20 @@ def handle_string(s):
                                                            
    OUTPUT: The function returns a custom link for every year and state. 
 '''
-def createURL(year):
-    if (year < 2009):
+def createURL(year,state):
+    if (year < 2010):
         yr = year
         yr = str(yr)
-        #filename = "NE"+yr[2:]+".txt"
-        #link ="https://www.fhwa.dot.gov/bridge/nbi/"+yr+"/delimited/"+filename
         link = "https://www.fhwa.dot.gov/bridge/nbi/"+yr+"del.zip"
         return(link)
     else:
         yr = year
         yr = str(yr)
-        filename = "NE"+yr[2:]+".txt"
+        ste = state
+        filename = ste+yr[2:]+".txt"
         link ="https://www.fhwa.dot.gov/bridge/nbi/"+yr+"/delimited/"+filename
         return(link)
+
 '''
    FUNCTION NAME: def convertLongLat()
    The purpose of this function to return a JSON formattd strings from a CSV file.
@@ -258,33 +263,25 @@ def createURL(year):
 
 
 def convertLongLat(longitude,latitude):
-    if(longitude or latitude == ''):
-       longitude = '00000000'
-       latitude = '000000000'
-           
-    lat = latitude
-    latDegree = lat[:2]
-    latDegree = int(latDegree)
-    latMin = lat[2:4]
-    latMin = int(latMin)
-    latMin = (latMin/60) 
-    latSec = lat[4:8]
-    lat = latDegree + latMin
-   
-    
-    longi = longitude
-    longiDegree = longi[:3]
-    longiDegree = int(longiDegree)
-    
-    longiMin = longi[3:5]
-    longiMin = int(longiMin)
-    longiMin = (longiMin/60);
-  
-    longiSec = longi[5:9]
-    longiSec = int(longiSec)
-    
-    longi = longiDegree + longiMin
-    longi = (0 - longi)
+    if(longitude and latitude != ''):     
+       lat = latitude
+       latDegree = lat[:2]
+       latDegree = int(latDegree)
+       latMin = lat[2:4]
+       latMin = int(latMin)
+       latMin = (latMin/60) 
+       latSec = lat[4:8]
+       lat = latDegree + latMin
+       longi = longitude
+       longiDegree = longi[:3]
+       longiDegree = int(longiDegree)  
+       longiMin = longi[3:5]
+       longiMin = int(longiMin)
+       longiMin = (longiMin/60);
+       longiSec = longi[5:9]
+       longiSec = int(longiSec)
+       longi = longiDegree + longiMin
+       longi = (0 - longi)
 
     return longi, lat
 
@@ -294,7 +291,7 @@ FUNCTION NAME: def convertLongLat()
 The purpose of this function to return a JSON formattd strings from a CSV file.
    
 INPUT PARAMETER: input parameters for this function are 1. Longitude is an integer.
-                                                           2. Latitude is an integer.
+                                                        2. Latitude is an integer.
 
 OUTPUT: The function returns a pair of integer coordinates, longitude and latitude. 
 '''
@@ -307,49 +304,74 @@ def find_all(name):
    FUNCTION NAME:  driverProgram
  
 '''
-
-
+'''
+def download_data(years,states):
+    for year in years:
+        if(year < 2010):
+           csv_url = createURL(year,"AK")
+           print("CRAWLING.. : " + csv_url)
+           url = urllib.request.urlopen(csv_url)
+           print("Downloading...")
+           with ZipFile(BytesIO(url.read())) as zfile:
+                for name in zfile.namelist():
+                    fname = find_all(name)
+                    with zfile.open(name) as readfile:
+                        readfile = io.TextIOWrapper(readfile,encoding,errors='ignore')
+                        cr = csv.reader(readfile,delimiter = ',')
+            
+    return cr    
+'''
 with requests.Session() as s:
     for year in years:
-       if(year < 2009):
-          csv_url = createURL(year)
-          url = urllib.request.urlopen(csv_url)
-          with ZipFile(BytesIO(url.read())) as zfile:
-               for name in zfile.namelist():
-                   fname = find_all(name)
-                   with zfile.open(name) as readfile:
-                       readfile = io.TextIOWrapper(readfile,encoding)
-                       cr = csv.reader(readfile,delimiter = ',')
-                       next(cr,None)
-                       my_list = list(cr)
-                       for row in my_list:
-                          #print("======================================================= Line Break ===================================================")
-                           temp = []
-                           for r in row:
-                              r = r.strip("'")
-                              r = r.strip(" ")  
-                              temp.append(r)
-                           #Longitude, Latitude = convertLongLat(temp[20],temp[19])
-                           #x = nbi_encoder(temp,year,Longitude,Latitude)
-                           #x = nbi_encoder(temp,year)
-                           print(year)
-                   
-       else:
-           csv_url = createURL(year)
-           download = s.get(csv_url)
-           decode_content = download.content.decode('utf-8')
-           cr = csv.reader(decode_content.splitlines(),delimiter = ',')
-           next(cr,None)
-           my_list = list(cr)
-           for row in my_list:
+        if(year < 2010):
+           csv_url = createURL(year,"AK")
+           print("CRAWLING.. : " + csv_url)
+           url = urllib.request.urlopen(csv_url)
+           print("Downloading...")
+           with ZipFile(BytesIO(url.read())) as zfile:
+                for name in zfile.namelist():
+                    fname = find_all(name)
+                    with zfile.open(name) as readfile:
+                        readfile = io.TextIOWrapper(readfile,encoding,errors='ignore')
+                        cr = csv.reader(readfile,delimiter = ',')
+                        next(cr,None)
+                        my_list = list(cr)
+                        with open("mergedNbiData.json",'a') as f:
+                            for row in my_list:
+                       #print("======================================================= Line Break ===================================================")
+                                temp = []
+                                for r in row:
+                                    r = r.strip("'")
+                                    r = r.strip(" ")  
+                                    temp.append(r)
+                                #Longitude, Latitude = convertLongLat(temp[20],temp[19])
+                                x = nbi_encoder(temp,year)
+                                f.write(x+'\n')
+                        f.close()  
+                        print("[ + ] " + name + " CSV file DONE..")
+           print("[ + ]"+ csv_url + " Zip file DONE...")
+
+        if(year > 2009):
+           for state in States:
+               csv_url = createURL(year,state)
+               print("CRAWLING..: " + csv_url)
+               download = s.get(csv_url)
+               print("Downloading...")
+               #decode_content = download.content.decode('utf-8')
+               decode_content = download.text
+               cr = csv.reader(decode_content.splitlines(),delimiter = ',')
+               next(cr,None)
+               my_list = list(cr)
+               with open("mergedNbiData.json",'a') as f:
+                   for row in my_list:
                 #print("======================================================= Line Break ===================================================")
-                temp = []
-                print(row)
-                for r in row:
-                    r = r.strip("'")
-                    r = r.strip(" ")
-                    temp.append(r)
-                #Longitude, Latitude = convertLongLat(temp[20],temp[19])
-                #x = nbi_encoder(temp,year,Longitude,Latitude)
-                #print(str(x))
-                print(year)
+                       temp = []
+                       for r in row:
+                           r = r.strip("'")
+                           r = r.strip(" ")
+                           temp.append(r)
+                   #Longitude, Latitude = convertLongLat(temp[20],temp[19])
+                       x = nbi_encoder(temp,year)
+                       f.write(x+'\n')     
+               print("[ + ] " + csv_url+ " DONE..")
+     
