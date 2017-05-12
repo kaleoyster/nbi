@@ -17,10 +17,7 @@ import io
 
 encoding = 'utf-8'
 years = [1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016] #Global variable 
-#years = [1992]
 States =["AK","AL","AR","AZ","CA","CO","CT","DC","DE","FL","GA","HI","IA","ID","IL","IN","KS","KY","MA",'MD',"ME","MI","MN","MO","MS","MT","NC","ND","NE","NH","NJ","NM","NV","NY","OH","OK","OR","PA","PR","RI","SC","SD","TN","TX","UT","VA","VT","WA","WI","WV","WY"]
-#States =["AK"]
-
 #global array States
 dEliminater = ',' #Global variable delimeter 
 
@@ -36,7 +33,7 @@ dEliminater = ',' #Global variable delimeter
    OUTPUT: The function returns a JSON formatred string using the schema described in json.dumps() function.
 '''
 
-def nbi_encoder(data,year):
+def nbi_encoder(data,year,Longitude,Latitude):
     x = json.dumps({
    "year" : year,                                                                                              #item No:0  YEAR      
    "stateCode":row[0],                                                                                         #item No:1   3  /  N  State Code
@@ -199,13 +196,13 @@ def nbi_encoder(data,year):
    "yearOfFutureAvgDailyTraffic":row[116],                                                                     #item No:115  YEAR OF FUTURE AAVG DAILY TRAFFIC
    "minimumNavigationVerticalClearanceVerricalLiftBridge":row[117],                                            #item No:116  MINIMUM NAVIGATION VERTICAL CLEARANCE VERTICAL LIFT BRIDGE
    "federalAgencyIndicator":row[118],                                                                          #item No:117  FEDERAL AGENCY INDICATOR            
-   #"loc":{
-   #        "type": "Point",
-   #        "coordinates":[
-   #                       Longitude,
-   #                       Latitude
-   #                       ] 
-   #        }  
+   "loc":{
+           "type": "Point",
+           "coordinates":[
+                          Longitude,
+                          Latitude
+                          ] 
+           }  
              })
     return x
 
@@ -263,27 +260,24 @@ def createURL(year,state):
 
 
 def convertLongLat(longitude,latitude):
-    if(longitude and latitude != ''):     
-       lat = latitude
-       latDegree = lat[:2]
-       latDegree = int(latDegree)
-       latMin = lat[2:4]
-       latMin = int(latMin)
-       latMin = (latMin/60) 
-       latSec = lat[4:8]
-       lat = latDegree + latMin
-       longi = longitude
-       longiDegree = longi[:3]
-       longiDegree = int(longiDegree)  
-       longiMin = longi[3:5]
-       longiMin = int(longiMin)
-       longiMin = (longiMin/60);
-       longiSec = longi[5:9]
-       longiSec = int(longiSec)
-       longi = longiDegree + longiMin
-       longi = (0 - longi)
-
-    return longi, lat
+    if(longitude == '' and latitude == ''):
+       longitude = '00000000'
+       latitude = '000000000'  
+    lat = latitude
+    latDegree = int(lat[:2])
+    latMin = int(lat[2:4])
+    latMin = (latMin/60) 
+    latSec = int(lat[4:8])
+    latSec = (latSec/360000)
+    latDecimal = latDegree + latMin + latSec
+    long = longitude
+    longDegree = int(long[:3])
+    longMin = int(long[3:5])
+    longMin = (longMin/60)
+    longSec = int(long[5:9])
+    longSec = (longSec/360000)
+    longDecimal = -(longDegree + longMin + longSec)
+    return longDecimal, latDecimal
 
 '''
 FUNCTION NAME: def convertLongLat()
@@ -304,24 +298,9 @@ def find_all(name):
    FUNCTION NAME:  driverProgram
  
 '''
-'''
-def download_data(years,states):
-    for year in years:
-        if(year < 2010):
-           csv_url = createURL(year,"AK")
-           print("CRAWLING.. : " + csv_url)
-           url = urllib.request.urlopen(csv_url)
-           print("Downloading...")
-           with ZipFile(BytesIO(url.read())) as zfile:
-                for name in zfile.namelist():
-                    fname = find_all(name)
-                    with zfile.open(name) as readfile:
-                        readfile = io.TextIOWrapper(readfile,encoding,errors='ignore')
-                        cr = csv.reader(readfile,delimiter = ',')
-            
-    return cr    
-'''
+
 with requests.Session() as s:
+    f = open("mergedNBI.json", 'w')
     for year in years:
         if(year < 2010):
            csv_url = createURL(year,"AK")
@@ -336,19 +315,18 @@ with requests.Session() as s:
                         cr = csv.reader(readfile,delimiter = ',')
                         next(cr,None)
                         my_list = list(cr)
-                        with open("mergedNbiData.json",'a') as f:
-                            for row in my_list:
-                       #print("======================================================= Line Break ===================================================")
-                                temp = []
-                                for r in row:
-                                    r = r.strip("'")
-                                    r = r.strip(" ")  
-                                    temp.append(r)
-                                #Longitude, Latitude = convertLongLat(temp[20],temp[19])
-                                x = nbi_encoder(temp,year)
-                                f.write(x+'\n')
-                        f.close()  
-                        print("[ + ] " + name + " CSV file DONE..")
+                        for row in my_list:
+                        #print("======================================================= Line Break ===================================================")
+                           temp = []
+                           for r in row:
+                                r = r.strip("'")
+                                r = r.strip(" ")  
+                                temp.append(r)
+                           Longitude, Latitude = convertLongLat(temp[20],temp[19])
+                           x = nbi_encoder(temp,year,Longitude,Latitude)
+                           f.write(x+'\n')
+
+                    print("[ + ] " + name + " CSV file DONE..")
            print("[ + ]"+ csv_url + " Zip file DONE...")
 
         if(year > 2009):
@@ -362,16 +340,17 @@ with requests.Session() as s:
                cr = csv.reader(decode_content.splitlines(),delimiter = ',')
                next(cr,None)
                my_list = list(cr)
-               with open("mergedNbiData.json",'a') as f:
-                   for row in my_list:
+
+               for row in my_list:
                 #print("======================================================= Line Break ===================================================")
-                       temp = []
-                       for r in row:
-                           r = r.strip("'")
-                           r = r.strip(" ")
-                           temp.append(r)
-                   #Longitude, Latitude = convertLongLat(temp[20],temp[19])
-                       x = nbi_encoder(temp,year)
-                       f.write(x+'\n')     
-               print("[ + ] " + csv_url+ " DONE..")
+                   temp = []
+                   for r in row:
+                       r = r.strip("'")
+                       r = r.strip(" ")
+                       temp.append(r)
+                   Longitude, Latitude = convertLongLat(temp[20],temp[19])
+                   x = nbi_encoder(temp,year,Longitude,Latitude)
+                   f.write(x+'\n')     
+           print("[ + ] " + csv_url+ " DONE..")
+    f.close()
      
