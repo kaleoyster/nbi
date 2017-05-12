@@ -16,15 +16,15 @@ import urllib.request
 import io
 
 encoding = 'utf-8'
-years = [1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016] #Global variable 
+years = [1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016] #Global variable
 States =["AK","AL","AR","AZ","CA","CO","CT","DC","DE","FL","GA","HI","IA","ID","IL","IN","KS","KY","MA",'MD',"ME","MI","MN","MO","MS","MT","NC","ND","NE","NH","NJ","NM","NV","NY","OH","OK","OR","PA","PR","RI","SC","SD","TN","TX","UT","VA","VT","WA","WI","WV","WY"]
 #global array States
-dEliminater = ',' #Global variable delimeter 
+dEliminater = ',' #Global variable delimeter
 
 '''
    FUNCTION NAME: def nbi_encoder()
    The purpose of this function to return a JSON formattd strings from a CSV file.
-   
+
    INPUT PARAMETER: input parameters for this function are 1. data is a list of rows containing NBI data.
                                                            2. year integer is an integer.
                                                            3. Longitude is an intger.
@@ -35,7 +35,7 @@ dEliminater = ',' #Global variable delimeter
 
 def nbi_encoder(data,year,Longitude,Latitude):
     x = json.dumps({
-   "year" : year,                                                                                              #item No:0  YEAR      
+   "year" : year,                                                                                              #item No:0  YEAR
    "stateCode":row[0],                                                                                         #item No:1   3  /  N  State Code
    "structureNumber":row[1],                                                                                   #item No:8  15  / AN  Structure Number
    "inventoryRoute": {                                                                                         #item No:5   9  / AN  Inventory Route
@@ -44,24 +44,24 @@ def nbi_encoder(data,year,Longitude,Latitude):
                         "designatedLevelOfService":row[4],                                                     #item No:5C  1  /  N  Designated Level of Service
                         "routeNumber":row[5],                                                                  #item No:5D  5  / AN  Route Number
                         "directionalSuffix":row[6]                                                             #item No:5E  1  /  N  Directional Suffi
-                     }, 
+                     },
    "highwayAgencyDistrict":row[7],                                                                             #item No:2   2  / AN  Highway Agency District
    "countyCode":row[8],                                                                                        #item No:3   3  /  N  Count (Parish) Code
    "placeCode":row[9],                                                                                         #item No:4   4  /  N  Place Code
    "featuresIntersected": {                                                                                    #item No:6  25  / AN  Features Intersected
                              "featuresInstersected":row[10],                                                   #item No:6A 25  / AN  Features Instersected
                              "criticalFacilityIndicator":row[11]                                               #item No:6B  1  / AN  Critical Facility Indicator
-                            },                                                                                                                                         
+                            },
    "facilityCarriedByStructure":row[12],                                                                       #item No:7   Facility Carried By Structure
    "location":row[13],                                                                                         #item No:9   Location
    "InventoryRTeMinVertClearance":row[14],                                                                     #item No:10  Inventory RTe, Min Vert Clearance
-                                                                                   
+
    "kilometerpoint":row[15],                                                                                   #item No:11  Kilometerpoint
    "baseHighwayPoint":row[16],                                                                                 #item No:12  Base Highway Point
    "inventoryRouteSubrouteNumber": {                                                                           #item No:13  Inventory Route, Subroute Number
                                          "LRSInventoryRoute":row[17],                                          #item No:13A LRS Inventory Route
                                          "subrouteNumber":row[18]                                              #item No:13B Subroute Number
-                                        },                                              
+                                        },
    "latitude":row[19],                                                                                         #item No:16  Latitude
    "longitude":row[20],                                                                                        #item No:17  Longitude
    "bypassDetourLength":row[21],                                                                               #item No:19  Bypass/Detour Length
@@ -73,9 +73,9 @@ def nbi_encoder(data,year,Longitude,Latitude):
    "lanesOnUnderStructure": {                                                                                  #item No:28  Lanes On/Under Structure
                                   "lanesOnStructure":row[27],                                                  #item No:28A Lanes On Structure
                                   "lanesUnderStructure":row[28]                                                #item No:28B Lanes Under Structure
-                                },  
+                                },
    "averageDailyTraffic":row[29],                                                                              #item No:29   Average Daily Traffic
-                                                
+
    "yearOfAverageDailyTraffic":row[30],                                                                        #item No:30   Year Of Average Daily Traffic
    "designLoad":row[31],                                                                                       #item No:31   Design Load
    "approachRoadwayWidth":row[32],                                                                             #item No:32   Approach Roadway Width
@@ -97,17 +97,17 @@ def nbi_encoder(data,year,Longitude,Latitude):
    "typeOfService":{                                                                                           #item No:42  Type of Service
                        "typeOfServiceOnBridge":row[45],                                                        #item No:42A Type of Service On Bridge"
                        "typeOfServiceUnderBridge":row[46]                                                      #item No:42B Type of Service Under Bridge
-                     }, 
- 
+                     },
+
    "structureTypeMain":{                                                                                       #item No:43  Structure Type, Main
-                          "kindOfMaterialDesign":row[47],                                                      #item No:43A Kind of Material/Design   
+                          "kindOfMaterialDesign":row[47],                                                      #item No:43A Kind of Material/Design
                           "typeOfDesignConstruction":row[48]                                                   #item No:43B Type of Design/Construction
                           },
    "structureTypeApproachSpans":{                                                                              #item No:44  Structure Type, Approach Spans
                                      "kindOMaterialDesign":row[49],                                            #item No:44A Kind of Material/Design
                                      "typeOfDesignContruction":row[50],                                        #item No:44B Type of Design/Contruction
-                                     },                                           
-                    
+                                     },
+
    "numberOfSpansInMainUnit":row[51],                                                                          #item No:45  Number of Spans in Main unit
    "numberOfApproachSpans":row[52],                                                                            #item No:46  Number of Approach Spans
    "InventoryRteTotalHorzClearance":row[53],                                                                   #item No:47  Inventory Rte Total Horz Clearance
@@ -117,19 +117,19 @@ def nbi_encoder(data,year,Longitude,Latitude):
                             "leftCurbSidewalkWidth":row[56],                                                   #item No:50A Left Curb/Sidewalk Width
                             "rightCurbSidewalkWidth":row[57]                                                   #item No:50B Right Curb/Sidewalk Width
                            },
- 
+
    "bridgeRoadwayWithCurbToCurb":row[58],                                                                      #item No:51  Bridge Roadway with Curb-To-Curb
    "deckWidthOutToOut":row[59],                                                                                #item No:52  Deck Width, Out-To-Out
    "minVertClearOverBridgeRoadway":row[60],                                                                    #item No:53  Min Vert Clear Over Bridge Roadway
    "minimumVeriticalUnderclearance": {                                                                         #item No:54  Minimum Veritical Underclearance
                                         "referenceFeature":row[61],                                            #item No:54A Reference Feature
                                         "minimumVeriticalUnderclearance":row[62]                               #item No:54B Minimum Veritical Underclearance
-                                       },     
+                                       },
    "minLateralUderclearOnRight":{                                                                               #item No:55  Min Lateral underclear On Right
                                        "referenceFeature":row[63],                                             #item No:55A Reference Feature
                                        "minimumLateralUnderclearance":row[64],                                 #item No:55B Minimum Lateral Underclearance
                                      },
-    
+
    "minLateralUnderclearOnLeft":row[65],                                                                       #item No:56 Min Lateral Underclear On Left
    "deck":row[66],                                                                                             #item No:58 Deck
    "superstructure":row[67],                                                                                   #item No:59 Superstructure
@@ -146,12 +146,12 @@ def nbi_encoder(data,year,Longitude,Latitude):
    "bridgePosting":row[78],                                                                                    #item No:70 Bridge Posting
    "waterwayAdequacy":row[79],                                                                                 #item No:71 Waterway Adequacy
    "approachRoadwayAlignment":row[80],                                                                         #item No:72 Approach Roadway Alignment
-                                        
+
    "typeOfWork": {                                                                                             #item No:75  Type of Work
                       "typeOfWorkProposed":row[81],                                                            #item No:75A Type of Work Proposed
                       "WorkDoneBy":row[82]                                                                     #item No:75B Work Done By
-                   },  
- 
+                   },
+
    "lengthOfStructureImprovement":row[83],                                                                     #item No:76  Length Of Structure Improvement
    "inspectionDate":row[84],                                                                                   #item No:90  Inspection Date
    "designatedInspectionFrequency":row[85],                                                                    #item No:91  Designated Inspection Frequency
@@ -164,7 +164,7 @@ def nbi_encoder(data,year,Longitude,Latitude):
                                           "fractureCiritcalDetailsDate":row[89],                               #item No:93A  Fracture Ciritcal Details Date
                                           "underwaterInspectionDate":row[90],                                  #item No:93B  Underwater Inspection Date
                                           "OtherSpecialInspectionDate":row[91]                                 #item No:93C  Other Special Inspection Date
-                                        }, 
+                                        },
    "bridgeImprovementCost":row[92],                                                                            #item No:94   Bridge Improvement Cost
    "roadwayImprovementCost":row[93],                                                                           #item No:95   Roadway Improvement Cost
    "totalProjectCost":row[94],                                                                                 #item No:96   Total Project Cost
@@ -172,11 +172,11 @@ def nbi_encoder(data,year,Longitude,Latitude):
    "borderBridge": {                                                                                           #item No:98   Border Bridge
                        "neighboringStateCode":row[96],                                                         #item No:98A  Neighboring State Code
                        "percentReponsibility":row[97]                                                          #item No:98B  Percent Reponsibility
-                    }, 
+                    },
    "borderBridgeStructureNumber":row[98],                                                                      #item No:99   Border Bridge Structure Number
-   "STRAHNETHighwayDesignation":row[99],                                                                       #item No:100  STRAHNETHighwayDesignation  
+   "STRAHNETHighwayDesignation":row[99],                                                                       #item No:100  STRAHNETHighwayDesignation
    "parallelStructureDesignation":row[100],                                                                    #item No:101  Parallel Structure Designation
-   "directionOfTraffic":row[101],                                                                              #item No:102  Direction Of Traffic                    
+   "directionOfTraffic":row[101],                                                                              #item No:102  Direction Of Traffic
    "temporaryStructureDesignation":row[102],                                                                   #item No:103  Federal Lands Highways
    "highwaySystemOfInventoryRoute":row[103],                                                                   #item No:104  Temporary Structure Designation
    "federalLandsHighways":row[104],                                                                            #item No:105  Highway System of Inventory Route
@@ -188,21 +188,21 @@ def nbi_encoder(data,year,Longitude,Latitude):
                                            "deckProtection" :row[109]                                          #item No:108C Deck Protection
                                          },
    "avgDailyTruckTraffic":row[110],                                                                            #item No:109  AVERAGE DAILY TRUCK TRAFFIC
-   "designatedNationalNetwork":row[111],                                                                       #item No:110  DESIGNATED NATIONAL NETWORK  
-   "pier/abutmentProtection":row[112],                                                                         #item No:111  PIER/ABUTMENT PROTECTION 
-   "nbisBridgeLength":row[113],                                                                                #item No:112  NBI BRIDGE LENGTH                        
+   "designatedNationalNetwork":row[111],                                                                       #item No:110  DESIGNATED NATIONAL NETWORK
+   "pier/abutmentProtection":row[112],                                                                         #item No:111  PIER/ABUTMENT PROTECTION
+   "nbisBridgeLength":row[113],                                                                                #item No:112  NBI BRIDGE LENGTH
    "scourCriticalBridges":row[114],                                                                            #item No:113  SCOUR CRITICAL BRIDGE
    "futureAvgDailyTraffic":row[115],                                                                           #item No:114  FUTURE AVERAGE DAILY TRAFFIC
    "yearOfFutureAvgDailyTraffic":row[116],                                                                     #item No:115  YEAR OF FUTURE AAVG DAILY TRAFFIC
    "minimumNavigationVerticalClearanceVerricalLiftBridge":row[117],                                            #item No:116  MINIMUM NAVIGATION VERTICAL CLEARANCE VERTICAL LIFT BRIDGE
-   "federalAgencyIndicator":row[118],                                                                          #item No:117  FEDERAL AGENCY INDICATOR            
+   "federalAgencyIndicator":row[118],                                                                          #item No:117  FEDERAL AGENCY INDICATOR
    "loc":{
            "type": "Point",
            "coordinates":[
                           Longitude,
                           Latitude
-                          ] 
-           }  
+                          ]
+           }
              })
     return x
 
@@ -211,7 +211,7 @@ def nbi_encoder(data,year,Longitude,Latitude):
    The purpose of this function to sanitize strings of extra white spaces and converts strings
    into integer or float depending on the structure of the string. create URL to crawl on websites
 
-   INPUT PARAMETER: input parameter 's' is a string. 
+   INPUT PARAMETER: input parameter 's' is a string.
 
    OUTPUT: the returning value could be either a string, float or int.
 
@@ -231,8 +231,8 @@ def handle_string(s):
    FUNCTION NAME: def createURL()
    The purpose of this function to create a link depending on the input year.
    INPUT PARAMETER: input parameters for this function is 'year' (integer).
-                                                           
-   OUTPUT: The function returns a custom link for every year and state. 
+
+   OUTPUT: The function returns a custom link for every year and state.
 '''
 def createURL(year,state):
     if (year < 2010):
@@ -250,44 +250,43 @@ def createURL(year,state):
 
 '''
    FUNCTION NAME: def convertLongLat()
-   The purpose of this function to return a JSON formattd strings from a CSV file.
-   
+   The purpose of this function to convert DMS format longitude and latitude strings to decimal degrees. This function helps with creating geoJSON formatted locations for every bridge record in the NBI Dataset.
+
    INPUT PARAMETER: input parameters for this function are 1. Longitude is an integer.
                                                            2. Latitude is an integer.
 
-   OUTPUT: The function returns a pair of integer coordinates, longitude and latitude. 
+   OUTPUT: The function returns a pair of integer coordinates, longitude and latitude.
 '''
 
 
 def convertLongLat(longitude,latitude):
-    if(longitude == '' and latitude == ''):
-       longitude = '00000000'
-       latitude = '000000000'  
-    lat = latitude
-    latDegree = int(lat[:2])
-    latMin = int(lat[2:4])
-    latMin = (latMin/60) 
-    latSec = int(lat[4:8])
-    latSec = (latSec/360000)
-    latDecimal = latDegree + latMin + latSec
-    long = longitude
-    longDegree = int(long[:3])
-    longMin = int(long[3:5])
-    longMin = (longMin/60)
-    longSec = int(long[5:9])
-    longSec = (longSec/360000)
-    longDecimal = -(longDegree + longMin + longSec)
-    return longDecimal, latDecimal
+    try:
+        lat = latitude
+        latDegree = int(lat[:2])
+        latMin = int(lat[2:4])
+        latMin = (latMin/60)
+        latSec = int(lat[4:8])
+        latSec = (latSec/360000)
+        latDecimal = latDegree + latMin + latSec
+        long = longitude
+        longDegree = int(long[:3])
+        longMin = int(long[3:5])
+        longMin = (longMin/60)
+        longSec = int(long[5:9])
+        longSec = (longSec/360000)
+        longDecimal = -(longDegree + longMin + longSec)
+        return longDecimal, latDecimal
+    except:
+        return 0.00, 0.00
 
 '''
-FUNCTION NAME: def convertLongLat()
+FUNCTION NAME: def find_all()
 
-The purpose of this function to return a JSON formattd strings from a CSV file.
-   
-INPUT PARAMETER: input parameters for this function are 1. Longitude is an integer.
-                                                        2. Latitude is an integer.
+PURPOSE: __TODO__
 
-OUTPUT: The function returns a pair of integer coordinates, longitude and latitude. 
+INPUT PARAMETER: __TODO__
+
+OUTPUT: __TODO__
 '''
 
 def find_all(name):
@@ -295,8 +294,8 @@ def find_all(name):
         return name
 
 '''
-   FUNCTION NAME:  driverProgram
- 
+FUNCTION NAME:  driverProgram
+
 '''
 
 with requests.Session() as s:
@@ -320,7 +319,7 @@ with requests.Session() as s:
                            temp = []
                            for r in row:
                                 r = r.strip("'")
-                                r = r.strip(" ")  
+                                r = r.strip(" ")
                                 temp.append(r)
                            Longitude, Latitude = convertLongLat(temp[20],temp[19])
                            x = nbi_encoder(temp,year,Longitude,Latitude)
@@ -350,7 +349,6 @@ with requests.Session() as s:
                        temp.append(r)
                    Longitude, Latitude = convertLongLat(temp[20],temp[19])
                    x = nbi_encoder(temp,year,Longitude,Latitude)
-                   f.write(x+'\n')     
+                   f.write(x+'\n')
            print("[ + ] " + csv_url+ " DONE..")
     f.close()
-     
