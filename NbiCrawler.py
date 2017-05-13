@@ -344,7 +344,7 @@ with requests.Session() as s:
                                 temp.append(r)
                            Longitude, Latitude = convertLongLat(temp[20],temp[19])
                            x = nbi_encoder(temp,year,Longitude,Latitude)
-                           #f.write(x+'\n')
+                           f.write(x+'\n')
 
                     print("[ + ] " + name + " CSV file DONE..")
            print("[ + ]"+ csv_url + " Zip file DONE...")
@@ -374,7 +374,7 @@ with requests.Session() as s:
                        Longitude = "NA"
                        Latitude = "NA"
                    x = nbi_encoder(temp,year,Longitude,Latitude)
-                   #f.write(x+'\n')     
+                   f.write(x+'\n')     
            print("[ + ] " + csv_url+ " DONE..")
     f.close()
      
