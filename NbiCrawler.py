@@ -16,10 +16,10 @@ import urllib.request
 import io
 
 encoding = 'utf-8'
-years = [1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016] #Global variable 
-#years = [2010]
-#States =["WV"]
-States =["AK","AL","AR","AZ","CA","CO","CT","DC","DE","FL","GA","HI","IA","ID","IL","IN","KS","KY","MA",'MD',"ME","MI","MN","MO","MS","MT","NC","ND","NE","NH","NJ","NM","NV","NY","OH","OK","OR","PA","PR","RI","SC","SD","TN","TX","UT","VA","VT","WA","WI","WV","WY"]
+#years = [1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016] #Global variable 
+years = [2010]
+States = ['WV']
+#States =["AK","AL","AR","AZ","CA","CO","CT","DC","DE","FL","GA","HI","IA","ID","IL","IN","KS","KY","MA",'MD',"ME","MI","MN","MO","MS","MT","NC","ND","NE","NH","NJ","NM","NV","NY","OH","OK","OR","PA","PR","RI","SC","SD","TN","TX","UT","VA","VT","WA","WI","WV","WY"]
 #global array States
 dEliminater = ',' #Global variable delimeter 
 
@@ -36,13 +36,6 @@ dEliminater = ',' #Global variable delimeter
 '''
 
 def nbi_encoder(data,year,Longitude,Latitude):
-    size = len(data)
-    row = []
-    for x in range(119):
-        if x<size:
-            data.append(data[x])
-        else:
-            data.append("-1") 
     x = json.dumps({
    
    "year" : year,                                                                                              #item No:0  YEAR      
@@ -364,17 +357,22 @@ with requests.Session() as s:
                for row in my_list:
                 #print("======================================================= Line Break ===================================================")
                    temp = []
+                   count = 0
                    for r in row:
                        r = r.strip("'")
                        r = r.strip(" ")
-                       temp.append(r)
-                   try:
-                       Longitude, Latitude = convertLongLat(temp[20],temp[19])
-                   except:
-                       Longitude = "NA"
-                       Latitude = "NA"
-                   x = nbi_encoder(temp,year,Longitude,Latitude)
-                   f.write(x+'\n')     
+                       count = count + 1
+                       temp.append(r)                  
+                   if(count == 133):               
+                      try:
+                         Longitude, Latitude = convertLongLat(temp[20],temp[19])
+                      except:
+                         Longitude = "NA"
+                         Latitude = "NA"
+                      x = nbi_encoder(temp,year,Longitude,Latitude)
+                      f.write(x+'\n')
+                   else:
+                      continue      
            print("[ + ] " + csv_url+ " DONE..")
     f.close()
      
