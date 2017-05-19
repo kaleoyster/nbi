@@ -1,3 +1,11 @@
+'''
+Program Title: NBI BRIDGE JSON ENCODER
+VERSION: 1
+TEMPLATE: NBI Record Format
+
+Author: Akshay Kale
+'''
+
 import json
 
 
@@ -14,7 +22,7 @@ import json
    OUTPUT: The function returns a JSON formatred string using the schema described in json.dumps() function.
 '''
 
-def nbi_encoder(data,year,Longitude,Latitude):
+def nbiEncoder(data,year,Longitude,Latitude):
     x = json.dumps({
    
    "year" : year,                                                                                               #item No:0  YEAR      
