@@ -4,13 +4,15 @@ VERSION: 1
 TEMPLATE: IA16
 
 Author: Akshay Kale
-'''
+''' 	
 
+
+import json
 from nbiEncoder import nbiEncoder
 '''
 FUNCTION NAME: def processNbiRecord()
 
-The purpose of this function is to return a JSON formattd strings from a CSV file.
+The purpose of this function is to return a JSON formatted strings from a CSV file.
    
 INPUT PARAMETER: input parameters for this function are 1. my_list is an integer.
                                                         2. year is an integer.
@@ -19,9 +21,10 @@ INPUT PARAMETER: input parameters for this function are 1. my_list is an integer
 OUTPUT: The function returns count of Rows
 '''          
 
-def processNbiRecord(Datalist,Year,RowCount,File):  
+def processNbiRecord(Datalist,Year,RowCount,myDb):  
     RowC = RowCount
-    f = File
+    arr = []
+    #f = File
     for row in Datalist:
        #print("======================================================= Line Break ===================================================")
         temp = []         
@@ -38,11 +41,14 @@ def processNbiRecord(Datalist,Year,RowCount,File):
               Longitude = "NA"
               Latitude = "NA"
            x = nbiEncoder(temp,Year,Longitude,Latitude)
-           #print(x)
+           #print(type(x))
+           myDb.mytable2.insert_one(json.loads(x))  
+           #print(json.loads(x))
            #f.write(x+'\n')
            RowC = RowC + 1
         else:
             continue
+    #         
     return RowC 
 
 
