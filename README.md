@@ -13,3 +13,19 @@ The Python script downloads CSV and zip file directly from the FHWA website. Thi
 python3 NbiCrawler.py
 
 ```
+## Update
+The nbiSeparateFiles folder contains two separate files,
+                     1. Downloadv1.py, to download csv files
+                     2. ProcessMain.py to convert csv into JSON.
+
+
+```bash
+
+python3 Downloadv1.py
+
+```
+```bash
+
+python3 ProcessMain.py
+
+```
