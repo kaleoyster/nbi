@@ -1,0 +1,2 @@
+Year: 2012, State: NE
+Total count of Repeated records:  0
