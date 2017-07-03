@@ -58,7 +58,8 @@ def stateCodeValidate(data,validation,structNumber,fieldErrorCountArray):
                       '01', 
                       '31',
                       '02',
-                      '49' ]
+                      '49',
+                      ' ' ]
 
        if data in validValues:
           error = 0
@@ -126,7 +127,8 @@ def routeSigningPrefixValidate(data,validation,structNumber,fieldErrorCountArray
                    '5',
                    '6',
                    '7',
-                   '8']
+                   '8',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -146,7 +148,8 @@ def DesignatedLevelServiceValidate(data,validation,structNumber,fieldErrorCountA
                    '5',
                    '6',
                    '7',
-                   '8']
+                   '8',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -163,7 +166,8 @@ def directionalSuffixValidate(data,validation,structNumber,fieldErrorCountArray)
                    '1', 
                    '2',
                    '3',
-                   '4']
+                   '4',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -183,7 +187,8 @@ def directionalSuffixValidate(data,validation,structNumber,fieldErrorCountArray)
 
 def baseHighwayNetwork(data,validation,structNumber,fieldErrorCountArray):
     validValues = ['0',
-                   '1']
+                   '1',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -216,7 +221,8 @@ def tollValidate(data,validation,structNumber,fieldErrorCountArray):
                    '2',
                    '3',
                    '4',
-                   '5']
+                   '5',
+                   ' ']
 
     if data in validValues:
         error = 0
@@ -257,7 +263,8 @@ def maintenanceReponsibilityValidate(data,validation,structNumber,fieldErrorCoun
                    '74',
                    '75',
                    '76',
-                   '80' ]
+                   '80',
+                   ' ' ]
     if data in validValues:
         error = 0
         return data, error
@@ -297,7 +304,8 @@ def OwnerValidate(data,validation,structNumber,fieldErrorCountArray):
                    '74',
                    '75',
                    '76',
-                   '80' ]
+                   '80',
+                   ' ' ]
     if data in validValues:
         error = 0
         return data, error
@@ -320,7 +328,8 @@ def FunctionalClassificationValidate(data,validation,structNumber,fieldErrorCoun
                    '14',
                    '16',
                    '17',
-                   '19']
+                   '19',
+                   ' ']
 
     if data in validValues:
         error = 0
@@ -369,7 +378,8 @@ def designLoadValidate(data,validation,structNumber,fieldErrorCountArray):
                    '7',
                    '8',
                    '9',
-                   '0']
+                   '0',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -388,7 +398,8 @@ def bridgeMedianValidate(data,validation,structNumber,fieldErrorCountArray):
     validValues = ['0',
                    '1',
                    '2',
-                   '3']
+                   '3',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -404,7 +415,8 @@ def bridgeMedianValidate(data,validation,structNumber,fieldErrorCountArray):
 
 def structureFlaredValidate(data,validation,structNumber,fieldErrorCountArray):
     validValues = ['0',
-                   '1']
+                   '1',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -483,7 +495,8 @@ def historicalSigValidation(data,validation,structNumber,fieldErrorCountArray):
                    '2',
                    '3',
                    '4',
-                   '5']
+                   '5',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -538,7 +551,8 @@ def structureTypeValidate(data,validation,structNumber,fieldErrorCountArray):
 #item 42A - Type of Service
 def typeOfServiceOnBridge(data,validation,structNumber,fieldErrorCountArray):
     #validValues = list(range(0,10)) # 10 is not inclusive
-    validValues = ['1',
+    validValues = ['0',
+                   '1',
                    '2',
                    '3',
                    '4',
@@ -547,7 +561,7 @@ def typeOfServiceOnBridge(data,validation,structNumber,fieldErrorCountArray):
                    '7',
                    '8',
                    '9',
-                   '0']
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -560,7 +574,8 @@ def typeOfServiceOnBridge(data,validation,structNumber,fieldErrorCountArray):
 #item 42B - Type of Service
 def typeOfServiceUnderBridge(data,validation,structNumber,fieldErrorCountArray):
     #validValues = list(range(0,10)) # 10 is not inclusive
-    validValues = ['1',
+    validValues = ['0',
+                   '1',
                    '2',
                    '3',
                    '4',
@@ -569,7 +584,7 @@ def typeOfServiceUnderBridge(data,validation,structNumber,fieldErrorCountArray):
                    '7',
                    '8',
                    '9',
-                   '0']
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -583,7 +598,8 @@ def typeOfServiceUnderBridge(data,validation,structNumber,fieldErrorCountArray):
 #item 43A - Structure Type, Main
 
 def kindOfMaterial(data,validation,structNumber,fieldErrorCountArray):
-    validValues = ['1',
+    validValues = ['0',
+                   '1',
                    '2',
                    '3',
                    '4',
@@ -592,7 +608,7 @@ def kindOfMaterial(data,validation,structNumber,fieldErrorCountArray):
                    '7',
                    '8',
                    '9',
-                   '0']
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -626,7 +642,8 @@ def typeOfDesign(data,validation,structNumber,fieldErrorCountArray):
                    '19',
                    '20',
                    '21',
-                   '22']
+                   '22',
+                   ' ']
 
     if data in validValues:
         error = 0
@@ -641,7 +658,8 @@ def typeOfDesign(data,validation,structNumber,fieldErrorCountArray):
 #item 44A - Structure Type, Approach Spans
 
 def structureTypeAspans44A(data,validation,structNumber,fieldErrorCountArray):
-    validValues = ['1',
+    validValues = ['0',
+                   '1',
                    '2',
                    '3',
                    '4',
@@ -650,7 +668,7 @@ def structureTypeAspans44A(data,validation,structNumber,fieldErrorCountArray):
                    '7',
                    '8',
                    '9',
-                   '0']
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -684,7 +702,8 @@ def structureTypeAspans44B(data,validation,structNumber,fieldErrorCountArray):
                    '19',
                    '20',
                    '21',
-                   '22']
+                   '22',
+                   ' ']
         
     if data in validValues:
         error = 0
@@ -750,7 +769,8 @@ def minLateralUnderclearanceRef(data,validation,structNumber,fieldErrorCountArra
 #Items 58 - Indicate the Condition Ratings for Deck--
 def deckRatings(data,validation,structNumber,fieldErrorCountArray):
     #validValues = list(range(0,10)) # 10 is not inclusive
-    validValues = ['1',
+    validValues = ['0',
+                   '1',
                    '2',
                    '3',
                    '4',
@@ -759,7 +779,6 @@ def deckRatings(data,validation,structNumber,fieldErrorCountArray):
                    '7',
                    '8',
                    '9',
-                   '0',
                    'N',
                    ' ']
     if data in validValues:
@@ -774,7 +793,8 @@ def deckRatings(data,validation,structNumber,fieldErrorCountArray):
 #Items 59 - Indicate the Condition Ratings for Superstructure--
 def superstructureRatings(data,validation,structNumber,fieldErrorCountArray):
     #validValues = list(range(0,10)) # 10 is not inclusive
-    validValues = ['1',
+    validValues = ['0',
+                   '1',
                    '2',
                    '3',
                    '4',
@@ -783,7 +803,6 @@ def superstructureRatings(data,validation,structNumber,fieldErrorCountArray):
                    '7',
                    '8',
                    '9',
-                   '0',
                    'N',
                    ' ']
     if data in validValues:
@@ -798,7 +817,8 @@ def superstructureRatings(data,validation,structNumber,fieldErrorCountArray):
 #Items 60 - Indicate the Condition Ratings Substructure--
 def substructureRatings(data,validation,structNumber,fieldErrorCountArray):
     #validValues = list(range(0,10)) # 10 is not inclusive
-    validValues = ['1',
+    validValues = ['0',
+                   '1',
                    '2',
                    '3',
                    '4',
@@ -807,7 +827,6 @@ def substructureRatings(data,validation,structNumber,fieldErrorCountArray):
                    '7',
                    '8',
                    '9',
-                   '0',
                    'N',
                    ' ']
     if data in validValues:
@@ -822,7 +841,8 @@ def substructureRatings(data,validation,structNumber,fieldErrorCountArray):
 #Item 61 - Channel and Channel Protection--
 def channelProtectionValidation(data,validation,structNumber,fieldErrorCountArray):
     #validValues = list(range(0,10)) # 10 is not inclusive
-    validValues = ['1',
+    validValues = ['0',
+                   '1',
                    '2',
                    '3',
                    '4',
@@ -831,7 +851,6 @@ def channelProtectionValidation(data,validation,structNumber,fieldErrorCountArra
                    '7',
                    '8',
                    '9',
-                   '0',
                    'N',
                    ' ']
     if data in validValues:
@@ -845,7 +864,8 @@ def channelProtectionValidation(data,validation,structNumber,fieldErrorCountArra
 
 #Item 62 - Culverts--
 def culvertsValidation(data,validation,structNumber,fieldErrorCountArray):
-    validValues = ['1',
+    validValues = ['0',
+                   '1',
                    '2',
                    '3',
                    '4',
@@ -854,7 +874,6 @@ def culvertsValidation(data,validation,structNumber,fieldErrorCountArray):
                    '7',
                    '8',
                    '9',
-                   '0',
                    'N',
                    ' ']
     if data in validValues:
@@ -873,7 +892,8 @@ def methodUsedToDetermineOperatingRatingValidation(data,validation,structNumber,
                    '2',
                    '3',
                    '4',
-                   '5']
+                   '5',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -889,7 +909,8 @@ def operatingRatingValidation(data,validation,structNumber,fieldErrorCountArray)
                    '2',
                    '3',
                    '4',
-                   '5']
+                   '5',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -908,7 +929,8 @@ def methodToDetermineInventoryRating(data,validation,structNumber,fieldErrorCoun
                    '2',
                    '3',
                    '4',
-                   '5']
+                   '5',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -1000,7 +1022,8 @@ def bridgePosting(data,validation,structNumber,fieldErrorCountArray):
                    '2',
                    '3',
                    '4',
-                   '5']
+                   '5',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -1133,7 +1156,8 @@ def strahnetValidation(data,validation,structNumber,fieldErrorCountArray):
     validValues = ['0',
                    '1',
                    '2',
-                   '3']
+                   '3',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -1165,7 +1189,8 @@ def directionOfTrafficValidation(data,validation,structNumber,fieldErrorCountArr
     validValues = ['0',
                    '1',
                    '2',
-                   '3']
+                   '3',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -1195,7 +1220,8 @@ def temporaryStructureValidation(data,validation,structNumber,fieldErrorCountArr
 
 def highwaySystemInventoryRouteValidation(data,validation,structNumber,fieldErrorCountArray):
     validValues = ['0',
-                   '1']
+                   '1',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -1216,7 +1242,8 @@ def federalLandsHighwaysValidation(data,validation,structNumber,fieldErrorCountA
                    '4',
                    '5',
                    '6',
-                   '9']
+                   '9',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
@@ -1340,7 +1367,8 @@ def deckProtectionValidation(data,validation,structNumber,fieldErrorCountArray):
 
 def designatedNationalNetworkValidation(data,validation,structNumber,fieldErrorCountArray):
     validValues = ['0',
-                   '1']
+                   '1',
+                   ' ']
     if data in validValues:
         error = 0
         return data, error
