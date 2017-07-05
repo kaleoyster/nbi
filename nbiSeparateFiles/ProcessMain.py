@@ -207,7 +207,7 @@ def processFilesJSON(files):
                       IndexErrorCount = IndexErrorCount + 1
                       print("IndexError: ", i)
                       continue
-                   #mergedFile.write(x)    
+                   mergedFile.write(x)    
             fieldSizeDict = {x: fieldSizeCount.count(x) for x in fieldSizeCount}             
             print("===================================",file=summary)
             print('Year: %s, State: %s' %(year, state),file=summary)                               
