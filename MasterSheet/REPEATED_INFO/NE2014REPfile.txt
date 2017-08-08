@@ -1,2 +1,0 @@
-Year: 2014, State: NE
-Total count of Repeated records:  0
