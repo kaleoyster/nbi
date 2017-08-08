@@ -8,6 +8,7 @@ Author: Akshay Kale
 
 import json
 from validationFunctions import *
+from crossValidationFunctions import *
 '''
    FUNCTION NAME: def nbi_encoder()
    The purpose of this function to return a JSON formattd strings from a CSV file.
@@ -23,19 +24,19 @@ from validationFunctions import *
 def nbiEncoder(data,year,Longitude,Latitude):
    x = json.dumps({ 
   
-   "year" : year,                                                                                                          #item No:0  YEAR      
-   "stateCode":convertToString(data[0]),                                                                                   #item No:1   3  /  N  State Code
-   "structureNumber":convertToString(data[1]),                                                                             #item No:8  15  / AN  Structure Number
-   "inventoryRoute": {                                                                                                     #item No:5   9  / AN  Inventory Route
-                        "recordType":convertToString(data[2]),                                                             #item No:5A  1  / AN  Record Type
-                        "routeSigningPrefix":convertToString(data[3]),                                                     #item No:5B  1  /  N  Route Signing Prefix
-                        "designatedLevelOfService":convertToString(data[4]),                                               #item No:5C  1  /  N  Designated Level of Service
-                        "routeNumber":convertToString(data[5]),                                                            #item No:5D  AN  / 5  Route Number
-                        "directionalSuffix":convertToString(data[6])                                                       #item No:5E  1  /  N  Directional Suffi
+   "year" : year,                                                                                                              #item No:0  YEAR      
+   "stateCode":convertToString(data[0]),                                                                                       #item No:1   3  /  N  State Code
+   "structureNumber":convertToString(data[1]),                                                                                 #item No:8  15  / AN  Structure Number
+   "inventoryRoute": {                                                                                                         #item No:5   9  / AN  Inventory Route
+                        "recordType":convertToString(data[2]),                                                                 #item No:5A  1  / AN  Record Type
+                        "routeSigningPrefix":convertToString(data[3]),                                                         #item No:5B  1  /  N  Route Signing Prefix
+                        "designatedLevelOfService":convertToString(data[4]),                                                   #item No:5C  1  /  N  Designated Level of Service
+                        "routeNumber":convertToString(data[5]),                                                                #item No:5D  AN  / 5  Route Number
+                        "directionalSuffix":convertToString(data[6])                                                           #item No:5E  1  /  N  Directional Suffi
                      }, 
-   "highwayAgencyDistrict":convertToString(data[7]),                                                                       #item No:2   2  / AN  Highway Agency District
-   "countyCode":convertNumeric(data[8]),                                                                                   #item No:3   3  /  N  Count (Parish) Code
-   "placeCode":convertNumeric(data[9]),                                                                                    #item No:4   4  /  N  Place Code
+   "highwayAgencyDistrict":convertToString(data[7]),                                                                           #item No:2   2  / AN  Highway Agency District
+   "countyCode":convertNumeric(data[8]),                                                                                       #item No:3   3  /  N  Count (Parish) Code
+   "placeCode":convertNumeric(data[9]),                                                                                         #item No:4   4  /  N  Place Code
    "featuresIntersected": {                                                                                                     #item No:6  25  / AN  Features Intersected
                              "featuresIntersected":convertToString(data[10]),                                                   #item No:6A 25  / AN  Features Intersected (NO LONGER CODE .. Has to be BLANK)
                              "criticalFacilityIndicator":convertToString(data[11])                                              #item No:6B  1  / AN  Critical Facility Indicator
@@ -138,17 +139,17 @@ def nbiEncoder(data,year,Longitude,Latitude):
                       "WorkDoneBy":convertToString(data[82])                                                                    #item No:75B AN Work Done By
                    },  
    "lengthOfStructureImprovement":convertToString(data[83]),                                                                    #item No:76  N Length Of Structure Improvement
-   "inspectionDate":convertNumeric(data[84]),                                                                                   #item No:90  N Inspection Date
-   "designatedInspectionFrequency":convertNumeric(data[85]),                                                                    #item No:91  N Designated Inspection Frequency
+   "inspectionDate":convertToString(data[84]),                                                                                  #item No:90  N Inspection Date
+   "designatedInspectionFrequency":convertToString(data[85]),                                                                   #item No:91  N Designated Inspection Frequency
    "criticalFeatureInspection": {                                                                                               #item No:92  AN Critical Feature Inspection
                                     "fractureCriticalDetails":convertToString(data[86]),                                        #item No:92A AN Fracture Critical Details
                                     "underwaterInspection":convertToString(data[87]),                                           #item No:92B AN Underwater Inspection
-                                    "otherSpecialInspection":convertToString(data[88])                                        #item No:92C AN Other Special Inspection
+                                    "otherSpecialInspection":convertToString(data[88])                                          #item No:92C AN Other Special Inspection
                                   },
-   "criticalFeatureInspectionDates": {                                                                                        #item No:93  AN Critical Feature Inspection Dates
-                                          "fractureCiritcalDetailsDate":convertToString(data[89]),                            #item No:93A AN Fracture Ciritcal Details Date
-                                          "underwaterInspectionDate":convertToString(data[90]),                               #item No:93B AN Underwater Inspection Date
-                                          "OtherSpecialInspectionDate":convertToString(data[91])                              #item No:93C AN Other Special Inspection Date
+   "criticalFeatureInspectionDates": {                                                                                          #item No:93  AN Critical Feature Inspection Dates
+                                          "fractureCiritcalDetailsDate":convertToString(data[89]),                              #item No:93A AN Fracture Ciritcal Details Date
+                                          "underwaterInspectionDate":convertToString(data[90]),                                 #item No:93B AN Underwater Inspection Date
+                                          "OtherSpecialInspectionDate":convertToString(data[91])                                #item No:93C AN Other Special Inspection Date
                                         }, 
 
    "bridgeImprovementCost":convertToString(data[92]),                                                                         #item No:94  N Bridge Improvement Cost
@@ -179,7 +180,7 @@ def nbiEncoder(data,year,Longitude,Latitude):
    "nbisBridgeLength":convertToString(data[113]),                                                                             #item No:112  NBI BRIDGE LENGTH                        
    "scourCriticalBridges":convertToString(data[114]),                                                                         #item No:113  SCOUR CRITICAL BRIDGE
    "futureAvgDailyTraffic":convertToString(data[115]),                                                                        #item No:114  N FUTURE AVERAGE DAILY TRAFFIC
-   "yearOfFutureAvgDailyTraffic":convertNumeric(data[116]),                                                     #item No:115  N YEAR OF FUTURE AAVG DAILY TRAFFIC
+   "yearOfFutureAvgDailyTraffic":convertNumeric(data[116]),                                                                   #item No:115  N YEAR OF FUTURE AVG DAILY TRAFFIC
    "minimumNavigationVerticalClearanceVerricalLiftBridge":convertToString(data[117]),      #item No:116  N MINIMUM NAVIGATION VERTICAL CLEARANCE VERTICAL LIFT BRIDGE
    "federalAgencyIndicator":convertToString(data[118]),                                                                       #item No:117  FEDERAL AGENCY INDICATOR
    "dateLastUpdate":convertToString(data[119]),
@@ -190,21 +191,7 @@ def nbiEncoder(data,year,Longitude,Latitude):
    "sufficiencyRatingAsteriskField":convertToString(data[131]),                                                               #item No:119  Sufficiency Rating Asterisk field
    "sufficiencyRating":convertToString(data[132]),                                                                            #item No:120  Sufficiency Rating
     #"status without 10 year rule":convertToString(data[133]),                                                                #item No:121  Status Without 10 Year Rule
-    #"CAT 10":convertToString(data[134]), 
-    #TYPE_LAST_UPDATE[119],
-    #DEDUCT_CODE[120],
-    #REMARKS[121],
-    #PROGRAM_CODE[122], 
-    #PROJ_NO[123],
-    #PROJ_SUFFIX[124],
-    #NBI_TYPE_OF_IMP[125],
-    #DTL_TYPE_OF_IMP[126],
-    #SPECIAL_CODE[127],
-    #STEP_CODE[128],
-    #STATUS_WITH_10YR_RULE[129],
-    #SUFFICIENCY_ASTERC[130],
-    #SUFFICIENCY_RATING[131],
-    #STATUS_NO_10YR_RULE[132]
+   
            
    "loc":{
            "type": "Point",
@@ -212,13 +199,13 @@ def nbiEncoder(data,year,Longitude,Latitude):
                           Longitude,
                           Latitude
                           ] 
-    #Programming guide: we wont be able tp consistent with guide 
+    
             }  
              })
    return x
 
 
-#utility functions
+
 
 
 #Function to convert string into int
@@ -227,7 +214,7 @@ def convertNumeric(s):
        res = convertToNumeric(s)
     except ValueError:
        #print("Error: values is expected to be Numeric for ", s)
-       res = s
+       res = -1
     return res     
        
 #Function to handle blank values by replacing it with "NA" 
@@ -248,6 +235,8 @@ def convertToNumeric(s):
        except ValueError:
          result = float(s)
     return result 
+
+
 def initializeValidationArray(validationArray,size):
     for i in range(size):
         validationArray.append(0)
@@ -255,7 +244,7 @@ def initializeValidationArray(validationArray,size):
 
 
 #function to validate NBI ROWS
-def validateNBIfields(temp, ErrorCheck, fieldErrorCountArray,validation,size):
+def validateNBIfields(temp, ErrorCheck, fieldErrorCountArray,validation,size,year):
     
     ErrorCheck = initializeValidationArray(ErrorCheck,size) # ErrorCheck will maintain a list of invalid error encountered in a row
     structNumber = temp[1]
@@ -275,6 +264,10 @@ def validateNBIfields(temp, ErrorCheck, fieldErrorCountArray,validation,size):
     temp[2], ErrorCheck[2] = recordTypeValidate(temp[2],validation,structNumber,fieldErrorCountArray)
     temp[3], ErrorCheck[3] = routeSigningPrefixValidate(temp[3],validation,structNumber,fieldErrorCountArray)
     temp[4], ErrorCheck[4] = DesignatedLevelServiceValidate(temp[4],validation,structNumber,fieldErrorCountArray)
+    try:
+       temp[5], ErrorCheck[5] = RouteNumberValidate(temp[5],validation,structNumber,fieldErrorCountArray)
+    except:
+       pass  
     temp[6], ErrorCheck[6] = directionalSuffixValidate(temp[6],validation,structNumber,fieldErrorCountArray)
     temp[16], ErrorCheck[16] = baseHighwayNetwork(temp[16],validation,structNumber,fieldErrorCountArray)                    
     temp[20], temp[19], ErrorCheck[19] = LongitudeLatitudeValidate(temp[20],temp[19],validation,structNumber,fieldErrorCountArray)
@@ -283,6 +276,7 @@ def validateNBIfields(temp, ErrorCheck, fieldErrorCountArray,validation,size):
     temp[24], ErrorCheck[24] = OwnerValidate(temp[24],validation,structNumber,fieldErrorCountArray)
     temp[25], ErrorCheck[25] = FunctionalClassificationValidate(temp[25],validation,structNumber,fieldErrorCountArray)
     temp[26], ErrorCheck[26] = yearBuilt(temp[26],validation,structNumber,fieldErrorCountArray)
+    temp[30], ErrorCheck[30] = yearOfAverageDailyTrafficBuilt(temp[30],validation,structNumber,fieldErrorCountArray,year)
     temp[31], ErrorCheck[31] = designLoadValidate(temp[31],validation,structNumber,fieldErrorCountArray)
     temp[33], ErrorCheck[33] = bridgeMedianValidate(temp[33],validation,structNumber,fieldErrorCountArray)
     temp[35], ErrorCheck[35] = structureFlaredValidate(temp[35],validation,structNumber,fieldErrorCountArray)
@@ -313,7 +307,13 @@ def validateNBIfields(temp, ErrorCheck, fieldErrorCountArray,validation,size):
     temp[78], ErrorCheck[78] = bridgePosting(temp[78],validation,structNumber,fieldErrorCountArray)
     temp[80], ErrorCheck[80] = approachRoadwayAlignValidation(temp[80],validation,structNumber,fieldErrorCountArray)
     temp[81], ErrorCheck[81] = typeofWork75A(temp[81],validation,structNumber,fieldErrorCountArray)
-    temp[82], ErrorCheck[82] = typeofWork75B(temp[82],validation,structNumber,fieldErrorCountArray)
+    temp[82], ErrorCheck[82] = typeofWork75B(temp[82],validation,structNumber,fieldErrorCountArray)                           
+    temp[84], ErrorCheck[84], inspectionYear = inspectionDateValidation(temp[84],validation,structNumber,fieldErrorCountArray)
+    temp[85], ErrorCheck[85] = inspectionDesignatedFrequencyValidation(temp[85],validation,structNumber,fieldErrorCountArray)
+    temp[86], ErrorCheck[86] = criticalFeatureFactureInspectionValidation(temp[86],validation,structNumber,fieldErrorCountArray)
+    temp[87], ErrorCheck[87] = criticalFeatureUnderWaterInspectionValidation(temp[87],validation,structNumber,fieldErrorCountArray)
+    temp[88], ErrorCheck[88] = criticalFeatureOtherSpecialInspectionValidation(temp[88],validation,structNumber,fieldErrorCountArray)
+    temp[95], ErrorCheck[95] = yearOfImprovementCostValidation(temp[95],validation,structNumber,fieldErrorCountArray, inspectionYear)
     temp[99], ErrorCheck[99] = strahnetValidation(temp[99],validation,structNumber,fieldErrorCountArray)
     temp[100], ErrorCheck[100] = parallelStructureDesignationValidation(temp[100],validation,structNumber,fieldErrorCountArray)
     temp[101], ErrorCheck[101] = directionOfTrafficValidation(temp[101],validation,structNumber,fieldErrorCountArray)
@@ -328,9 +328,127 @@ def validateNBIfields(temp, ErrorCheck, fieldErrorCountArray,validation,size):
     temp[111], ErrorCheck[111] = designatedNationalNetworkValidation(temp[111], validation, structNumber, fieldErrorCountArray)
     temp[112], ErrorCheck[112] = navProtectionValidation(temp[112],validation,structNumber,fieldErrorCountArray)
     temp[113], ErrorCheck[113] = bridgeLengthNBIS(temp[113],validation,structNumber,fieldErrorCountArray)
-    temp[114], ErrorCheck[114] = scourCriticalValidation(temp[114],validation,structNumber,fieldErrorCountArray)
-
+    temp[114], ErrorCheck[114] = scourCriticalValidation(temp[114],validation,structNumber,fieldErrorCountArray,inspectionYear)
+    temp[116], ErrorCheck[116] = yearOfFutureDailyTrafficValidation(temp[116],validation,structNumber,fieldErrorCountArray, inspectionYear)
                              
     return temp, ErrorCheck
+
+def crossCheckValidation(temp,crossValidation):
+    structNumber = temp[1]
+    
+    #ITEM 16 - A VALID ITEM 100 IS ENTERED -- SO ITEM 16 MUST BE > 0.
+    item16CrossValidationCheck1(temp[19],temp[99], crossValidation, structNumber)
+
+    #ITEM 17 - A VALID ITEM 100 IS ENTERED -- SO ITEM 17 MUST BE > 0.
+    item17CrossValidationCheck1(temp[20],temp[99], crossValidation, structNumber)
+
+    #ITEM 102 - ITEM 28A EQUALS 1 SO ITEM 102 MUST EQUAL 1 OR 3.
+    item102CrossValidationCheck1(temp[27],temp[101], crossValidation, structNumber)
+    
+    #ITEM 102 - ITEM 28B = 1 -- SO ITEM 102 MUST = 1 OR 3.
+    item102CrossValidationCheck2(temp[28],temp[101], crossValidation, structNumber)
+
+    #ITEM 39 - ITEM 38 = 1 -- SO ITEM 39 MUST BE GREATER THAN ZERO.
+    item39CrossValidationCheck1(temp[41],temp[42], crossValidation, structNumber) 
+   
+    #ITEM 39 - ITEM 38 = 0 - SO ITEMS 39 AND 40 MUST = 0.
+    item39CrossValidationCheck2(temp[41],temp[42], crossValidation, structNumber)
+    
+    #ITEM 40 - ITEM 38 = 0 - SO ITEMS 40 MUST = 0.
+    item40CrossValidationCheck1(temp[41],temp[43], crossValidation, structNumber)
+
+    #ITEM 40 - ITEM 38 = 1 -- SO ITEM 40 MUST BE GREATER THAN ZERO.
+    item40CrossValidationCheck2(temp[41],temp[43], crossValidation, structNumber)
+
+    #ITEM 41 - ITEM 59 = 0 OR 1 --- SO ITEM 41 MUST = D E OR K.
+    item41CrossValidationCheck1(temp[44],temp[67], crossValidation, structNumber)
+
+    #ITEM 41 - ITEM 60 = 0 OR 1 --- SO ITEM 41 MUST = D E OR K.
+    item41CrossValidationCheck2(temp[44],temp[68], crossValidation, structNumber)
+
+    #ITEM 41 - ITEM 62 = 0 OR 1 --- SO ITEM 41 MUST = D E OR K.
+    item41CrossValidationCheck3(temp[44],temp[70], crossValidation, structNumber)
+
+    #ITEM 41 - ITEM 103 IS = T AND ITEM 41 IS NOT = D E OR P.
+    item41CrossValidationCheck4(temp[44],temp[102], crossValidation, structNumber)
+
+    #ITEM 42A - ITEM 28A > 0 -- SO ITEM 42A MUST BE 1 4 5 6 7 OR 8.
+    item42ACrossValidationCheck1(temp[27],temp[45], crossValidation, structNumber)
+
+    #ITEM 42B - ITEM 28B > 0 -- SO ITEM 42B MUST BE 1 4 6 OR 8.
+    item42BCrossValidationCheck1(temp[28],temp[46], crossValidation, structNumber)
+
+    #ITEM 42B - ITEM 28B = 0 -- SO ITEM 42B MUST BE 0 2 3 5 7 OR 9.
+    item42BCrossValidationCheck2(temp[28],temp[46], crossValidation, structNumber)
+
+    #ITEM 42B - ITEM 69 IS NUMERIC - 42B MUST BE = 1 2 4 6 7 OR 8
+    item42BCrossValidationCheck3(temp[46],temp[77], crossValidation, structNumber)
+
+    #ITEM 42B - ITEM 71 IS NUMERIC - 42B MUST BE = 5 6 7 8 9 OR 0
+    item42BCrossValidationCheck4(temp[46],temp[79], crossValidation, structNumber)
+
+    #ITEM 43B - ITEM 62 IS NUMERIC -- SO ITEM 43B MUST BE 19.
+    item43BCrossValidationCheck1(temp[46],temp[70], crossValidation, structNumber)
+
+    #ITEM 47 - A VALID ITEM 100 IS ENTERED -- SO ITEM 47 MUST BE > 0.
+    item47CrossValidationCheck1(temp[53],temp[100], crossValidation, structNumber)
+  
+    #ITEM 49 - ITEM 48 MUST NOT BE GREATER THAN ITEM 49.
+    item49CrossValidationCheck1(temp[54],temp[55], crossValidation, structNumber)
+    
+    #ITEM 49 - ITEM 48 MUST NOT BE GREATER THAN ITEM 49.
+    item49CrossValidationCheck2(temp[55],temp[113], crossValidation, structNumber)
+
+    #ITEM 58 - ITEM 43B = 19 -- SO ITEM 58 MUST BE N.
+    item58CrossValidationCheck1(temp[48],temp[66], crossValidation, structNumber)
+
+    #ITEM 59 - ITEM 43B = 19 -- SO ITEM 59 MUST BE N.
+    item59CrossValidationCheck1(temp[48],temp[67], crossValidation, structNumber)
+
+    #ITEM 60 - ITEM 43B = 19 -- SO ITEM 60 MUST BE N.
+    item60CrossValidationCheck1(temp[48],temp[68], crossValidation, structNumber)
+
+    #ITEM 62 - ITEM 43B = 19 -- SO ITEM 62 MUST BE NUMERIC.
+    item62CrossValidationCheck1(temp[48],temp[70], crossValidation, structNumber)
+
+    #ITEM 64 - ITEM 41 = E -- SO ITEM 64 MUST BE = 0.
+    item64CrossValidationCheck1(temp[44],temp[72], crossValidation, structNumber)
+
+    #ITEM 64 - ITEM 66 MUST NOT BE GREATER THAN ITEM 64.
+    item64CrossValidationCheck2(temp[72],temp[74], crossValidation, structNumber)
+
+    #ITEM 66 - ITEM 41 = E -- SO ITEM 66 MUST BE = 0.
+    item64CrossValidationCheck1(temp[44],temp[74], crossValidation, structNumber)
+
+    #ITEM 103 - ITEM 41 = D OR E -- SO ITEM 103 MUST BE T.
+    item103CrossValidationCheck1(temp[44],temp[102], crossValidation, structNumber)
+
+    #ITEM 106 - ITEM 106 > 0 SO ITEM 106 MUST BE GREATER THAN ITEM 27.
+    #item106CrossValidationCheck1(temp[26],temp[105], crossValidation, structNumber)
+
+    #ITEM 29 - ITEM 29 IS > 100 -- SO ITEM 109 MUST BE ENTERED.
+    item29CrossValidationCheck1(temp[29],temp[110], crossValidation, structNumber)
+
+    #ITEM 111 - ITEM 38 = 1 -- SO ITEM 111 MUST BE ENTERED.
+    item111CrossValidationCheck1(temp[41],temp[112], crossValidation, structNumber)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

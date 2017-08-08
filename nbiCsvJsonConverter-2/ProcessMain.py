@@ -12,14 +12,15 @@ from urllib.request import urlopen
 
 from nbiEncoder import *
 from validationFunctions import *
+from crossValidationFunctions import *
 
 ####### MongoDB    ##########
-fillMongoDB = False
+fillMongoDB = True
 
 # Note: Default value for fillMongoDB is false
 #importing directly to MongoDB is not yet not properly implemented
 #the issue is being handled and will be updated as soon as possible
-###### SELECT YEARS ######### 
+###### SELECT YEARS #########
 
 years = [1992,
          1993,
@@ -48,9 +49,8 @@ years = [1992,
          2016,
        ]
 
-
-###### SELECT STATES #######
-#states= ['AZ'] 
+###### SELECT STATES ####### 
+#states = ["NE"]
 
 states = ["AK",
           "AZ",
@@ -104,17 +104,14 @@ states = ["AK",
           "WV",
           "WY"]
 
-
-
-
-
 files = [] #global variable for Files
 
 #Connection to MongoDB
 def get_db():
     from pymongo import MongoClient
-    client = MongoClient('localhost',27017)
-    db = client.testDB1
+    client = MongoClient()
+    db = client.admin
+    db.authenticate('admin','SecuredDb@123', source = 'admin')
     return db 
 
 #return a list of files which will helpful for renaming files
@@ -163,18 +160,22 @@ def countValidCoordinates(Longitude, Latitude, cvc, structureNumber, year,missin
 # how to close file with open technique
 def processFilesJSON(files):
     directory = 'ValidationLog'
+    crossValidationDirectory = 'CrossValidationLog'
     mergedFile = open('mergedJSON.json','w')
     summary = open('Summary.txt','w')
     missingGeo = open('missingeo.txt','w')
     if not os.path.exists(directory):
        os.makedirs(directory)
+       os.makedirs(crossValidationDirectory)
     for f in files:
         state , year = f[:2] , int(f[2:6])
         with open(os.path.join('NBIDATA',f),'r', encoding='utf-8', errors = 'ignore') as csvfile:
             reader = csv.reader(csvfile,delimiter = ',')
             headerRow = next(reader,None)
             validationFileName = f[:6] + 'validationLog.txt'
+            crossValidationFileName = f[:6] + 'CrossValidationLog.txt'
             validation = open(os.path.join(directory,validationFileName),'w')
+            crossValidation = open(os.path.join(crossValidationDirectory,crossValidationFileName),'w')
             fieldErrorCountArray = []
             size = 150
             fieldErrorCountArray = initializeValidationArray(fieldErrorCountArray,size)
@@ -191,7 +192,8 @@ def processFilesJSON(files):
                     r = r.strip(" ")
                     temp.append(r)
                 ErrorCheck = []
-                temp, ErrorCheck = validateNBIfields(temp, ErrorCheck, fieldErrorCountArray,validation,size)
+                temp, ErrorCheck = validateNBIfields(temp, ErrorCheck, fieldErrorCountArray,validation,size,year)
+                crossCheckValidation(temp,crossValidation)
                 fieldSize = len(temp)
                 fieldSizeCount.append(fieldSize)
                 fieldErrorCountArray[fieldSize] = fieldErrorCountArray[fieldSize] + 1
@@ -199,7 +201,7 @@ def processFilesJSON(files):
                    pass
                 else:
                    structureNumber = temp[1]
-                   Longitude, Latitude = convertLongLat(temp[20],temp[19])       
+                   Longitude, Latitude = convertLongLat(temp[20],temp[19])
                    cvc = countValidCoordinates(Longitude, Latitude, cvc,structureNumber,year,missingGeo)
                    try:
                       x = nbiEncoder(temp,year,Longitude,Latitude)
@@ -207,6 +209,7 @@ def processFilesJSON(files):
                       IndexErrorCount = IndexErrorCount + 1
                       print("IndexError: ", i)
                       continue
+                   #print(x)
                    mergedFile.write(x)    
             fieldSizeDict = {x: fieldSizeCount.count(x) for x in fieldSizeCount}             
             print("===================================",file=summary)
@@ -223,68 +226,75 @@ def processFilesJSON(files):
     mergedFile.close()
 
 
-'''
-with open(SampleFileName, 'r') as f:
-    reader = csv.reader(f, delimiter = dEliminater)
-    next(reader,None) #skips header
-    validation = open('validationLog.txt','w')
-    fieldErrorCountArray = []
-    size = 150
-    fieldErrorCountArray = initializeValidationArray(fieldErrorCountArray,size)
-    count = 0  
-    for row in reader:
-       #print("=" * 50 + 'Line break' + "=" * 50) #Enhance print
-       temp = []
-       for r in row:
-           r = r.strip("'")
-           r = r.strip(" ")
-           temp.append(r)
-       ErrorCheck = []
-       #validate
-       temp, ErrorCheck = validateNBIfields(temp, ErrorCheck, size)
-       if 1 in ErrorCheck:
-          pass
-       else:
-           Longitude, Latitude = convertLongLat(temp[20],temp[19])       
-           try:
-              count = count + 1
-              x = nbiEncoder(temp)
-              print(str(x))
-           except IndexError as i:
-              #print("Error: " , i)
-              pass
-   
-    validation.close() 
-''' 
-
-'''
 def processFilesMongo(files):
+    myDb = get_db()
+    myCollection = myDb.NBI
+    directory = 'ValidationLog'
+    crossValidationDirectory = 'CrossValidationLog'
+    summary = open('Summary.txt','w')
+    missingGeo = open('missingeo.txt','w')
+    if not os.path.exists(directory):
+       os.makedirs(directory)
+       os.makedirs(crossValidationDirectory)
     for f in files:
         state , year = f[:2] , int(f[2:6])
-        with open(os.path.join('NBIDATA',f),'r') as csvfile:
+        with open(os.path.join('NBIDATA',f),'r', encoding='utf-8', errors = 'ignore') as csvfile:
             reader = csv.reader(csvfile,delimiter = ',')
-            next(reader,None)
+            headerRow = next(reader,None)
+            validationFileName = f[:6] + 'validationLog.txt'
+            crossValidationFileName = f[:6] + 'CrossValidationLog.txt'
+            validation = open(os.path.join(directory,validationFileName),'w')
+            crossValidation = open(os.path.join(crossValidationDirectory,crossValidationFileName),'w')
+            fieldErrorCountArray = []
+            size = 150
+            fieldErrorCountArray = initializeValidationArray(fieldErrorCountArray,size)
             cvc = 0
             RowCount = 0
+            IndexErrorCount = 0
+            fieldSizeCount = []
+            fieldSizeDict = {}     
             for row in reader:
                 temp = []
-                RowCount = RowCount + 1                
+                RowCount = RowCount + 1           
                 for r in row:
                     r = r.strip("'")
                     r = r.strip(" ")
                     temp.append(r)
-                structureNumber = temp[1]
-                Longitude, Latitude = convertLongLat(temp[20],temp[19])
-                cvc = countValidCoordinates(Longitude, Latitude, cvc,structureNumber,year)
-                x = nbiEncoder(temp,year,Longitude,Latitude)
-                mergedFile.write(x)               
-            print("================Link==============")
-            print('Year: %s, State: %s' %(year, state))                               
-            print("Valid Coordinates:", RowCount - cvc)
-            print("Invalid Coordinates:", cvc)
-            print("Total Records:", RowCount)
+                ErrorCheck = []
+                temp, ErrorCheck = validateNBIfields(temp, ErrorCheck, fieldErrorCountArray,validation,size,year)
+                crossCheckValidation(temp,crossValidation)
+                fieldSize = len(temp)
+                fieldSizeCount.append(fieldSize)
+                fieldErrorCountArray[fieldSize] = fieldErrorCountArray[fieldSize] + 1
+                if 1 in ErrorCheck:
+                   pass
+                else:
+                   structureNumber = temp[1]
+                   Longitude, Latitude = convertLongLat(temp[20],temp[19]) 
+                   cvc = countValidCoordinates(Longitude, Latitude, cvc,structureNumber,year,missingGeo)
+                   try:
+                      x = nbiEncoder(temp,year,Longitude,Latitude)
+                   except IndexError as i:
+                      IndexErrorCount = IndexErrorCount + 1
+                      print("IndexError: ", i)
+                      continue
+                   myCollection.insert_one(json.loads(x))    
+            fieldSizeDict = {x: fieldSizeCount.count(x) for x in fieldSizeCount}             
+            print("===================================",file=summary)
+            print('Year: %s, State: %s' %(year, state),file=summary)                               
+            print("Valid Coordinates:", RowCount - cvc, file=summary) #valid coordinates includes coordinates which have longitude latitude with in proper range. 
+            print("Invalid Coordinates:", cvc, file=summary) #Invalid coordinates includes coordinates which have value'0' or ' ' 
+            print("Total Records:", RowCount, file=summary)
+            print('Index Error Count: ', IndexErrorCount)
+            print('Year: %s, State: %s' %(year, state))            
+            print(fieldSizeDict)
+    validation.close()
+    missingGeo.close()  
+    summary.close()
+    
 
-'''
+
+
 #driver function
 def main():
     if (fillMongoDB == True):
