@@ -21,7 +21,7 @@ fillMongoDB = True
 #importing directly to MongoDB is not yet not properly implemented
 #the issue is being handled and will be updated as soon as possible
 ###### SELECT YEARS #########
-
+'''
 years = [1992,
          1993,
          1994,
@@ -48,10 +48,12 @@ years = [1992,
          2015,
          2016,
        ]
-
+'''
+years = [1992, 2015, 2016]
 ###### SELECT STATES ####### 
-#states = ["NE"]
+states = ["AK","NE","AZ"]
 
+'''
 states = ["AK",
           "AZ",
           "AL",
@@ -103,16 +105,18 @@ states = ["AK",
           "WI",
           "WV",
           "WY"]
-
+'''
 files = [] #global variable for Files
 
 #Connection to MongoDB
 def get_db():
     from pymongo import MongoClient
-    client = MongoClient()
-    db = client.admin
-    db.authenticate('admin','SecuredDb@123', source = 'admin')
+    file = open("dbConnect.txt", 'r')
+    dbConnectionString = str(file.read()).strip()
+    client = MongoClient(dbConnectionString)
+    db = client.bridge
     return db 
+
 
 #return a list of files which will helpful for renaming files
 def createFileList(states,years):
@@ -228,7 +232,7 @@ def processFilesJSON(files):
 
 def processFilesMongo(files):
     myDb = get_db()
-    myCollection = myDb.NBI
+    myCollection =myDb['SampleNbi2']
     directory = 'ValidationLog'
     crossValidationDirectory = 'CrossValidationLog'
     summary = open('Summary.txt','w')

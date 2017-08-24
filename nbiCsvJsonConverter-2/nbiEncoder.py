@@ -24,51 +24,51 @@ from crossValidationFunctions import *
 def nbiEncoder(data,year,Longitude,Latitude):
    x = json.dumps({ 
   
-   "year" : year,                                                                                                              #item No:0  YEAR      
+   "year" : convertNumeric(year),                                                                                              #item No:0  YEAR      
    "stateCode":convertToString(data[0]),                                                                                       #item No:1   3  /  N  State Code
    "structureNumber":convertToString(data[1]),                                                                                 #item No:8  15  / AN  Structure Number
    "inventoryRoute": {                                                                                                         #item No:5   9  / AN  Inventory Route
                         "recordType":convertToString(data[2]),                                                                 #item No:5A  1  / AN  Record Type
-                        "routeSigningPrefix":convertToString(data[3]),                                                         #item No:5B  1  /  N  Route Signing Prefix
-                        "designatedLevelOfService":convertToString(data[4]),                                                   #item No:5C  1  /  N  Designated Level of Service
+                        "routeSigningPrefix":convertNumeric(data[3]),                                                          #item No:5B  1  /  N  Route Signing Prefix
+                        "designatedLevelOfService":convertNumeric(data[4]),                                                    #item No:5C  1  /  N  Designated Level of Service
                         "routeNumber":convertToString(data[5]),                                                                #item No:5D  AN  / 5  Route Number
-                        "directionalSuffix":convertToString(data[6])                                                           #item No:5E  1  /  N  Directional Suffi
+                        "directionalSuffix":convertNumeric(data[6])                                                            #item No:5E  1  /  N  Directional Suffi
                      }, 
    "highwayAgencyDistrict":convertToString(data[7]),                                                                           #item No:2   2  / AN  Highway Agency District
    "countyCode":convertNumeric(data[8]),                                                                                       #item No:3   3  /  N  Count (Parish) Code
-   "placeCode":convertNumeric(data[9]),                                                                                         #item No:4   4  /  N  Place Code
-   "featuresIntersected": {                                                                                                     #item No:6  25  / AN  Features Intersected
-                             "featuresIntersected":convertToString(data[10]),                                                   #item No:6A 25  / AN  Features Intersected (NO LONGER CODE .. Has to be BLANK)
-                             "criticalFacilityIndicator":convertToString(data[11])                                              #item No:6B  1  / AN  Critical Facility Indicator
+   "placeCode":convertNumeric(data[9]),                                                                                        #item No:4   4  /  N  Place Code
+   "featuresIntersected": {                                                                                                    #item No:6  25  / AN  Features Intersected
+                             "featuresIntersected":convertToString(data[10]),                                                  #item No:6A 25  / AN  Features Intersected (NO LONGER CODE .. Has to be BLANK)
+                             "criticalFacilityIndicator":convertToString(data[11])                                             #item No:6B  1  / AN  Critical Facility Indicator
                             },                                                                                                                                        
-   "facilityCarriedByStructure":convertToString(data[12]),                                                                      #item No:7  AN Facility Carried By Structure
-   "location":convertToString(data[13]),                                                                                        #item No:9  AN Location
-   "InventoryRTeMinVertClearance":convertToString(data[14]),                                                                    #item No:10 N Inventory RTe, Min Vert Clearance
+   "facilityCarriedByStructure":convertToString(data[12]),                                                                     #item No:7  AN Facility Carried By Structure
+   "location":convertToString(data[13]),                                                                                       #item No:9  AN Location
+   "InventoryRTeMinVertClearance":convertNumeric(data[14]),                                                                     #item No:10 N Inventory RTe, Min Vert Clearance
                                                                                    
-   "kilometerpoint":convertToString(data[15]),                                                                                  #item No:11 N Kilometerpoint
+   "kilometerpoint":convertNumeric(data[15]),                                                                                   #item No:11 N Kilometerpoint
    "baseHighwayPoint":convertNumeric(data[16]),                                                                                 #item No:12 N Base Highway Point
    "inventoryRouteSubrouteNumber": {                                                                                            #item No:13  AN Inventory Route, Subroute Number
                                          "LRSInventoryRoute":convertToString(data[17]),                                         #item No:13A AN LRS Inventory Route
                                         },                                              
-   "latitude":convertToString(data[19]),                                                                                        #item No:16 N Latitude
-   "longitude":convertToString(data[20]),                                                                                       #item No:17 N Longitude
-   "bypassDetourLength":convertToString(data[21]),                                                                              #item No:19 N Bypass/Detour Length (should be string)
+   "latitude":convertNumeric(data[19]),                                                                                        #item No:16 N Latitude
+   "longitude":convertNumeric(data[20]),                                                                                       #item No:17 N Longitude
+   "bypassDetourLength":convertNumeric(data[21]),                                                                              #item No:19 N Bypass/Detour Length (should be string)
    "toll":convertNumeric(data[22]),                                                                                             #item No:20 N Toll 
    "maintenanceReponsibility":convertNumeric(data[23]),                                                                         #item No:21 N Maintenance Reponsibility(Not Available, values not in bounds of acceptable bounds)
    "owner":convertNumeric(data[24]),                                                                                            #item No:22 N Owner (Not Available, values not in bounds of acceptable bounds)
-   "functionalClassOfInventoryRte":convertToString(data[25]),                                                                   #item No:26 N Functional Class Of Inventory Rte.
+   "functionalClassOfInventoryRte":convertNumeric(data[25]),                                                                   #item No:26 N Functional Class Of Inventory Rte.
    "yearBuilt":convertNumeric(data[26]),                                                                                        #item No:27 N Year Built
    "lanesOnUnderStructure": {                                                                                                   #item No:28 N Lanes On/Under Structure
-                                  "lanesOnStructure":convertToString(data[27]),                                                 #item No:28A N Lanes On Structure (Doubt )
-                                  "lanesUnderStructure":convertToString(data[28])                                               #item No:28B N Lanes Under Structure (Doubt )
+                                  "lanesOnStructure":convertNumeric(data[27]),                                                 #item No:28A N Lanes On Structure (Doubt )
+                                  "lanesUnderStructure":convertNumeric(data[28])                                               #item No:28B N Lanes Under Structure (Doubt )
                                 },  
    "averageDailyTraffic":convertNumeric(data[29]),                                                                              #item No:29  N Average Daily Traffic
                                                 
    "yearOfAverageDailyTraffic":convertNumeric(data[30]),                                                                        #item No:30  N Year Of Average Daily Traffic
-   "designLoad":convertToString(data[31]),                                                                                      #item No:31  N Design Load
-   "approachRoadwayWidth":convertToString(data[32]),                                                                            #item No:32  N Approach Roadway Width
+   "designLoad":convertNumeric(data[31]),                                                                                      #item No:31  N Design Load
+   "approachRoadwayWidth":convertNumeric(data[32]),                                                                            #item No:32  N Approach Roadway Width
    "bridgeMedian":convertNumeric(data[33]),                                                                                     #item No:33  N Bridge Median
-   "skew":convertToString(data[34]),                                                                                            #item No:34  N Skew (Need Conversion, but can work without it)
+   "skew":convertNumeric(data[34]),                                                                                            #item No:34  N Skew (Need Conversion, but can work without it)
    "structureFlared":convertNumeric(data[35]),                                                                                  #item No:35  N Structure Flared
    "trafficSafetyFeatures": {                                                                                                   #item No:36  AN  Traffic safety Features
                                 "bridgeRailings":convertToString(data[36]),                                                     #item No:36A AN Bridge Railings
@@ -79,31 +79,31 @@ def nbiEncoder(data,year,Longitude,Latitude):
 
    "historicalSignificance":convertNumeric(data[40]),                                                                           #item No:37  N Historical significance
    "navigationControl":convertToString(data[41]),                                                                               #item No:38  AN Navigation Control
-   "navigationVeriticalClearance":convertToString(data[42]),                                                                    #item No:39  N Navigation Veritical Clearance (Need Conversion)
-   "navigationHorizontalClearance":convertToString(data[43]),                                                                   #item No:40  N Navigation Horizontal Clearance (Need Conversion)
+   "navigationVeriticalClearance":convertNumeric(data[42]),                                                                     #item No:39  N Navigation Veritical Clearance (Need Conversion)
+   "navigationHorizontalClearance":convertNumeric(data[43]),                                                                    #item No:40  N Navigation Horizontal Clearance (Need Conversion)
    "strucutreOpenPostedClosed":convertToString(data[44]),                                                                       #item No:41  AN Strucutre Open/Posted/Closed
    "typeOfService":{                                                                                                            #item No:42  N Type of Service
-                       "typeOfServiceOnBridge":convertToString(data[45]),                                                       #item No:42A N Type of Service On Bridge"
-                       "typeOfServiceUnderBridge":convertToString(data[46])                                                     #item No:42B N Type of Service Under Bridge
+                       "typeOfServiceOnBridge":convertNumeric(data[45]),                                                       #item No:42A N Type of Service On Bridge"
+                       "typeOfServiceUnderBridge":convertNumeric(data[46])                                                     #item No:42B N Type of Service Under Bridge
                      }, 
  
-   "structureTypeMain":{                                                                                                        #item No:43  N Structure Type, Main
-                          "kindOfMaterialDesign":convertToString(data[47]),                                                     #item No:43A N Kind of Material/Design   
-                          "typeOfDesignConstruction":convertToString(data[48])                                                  #item No:43B N Type of Design/Construction
+   "structureTypeMain":{                                                                                                       #item No:43  N Structure Type, Main
+                          "kindOfMaterialDesign":convertNumeric(data[47]),                                                     #item No:43A N Kind of Material/Design   
+                          "typeOfDesignConstruction":convertNumeric(data[48])                                                  #item No:43B N Type of Design/Construction
                           },
    "structureTypeApproachSpans":{                                                                                               #item No:44  N Structure Type, Approach Spans
-                                     "kindOMaterialDesign":convertToString(data[49]),                                           #item No:44A N Kind of Material/Design
-                                     "typeOfDesignContruction":convertToString(data[50]),                                       #item No:44B N Type of Design/Contruction
+                                     "kindOMaterialDesign":convertNumeric(data[49]),                                           #item No:44A N Kind of Material/Design
+                                     "typeOfDesignContruction":convertNumeric(data[50]),                                       #item No:44B N Type of Design/Contruction
                                      },                                           
                     
    "numberOfSpansInMainUnit":convertNumeric(data[51]),                                                                          #item No:45  N Number of Spans in Main unit
    "numberOfApproachSpans":convertNumeric(data[52]),                                                                            #item No:46  N Number of Approach Spans
    "InventoryRteTotalHorzClearance":convertNumeric(data[53]),                                                                   #item No:47  N Inventory Rte Total Horz Clearance
-   "lengthOfMaximumSpan":convertToString(data[54]),                                                                             #item No:48  N Length Of Maximum Span (Need comversiom)
-   "structureLength":convertToString(data[55]),                                                                                 #item No:49  N Structure Length
-   "curbSidewalk Width": {                                                                                                      #item No:50  N Curb/Sidewalk Width
-                            "leftCurbSidewalkWidth":convertToString(data[56]),                                                  #item No:50A N Left Curb/Sidewalk Width
-                            "rightCurbSidewalkWidth":convertToString(data[57])                                                  #item No:50B N Right Curb/Sidewalk Width
+   "lengthOfMaximumSpan":convertNumeric(data[54]),                                                                             #item No:48  N Length Of Maximum Span (Need comversiom)
+   "structureLength":convertNumeric(data[55]),                                                                                 #item No:49  N Structure Length
+   "curbSidewalk Width": {                                                                                                     #item No:50  N Curb/Sidewalk Width
+                            "leftCurbSidewalkWidth":convertNumeric(data[56]),                                                  #item No:50A N Left Curb/Sidewalk Width
+                            "rightCurbSidewalkWidth":convertNumeric(data[57])                                                  #item No:50B N Right Curb/Sidewalk Width
                            },
  
    "bridgeRoadwayWithCurbToCurb":convertNumeric(data[58]),                                                                      #item No:51  N Bridge Roadway with Curb-To-Curb
@@ -111,23 +111,23 @@ def nbiEncoder(data,year,Longitude,Latitude):
    "minVertClearOverBridgeRoadway":convertNumeric(data[60]),                                                                    #item No:53  N Min Vert Clear Over Bridge Roadway 
    "minimumVeriticalUnderclearance": {                                                                                          #item No:54  AN Minimum Veritical Underclearance
                                         "referenceFeature":convertToString(data[61]),                                           #item No:54A AN Reference Feature
-                                        "minimumVeriticalUnderclearance":convertToString(data[62])                              #item No:54B N Minimum Veritical Underclearance
+                                        "minimumVeriticalUnderclearance":convertNumeric(data[62])                              #item No:54B N Minimum Veritical Underclearance
                                        },     
    "minLateralUnderclearOnRight":{                                                                                              #item No:55 AN Min Lateral underclear On Right
                                        "referenceFeature":convertToString(data[63]),                                            #item No:55A AN Reference Feature
-                                       "minimumLateralUnderclearance":convertToString(data[64]),                                #item No:55B N Minimum Lateral Underclearance
+                                       "minimumLateralUnderclearance":convertNumeric(data[64]),                                #item No:55B N Minimum Lateral Underclearance
                                      },
     
-   "minLateralUnderclearOnLeft":convertToString(data[65]),                                                                      #item No:56 N Min Lateral Underclear On Left
+   "minLateralUnderclearOnLeft":convertNumeric(data[65]),                                                                       #item No:56 N Min Lateral Underclear On Left
    "deck":convertToString(data[66]),                                                                                            #item No:58 AN Deck
    "superstructure":convertToString(data[67]),                                                                                  #item No:59 AN Superstructure
    "substructure":convertToString(data[68]),                                                                                    #item No:60 AN Substructure
    "channelChannelProtection":convertToString(data[69]),                                                                        #item No:61 AN Channel/Channel Protection
    "culverts":convertToString(data[70]),                                                                                        #item No:62 AN culverts
    "methodUsedToDetermineOperatingRating":convertNumeric(data[71]),                                                             #item No:63 N Method Used to Determine Operating Rating
-   "operatingRating":convertToString(data[72]),                                                                                 #item No:64 N Operating Rating
+   "operatingRating":convertNumeric(data[72]),                                                                                  #item No:64 N Operating Rating
    "methodUsedToDetermineInventoryRating":convertNumeric(data[73]),                                                             #item No:65 N Method Used To Determine Inventory Rating
-   "inventoryRating":convertToString(data[74]),                                                                                 #item No:66 AN Inventory Rating
+   "inventoryRating":convertNumeric(data[74]),                                                                                 #item No:66 N Inventory Rating
    "structuralEvaluation":convertToString(data[75]),                                                                            #item No:67 AN Structural Evaluation
    "deckGeometry":convertToString(data[76]),                                                                                    #item No:68 AN Deck Geometry
    "underclearVerticalHorizontal":convertToString(data[77]),                                                                    #item No:69 AN Underclear, Vertical & Horizontal
@@ -135,12 +135,12 @@ def nbiEncoder(data,year,Longitude,Latitude):
    "waterwayAdequacy":convertToString(data[79]),                                                                                #item No:71 AN Waterway Adequacy
    "approachRoadwayAlignment":convertToString(data[80]),                                                                        #item No:72 AN Approach Roadway Alignment
    "typeOfWork": {                                                                                                              #item No:75 AN Type of Work
-                      "typeOfWorkProposed":convertToString(data[81]),                                                           #item No:75A N Type of Work Proposed
+                      "typeOfWorkProposed":convertNumeric(data[81]),                                                            #item No:75A N Type of Work Proposed
                       "WorkDoneBy":convertToString(data[82])                                                                    #item No:75B AN Work Done By
                    },  
-   "lengthOfStructureImprovement":convertToString(data[83]),                                                                    #item No:76  N Length Of Structure Improvement
-   "inspectionDate":convertToString(data[84]),                                                                                  #item No:90  N Inspection Date
-   "designatedInspectionFrequency":convertToString(data[85]),                                                                   #item No:91  N Designated Inspection Frequency
+   "lengthOfStructureImprovement":convertNumeric(data[83]),                                                                     #item No:76  N Length Of Structure Improvement
+   "inspectionDate":convertNumeric(data[84]),                                                                                   #item No:90  N Inspection Date
+   "designatedInspectionFrequency":convertNumeric(data[85]),                                                                    #item No:91  N Designated Inspection Frequency
    "criticalFeatureInspection": {                                                                                               #item No:92  AN Critical Feature Inspection
                                     "fractureCriticalDetails":convertToString(data[86]),                                        #item No:92A AN Fracture Critical Details
                                     "underwaterInspection":convertToString(data[87]),                                           #item No:92B AN Underwater Inspection
@@ -152,17 +152,17 @@ def nbiEncoder(data,year,Longitude,Latitude):
                                           "OtherSpecialInspectionDate":convertToString(data[91])                                #item No:93C AN Other Special Inspection Date
                                         }, 
 
-   "bridgeImprovementCost":convertToString(data[92]),                                                                         #item No:94  N Bridge Improvement Cost
-   "roadwayImprovementCost":convertToString(data[93]),                                                                        #item No:95  N Roadway Improvement Cost
-   "totalProjectCost":convertToString(data[94]),                                                                              #item No:96  N Total Project Cost
+   "bridgeImprovementCost":convertNumeric(data[92]),                                                                          #item No:94  N Bridge Improvement Cost
+   "roadwayImprovementCost":convertNumeric(data[93]),                                                                        #item No:95  N Roadway Improvement Cost
+   "totalProjectCost":convertNumeric(data[94]),                                                                              #item No:96  N Total Project Cost
    "yearOfImprovementCost":convertNumeric(data[95]),                                                                          #item No:97 N  Year Of Improvement Cost
    "borderBridge": {                                                                                                          #item No:98   Border Bridge
                        "neighboringStateCode":convertToString(data[96]),                                                      #item No:98A AN Neighboring State Code
-                       "percentReponsibility":convertToString(data[97])                                                       #item No:98B N Percent Reponsibility
+                       "percentReponsibility":convertNumeric(data[97])                                                        #item No:98B N Percent Reponsibility
                     }, 
-   "borderBridgeStructureNumber":convertNumeric(data[98]),                                                                    #item No:99  N Border Bridge Structure Number
-   "STRAHNETHighwayDesignation":convertToString(data[99]),                                                                    #item No:100  STRAHNETHighwayDesignation  
-   "parallelStructureDesignation":convertToString(data[100]),                                                                 #item No:101  Parallel Structure Designation
+   "borderBridgeStructureNumber":convertToString(data[98]),                                                                    #item No:99  N Border Bridge Structure Number
+   "STRAHNETHighwayDesignation":convertNumeric(data[99]),                                                                    #item No:100  N STRAHNETHighwayDesignation  
+   "parallelStructureDesignation":convertToString(data[100]),                                                                 #item No:101  AN Parallel Structure Designation
    "directionOfTraffic":convertNumeric(data[101]),                                                                            #item No:102  N Direction Of Traffic                    
    "temporaryStructureDesignation":convertToString(data[102]),                                                                #item No:103  Federal Lands Highways
    "highwaySystemOfInventoryRoute":convertNumeric(data[103]),                                                                 #item No:104  N Temporary Structure Designation
@@ -179,9 +179,9 @@ def nbiEncoder(data,year,Longitude,Latitude):
    "pier/abutmentProtection":convertNumeric(data[112]),                                                                       #item No:111 N PIER/ABUTMENT PROTECTION 
    "nbisBridgeLength":convertToString(data[113]),                                                                             #item No:112  NBI BRIDGE LENGTH                        
    "scourCriticalBridges":convertToString(data[114]),                                                                         #item No:113  SCOUR CRITICAL BRIDGE
-   "futureAvgDailyTraffic":convertToString(data[115]),                                                                        #item No:114  N FUTURE AVERAGE DAILY TRAFFIC
+   "futureAvgDailyTraffic":convertNumeric(data[115]),                                                                         #item No:114  N FUTURE AVERAGE DAILY TRAFFIC
    "yearOfFutureAvgDailyTraffic":convertNumeric(data[116]),                                                                   #item No:115  N YEAR OF FUTURE AVG DAILY TRAFFIC
-   "minimumNavigationVerticalClearanceVerricalLiftBridge":convertToString(data[117]),      #item No:116  N MINIMUM NAVIGATION VERTICAL CLEARANCE VERTICAL LIFT BRIDGE
+   "minimumNavigationVerticalClearanceVerticalLiftBridge":convertNumeric(data[117]),                                          #item No:116  N MINIMUM NAVIGATION VERTICAL CLEARANCE VERTICAL LIFT BRIDGE
    "federalAgencyIndicator":convertToString(data[118]),                                                                       #item No:117  FEDERAL AGENCY INDICATOR
    "dateLastUpdate":convertToString(data[119]),
    "typeLastUpdate":convertToString(data[120]),
@@ -189,7 +189,7 @@ def nbiEncoder(data,year,Longitude,Latitude):
    
    "status with 10 year rule":convertToString(data[130]),                                                                     #item No:118  Status with 10 Year Rule
    "sufficiencyRatingAsteriskField":convertToString(data[131]),                                                               #item No:119  Sufficiency Rating Asterisk field
-   "sufficiencyRating":convertToString(data[132]),                                                                            #item No:120  Sufficiency Rating
+   "sufficiencyRating":convertNumeric(data[132]),                                                                            #item No:120  Sufficiency Rating
     #"status without 10 year rule":convertToString(data[133]),                                                                #item No:121  Status Without 10 Year Rule
    
            

@@ -377,7 +377,7 @@ def yearBuilt(data,validation,structNumber,fieldErrorCountArray):
            fieldErrorCountArray[26] = fieldErrorCountArray[26] + 1
            print('Year Built ('+ data +') Invalid in Structure Number: ' + structNumber ,file = validation)
            error = 0
-           data = 0
+           data = '-1'
            return data, error
     except:
        print('Year Built ('+ data +') Invalid in Structure Number: ' + structNumber ,file = validation)
