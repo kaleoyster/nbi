@@ -5,21 +5,48 @@
 National Bridge Inventory (NBI) represents bridge data submitted annually to FHWA by the States, Federal agencies, and Tribal governments.The data conforms to the [Recording and Coding Guide for the Structure Inventory and Appraisal of the Nations Bridges](https://www.fhwa.dot.gov/bridge/mtguide.pdf). Each data set is submitted in the spring, and may be corrected or updated throughout the year. The data is considered final and is published on this website at the end of each calendar year. [Source: [Federal Highway Administration](https://www.fhwa.dot.gov/bridge/nbi/ascii.cfm)]
 
 The Python script downloads CSV and zip file directly from the FHWA website. This features ensures that all transformations to the dataset are accounted for. 
+## Addition information
+ProjectNBI repository contains two versions of csv to json convertor
+1. `nbiCsvJsonConverter-1`
+2. `nbiCsvJsonConverter-2`
 
-## Simple Crawler: Download NBI and Convert to JSON at the same time 
+The above both versions will return the same output. but approach taken by each of these version is very different.
+`nbiCsvJsonConverter-1` will iteratively download, convert and then import each nbi csv file in mongodb.
+
+`nbiCsvJsonConverter-2` separates downloading and importing scripts, `nbiCsvJsonConverter-2` will download all the nbi csv files before performing conversion and importing task, in addition to that, this version performs cross-check and
+item check validations mentioned [here.](https://www.fhwa.dot.gov/bridge/nbi/checks/)
+
+**Recommended version is `nbiCsvJsonConverter-2`**
+
+## Prerequisites libraries used by the scripts
+1. [io](https://docs.python.org/3.6/library/io.html)
+2. [zipfile](https://docs.python.org/3.6/library/zipfile.html)
+3. [csv](https://docs.python.org/3.6/library/csv.html)
+4. [urllib.request](https://docs.python.org/3/library/urllib.request.html#module-urllib.request)
+5. [requests](http://docs.python-requests.org/en/master/)
+6. [json](https://docs.python.org/3.6/library/json.html)
+7. [pymongo](https://api.mongodb.com/python/current/)
+8. [ssl](https://docs.python.org/3.6/library/ssl.html)
+9. [os](https://docs.python.org/3.6/library/os.html)
+
+## Steps
+
+
+
+
+###  `nbiCsvJsonConverter-1`
+`nbiCsvJsonConverter-1` contains `NBIJsonFile` and `NBIMongo`.
 
 ```bash
 
 python3 NbiCrawler.py
 
 ```
-## Advanced Crawler: Separate scripts to download and then process NBI data
+###  `nbiCsvJsonConverter-2`
 
 This crawler creates a local copy of NBI files. This prevents uncessary requests to the server during the processing stage.
 
 ```bash
-# Change Directory to nbiSeparateFiles
-cd nbiSeparateFiles
 
 # Start NBI File Download for all years
 python3 Downloadv1.py
