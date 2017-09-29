@@ -21,7 +21,7 @@ fillMongoDB = True
 #importing directly to MongoDB is not yet not properly implemented
 #the issue is being handled and will be updated as soon as possible
 ###### SELECT YEARS #########
-'''
+
 years = [1992,
          1993,
          1994,
@@ -48,12 +48,10 @@ years = [1992,
          2015,
          2016,
        ]
-'''
-years = [1992, 2015, 2016]
-###### SELECT STATES ####### 
-states = ["AK","NE","AZ"]
 
-'''
+###### SELECT STATES ####### 
+
+
 states = ["AK",
           "AZ",
           "AL",
@@ -106,7 +104,7 @@ states = ["AK",
           "WI",
           "WV",
           "WY"]
-'''
+
 files = [] #global variable for Files
 
 #Connection to MongoDB
@@ -233,7 +231,7 @@ def processFilesJSON(files):
 
 def processFilesMongo(files):
     myDb = get_db()
-    myCollection =myDb['SampleNbi2']
+    myCollection =myDb['nbi']
     directory = 'ValidationLog'
     crossValidationDirectory = 'CrossValidationLog'
     summary = open('Summary.txt','w')
