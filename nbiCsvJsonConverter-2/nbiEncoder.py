@@ -43,7 +43,7 @@ def nbiEncoder(data,year,Longitude,Latitude):
                             },                                                                                                                                        
    "facilityCarriedByStructure":convertToString(data[12]),                                                                     #item No:7  AN Facility Carried By Structure
    "location":convertToString(data[13]),                                                                                       #item No:9  AN Location
-   "InventoryRTeMinVertClearance":convertNumeric(data[14]),                                                                     #item No:10 N Inventory RTe, Min Vert Clearance
+   "inventoryRTeMinVertClearance":convertNumeric(data[14]),                                                                     #item No:10 N Inventory RTe, Min Vert Clearance
                                                                                    
    "kilometerpoint":convertNumeric(data[15]),                                                                                   #item No:11 N Kilometerpoint
    "baseHighwayPoint":convertNumeric(data[16]),                                                                                 #item No:12 N Base Highway Point
@@ -99,7 +99,7 @@ def nbiEncoder(data,year,Longitude,Latitude):
                     
    "numberOfSpansInMainUnit":convertNumeric(data[51]),                                                                          #item No:45  N Number of Spans in Main unit
    "numberOfApproachSpans":convertNumeric(data[52]),                                                                            #item No:46  N Number of Approach Spans
-   "InventoryRteTotalHorzClearance":convertNumeric(data[53]),                                                                   #item No:47  N Inventory Rte Total Horz Clearance
+   "inventoryRteTotalHorzClearance":convertNumeric(data[53]),                                                                   #item No:47  N Inventory Rte Total Horz Clearance
    "lengthOfMaximumSpan":convertNumeric(data[54]),                                                                              #item No:48  N Length Of Maximum Span (Need comversiom)
    "structureLength":convertNumeric(data[55]),                                                                                  #item No:49  N Structure Length
    "curbSidewalkWidth": {                                                                                                       #item No:50  N Curb/Sidewalk Width
@@ -110,9 +110,9 @@ def nbiEncoder(data,year,Longitude,Latitude):
    "bridgeRoadwayWithCurbToCurb":convertNumeric(data[58]),                                                                      #item No:51  N Bridge Roadway with Curb-To-Curb
    "deckWidthOutToOut":convertNumeric(data[59]),                                                                                #item No:52  N Deck Width, Out-To-Out
    "minVertClearOverBridgeRoadway":convertNumeric(data[60]),                                                                    #item No:53  N Min Vert Clear Over Bridge Roadway 
-   "minimumVeriticalUnderclearance": {                                                                                          #item No:54  AN Minimum Veritical Underclearance
+   "minimumVerticalUnderclearance": {                                                                                          #item No:54  AN Minimum Vertical Underclearance
                                         "referenceFeature":convertToString(data[61]),                                           #item No:54A AN Reference Feature
-                                        "minimumVeriticalUnderclearance":convertNumeric(data[62])                               #item No:54B N Minimum Veritical Underclearance
+                                        "minimumVerticalUnderclearance":convertNumeric(data[62])                               #item No:54B N Minimum Vertical Underclearance
                                        },     
    "minLateralUnderclearOnRight":{                                                                                              #item No:55 AN Min Lateral underclear On Right
                                        "referenceFeature":convertToString(data[63]),                                            #item No:55A AN Reference Feature
