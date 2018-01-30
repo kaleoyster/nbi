@@ -45,7 +45,7 @@ python3 NbiCrawler.py
 ###  `nbiCsvJsonConverter-2`
 
 This crawler creates a local copy of NBI files. This prevents uncessary requests to the server during the processing stage.
-
+`
 ```bash
 
 # Start NBI File Download for all years
@@ -60,8 +60,8 @@ python3 ProcessMain.py
 Downloadv1.py, contains two global lists to configure the states and years for which files are to downloaded. By default the  two lists includes all states and years.
 
 ```python
-states = ['NE','AL','AK',..]
-years = [1992,1993,1994..]
+states = ['NE','AL','AK',...]
+years = [1992,1993,1994,...]
 ```
 Downloadv1.py output includes the following items:  
 1. `NBIDATA` folder. This folder includes all bridge inspection files for all states and years in the configuration list. The files are renamed following this convention: `XXYYYY.txt`. `XX` representes the two digit state code and `YYYY` represents the year of reporting into NBI.
@@ -73,8 +73,15 @@ ProcessMain.py, contains two global lists to configure the states and years for 
 
 ```python
 states = ['NE']
-years = [1992,1993,1994..]
+years = [1992,1993,1994,...]
 ```
+To connect to mongodb instance `dbConnect.txt` is required. you can create the file manually and add standard URI connection scheme given below:
+
+```python
+mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
+```
+To now know more about the schema, [Click Here](https://docs.mongodb.com/manual/reference/connection-string/)
+
 ProcessMain.py output includes the following items:  
 1. `missinggeo.txt` This text file will include all structure Number and year, where geo coordinates are invalid
 2. `Summary.txt` This text file will include basic summary of this processing run
