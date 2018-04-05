@@ -47,9 +47,10 @@ years = [1992,
          2014,
          2015,
          2016,
+         2017
        ]
 
-###### SELECT STATES ####### 
+###### SELECT STATES #######
 
 
 states = ["AK",
@@ -114,7 +115,7 @@ def get_db():
     dbConnectionString = str(file.read()).strip()
     client = MongoClient(dbConnectionString)
     db = client.bridge
-    return db 
+    return db
 
 
 #return a list of files which will helpful for renaming files
@@ -147,7 +148,7 @@ def convertLongLat(longitude,latitude):
         longSec = int(long[5:9])
         longSec = (longSec/360000)
         longDecimal = -(longDegree + longMin + longSec)
-        return longDecimal, latDecimal      
+        return longDecimal, latDecimal
    except:
         return 0.00, 0.00
 
@@ -159,7 +160,7 @@ def countValidCoordinates(Longitude, Latitude, cvc, structureNumber, year,missin
     return cvc
 
 
-    
+
 # how to close file with open technique
 def processFilesJSON(files):
     directory = 'ValidationLog'
@@ -186,10 +187,10 @@ def processFilesJSON(files):
             RowCount = 0
             IndexErrorCount = 0
             fieldSizeCount = []
-            fieldSizeDict = {}     
+            fieldSizeDict = {}
             for row in reader:
                 temp = []
-                RowCount = RowCount + 1           
+                RowCount = RowCount + 1
                 for r in row:
                     r = r.strip("'")
                     r = r.strip(" ")
@@ -213,18 +214,18 @@ def processFilesJSON(files):
                       print("IndexError: ", i)
                       continue
                    #print(x)
-                   mergedFile.write(x)    
-            fieldSizeDict = {x: fieldSizeCount.count(x) for x in fieldSizeCount}             
+                   mergedFile.write(x)
+            fieldSizeDict = {x: fieldSizeCount.count(x) for x in fieldSizeCount}
             print("===================================",file=summary)
-            print('Year: %s, State: %s' %(year, state),file=summary)                               
-            print("Valid Coordinates:", RowCount - cvc, file=summary) #valid coordinates includes coordinates which have longitude latitude with in proper range. 
-            print("Invalid Coordinates:", cvc, file=summary) #Invalid coordinates includes coordinates which have value'0' or ' ' 
+            print('Year: %s, State: %s' %(year, state),file=summary)
+            print("Valid Coordinates:", RowCount - cvc, file=summary) #valid coordinates includes coordinates which have longitude latitude with in proper range.
+            print("Invalid Coordinates:", cvc, file=summary) #Invalid coordinates includes coordinates which have value'0' or ' '
             print("Total Records:", RowCount, file=summary)
             print('Index Error Count: ', IndexErrorCount)
-            print('Year: %s, State: %s' %(year, state))            
+            print('Year: %s, State: %s' %(year, state))
             print(fieldSizeDict)
     validation.close()
-    missingGeo.close()  
+    missingGeo.close()
     summary.close()
     mergedFile.close()
 
@@ -255,10 +256,10 @@ def processFilesMongo(files):
             RowCount = 0
             IndexErrorCount = 0
             fieldSizeCount = []
-            fieldSizeDict = {}     
+            fieldSizeDict = {}
             for row in reader:
                 temp = []
-                RowCount = RowCount + 1           
+                RowCount = RowCount + 1
                 for r in row:
                     r = r.strip("'")
                     r = r.strip(" ")
@@ -273,7 +274,7 @@ def processFilesMongo(files):
                    pass
                 else:
                    structureNumber = temp[1]
-                   Longitude, Latitude = convertLongLat(temp[20],temp[19]) 
+                   Longitude, Latitude = convertLongLat(temp[20],temp[19])
                    cvc = countValidCoordinates(Longitude, Latitude, cvc,structureNumber,year,missingGeo)
                    try:
                       x = nbiEncoder(temp,year,Longitude,Latitude)
@@ -281,20 +282,20 @@ def processFilesMongo(files):
                       IndexErrorCount = IndexErrorCount + 1
                       print("IndexError: ", i)
                       continue
-                   myCollection.insert_one(json.loads(x))    
-            fieldSizeDict = {x: fieldSizeCount.count(x) for x in fieldSizeCount}             
+                   myCollection.insert_one(json.loads(x))
+            fieldSizeDict = {x: fieldSizeCount.count(x) for x in fieldSizeCount}
             print("===================================",file=summary)
-            print('Year: %s, State: %s' %(year, state),file=summary)                               
-            print("Valid Coordinates:", RowCount - cvc, file=summary) #valid coordinates includes coordinates which have longitude latitude with in proper range. 
-            print("Invalid Coordinates:", cvc, file=summary) #Invalid coordinates includes coordinates which have value'0' or ' ' 
+            print('Year: %s, State: %s' %(year, state),file=summary)
+            print("Valid Coordinates:", RowCount - cvc, file=summary) #valid coordinates includes coordinates which have longitude latitude with in proper range.
+            print("Invalid Coordinates:", cvc, file=summary) #Invalid coordinates includes coordinates which have value'0' or ' '
             print("Total Records:", RowCount, file=summary)
             print('Index Error Count: ', IndexErrorCount)
-            print('Year: %s, State: %s' %(year, state))            
+            print('Year: %s, State: %s' %(year, state))
             print(fieldSizeDict)
     validation.close()
-    missingGeo.close()  
+    missingGeo.close()
     summary.close()
-    
+
 
 
 
@@ -303,15 +304,9 @@ def main():
     if (fillMongoDB == True):
         processFilesMongo(files)
     else:
-        processFilesJSON(files)  
+        processFilesJSON(files)
 
 
 #main function
 if __name__ == "__main__":
     main()
-
-
-
-
-
-

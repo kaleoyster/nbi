@@ -5,41 +5,45 @@ Purpose: Downloads zip files and csvfiles from NBI and extracts them
 
 '''
 #Importing Modules
-import requests 
+import requests
 import zipfile
 import io
 import os
 from urllib.request import urlopen
 
-# years global variable 
+# years global variable
+
 years = [
-        1992,
-        1993,
-        1994,
-        1995,
-        1996,
-        1997,
-        1998,
-        1999,
-        2000,
-        2001,
-        2002,
-        2003,
-        2004,
-        2005,
-        2006,
-        2007,
-        2008,
-        2009,
-        2010,
-        2011,
-        2012,
-        2013,
-        2014,
-        2015,
-        2016]
+    1992,
+    1993,
+    1994,
+    1995,
+    1996,
+    1997,
+    1998,
+    1999,
+    2000,
+    2001,
+    2002,
+    2003,
+    2004,
+    2005,
+    2006,
+    2007,
+    2008,
+    2009,
+    2010,
+    2011,
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017]
+
 
 #states global variable
+
 states = ["AK",
           "AL",
           "AR",
@@ -95,56 +99,56 @@ states = ["AK",
 
 #Dictionary - for rename function
 fileNameDict = {'25fluna':'MA',
-                '04fluna':'AZ', 
-                '08fluna':'CO', 
-                '38fluna':'ND', 
-                '09fluna':'CT', 
-                '19fluna':'IA', 
-                '26fluna':'MI', 
+                '04fluna':'AZ',
+                '08fluna':'CO',
+                '38fluna':'ND',
+                '09fluna':'CT',
+                '19fluna':'IA',
+                '26fluna':'MI',
                 '48fluna':'TX',
-                '35fluna':'NM', 
-                '17fluna':'IL', 
-                '51fluna':'VA', 
+                '35fluna':'NM',
+                '17fluna':'IL',
+                '51fluna':'VA',
                 '23fluna':'ME',
                 '16fluna':'ID',
                 '36fluna':'NY',
                 '56fluna':'WY',
                 '29fluna':'MO',
                 '39fluna':'OH',
-                '28fluna':'MS', 
+                '28fluna':'MS',
                 '11fluna':'DC',
-                '21fluna':'KY', 
+                '21fluna':'KY',
                 '18fluna':'IN',
                 '06fluna':'CA',
-                '47fluna':'TN', 
+                '47fluna':'TN',
                 '12fluna':'FL',
                 '24fluna':'MD',
-                '34fluna':'NJ', 
+                '34fluna':'NJ',
                 '46fluna':'SD',
                 '13fluna':'GA',
                 '55fluna':'WI',
                 '30fluna':'MT',
                 '54fluna':'WV',
-                '15fluna':'HI', 
-                '32fluna':'NV', 
+                '15fluna':'HI',
+                '32fluna':'NV',
                 '37fluna':'NC',
-                '10fluna':'DE', 
-                '33fluna':'NH', 
-                '44fluna':'RI', 
-                '50fluna':'VT', 
-                '42fluna':'PA', 
-                '05fluna':'AR', 
-                '20fluna':'KS', 
+                '10fluna':'DE',
+                '33fluna':'NH',
+                '44fluna':'RI',
+                '50fluna':'VT',
+                '42fluna':'PA',
+                '05fluna':'AR',
+                '20fluna':'KS',
                 '45fluna':'SC',
                 '22fluna':'LA',
-                '40fluna':'OK', 
-                '72fluna':'PR', 
-                '41fluna':'OR', 
-                '27fluna':'MN', 
-                '53fluna':'WA', 
-                '01fluna':'AL', 
+                '40fluna':'OK',
+                '72fluna':'PR',
+                '41fluna':'OR',
+                '27fluna':'MN',
+                '53fluna':'WA',
+                '01fluna':'AL',
                 '31fluna':'NE',
-                '02fluna':'AK', 
+                '02fluna':'AK',
                 '49fluna':'UT'
                }
 
@@ -183,11 +187,11 @@ def downloadZipfile(zipUrl):
     r = requests.get(zipUrl,stream = True)
     z = zipfile.ZipFile(io.BytesIO(r.content))
     z.extractall('NBIDATA')
- 
+
 #driver function
 def main():
     for year in years:
-        if (year<2010):        
+        if (year<2010):
            zipUrl = createZipUrl(year)
            print('Downloading Zip file for ', year)
            downloadZipfile(zipUrl)
@@ -210,7 +214,7 @@ def main():
                        f.write(line)
                f.close()
            log.close()
-    rename(fileNameDict)   
+    rename(fileNameDict)
 #main function
 if __name__ == "__main__":
     main()
