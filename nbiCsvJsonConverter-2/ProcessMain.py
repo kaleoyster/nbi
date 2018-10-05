@@ -15,7 +15,7 @@ from validationFunctions import *
 from crossValidationFunctions import *
 
 ####### MongoDB    ##########
-fillMongoDB = True
+fillMongoDB = False
 
 # Note: Default value for fillMongoDB is false
 #importing directly to MongoDB is not yet not properly implemented
