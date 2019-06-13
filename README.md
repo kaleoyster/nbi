@@ -5,6 +5,7 @@
 National Bridge Inventory (NBI) represents bridge data submitted annually to FHWA by the States, Federal agencies, and Tribal governments.The data conforms to the [Recording and Coding Guide for the Structure Inventory and Appraisal of the Nations Bridges](https://www.fhwa.dot.gov/bridge/mtguide.pdf). Each data set is submitted in the spring, and may be corrected or updated throughout the year. The data is considered final and is published on this website at the end of each calendar year. [Source: [Federal Highway Administration](https://www.fhwa.dot.gov/bridge/nbi/ascii.cfm)]
 
 The Python script downloads CSV and zip file directly from the FHWA website. This features ensures that all transformations to the dataset are accounted for. 
+
 ## Addition information
 ProjectNBI repository contains two versions of csv to json convertor
 1. `nbiCsvJsonConverter-1`
@@ -13,7 +14,7 @@ ProjectNBI repository contains two versions of csv to json convertor
 The above both versions will return the same output. but approach taken by each of these version is very different.
 `nbiCsvJsonConverter-1` will iteratively download, convert and then import each nbi csv file in mongodb.
 
-`nbiCsvJsonConverter-2` separates downloading and importing scripts, `nbiCsvJsonConverter-2` will download all the nbi csv files before performing conversion and importing task, in addition to that, this version performs cross-check and
+`nbiCsvJsonConverter-2` separates downloading and importing scripts, `nbiCsvJsonConverter-2` will download all the nbi csv files before performing conversion and importing procedure, in addition to that, this version performs cross-check and
 item check validations mentioned [here.](https://www.fhwa.dot.gov/bridge/nbi/checks/)
 
 **Recommended version is `nbiCsvJsonConverter-2`**
@@ -75,7 +76,7 @@ ProcessMain.py, contains two global lists to configure the states and years for 
 states = ['NE']
 years = [1992,1993,1994,...]
 ```
-To connect to mongodb instance `dbConnect.txt` is required. you can create the file manually and add standard URI connection scheme given below:
+To connect to mongodb instance `dbConnect.txt` is required. you mayn create the file manually and add standard URI connection scheme given below:
 
 ```python
 mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
