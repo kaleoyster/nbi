@@ -16,7 +16,7 @@ from validationFunctions import *
 from crossValidationFunctions import *
 
 ####### MongoDB    ##########
-fillMongoDB = False
+fillMongoDB = True
 
 # Note: Default value for fillMongoDB is false
 #importing directly to MongoDB is not yet not properly implemented
@@ -52,8 +52,7 @@ years = [1992,
        ]
 
 ###### SELECT STATES #######
-
-
+"""
 states = ["AK",
           "AZ",
           "AL",
@@ -106,7 +105,9 @@ states = ["AK",
           "WI",
           "WV",
           "WY"]
+"""
 
+states  = ["NE"]
 files = [] #global variable for Files
 
 #Connection to MongoDB
@@ -162,7 +163,7 @@ def countValidCoordinates(Longitude, Latitude, cvc, structureNumber, year,missin
 
 
 
-# how to close file with open technique
+
 def processFilesJSON(files):
     directory = 'ValidationLog'
     crossValidationDirectory = 'CrossValidationLog'
