@@ -7,15 +7,11 @@ National Bridge Inventory (NBI) represents bridge data submitted annually to FHW
 The Python script downloads CSV and zip file directly from the FHWA website. This features ensures that all transformations to the dataset are accounted for. 
 
 ## Addition information
-ProjectNBI repository contains two versions of csv to json convertor
+This repository contains two versions of CSV to JSON convertor
 1. `nbiCsvJsonConverter-1`
 2. `nbiCsvJsonConverter-2`
 
-The above both versions will return the same output. but approach taken by each of these version is very different.
-`nbiCsvJsonConverter-1` will iteratively download, convert and then import each nbi csv file in mongodb.
-
-`nbiCsvJsonConverter-2` separates downloading and importing scripts, `nbiCsvJsonConverter-2` will download all the nbi csv files before performing conversion and importing procedure, in addition to that, this version performs cross-check and
-item check validations mentioned [here.](https://www.fhwa.dot.gov/bridge/nbi/checks/)
+The `nbiCsvJsonConverter-1` and `nbiCsvJsonConverter-2` will produce the same output, the only difference is the approach taken by each of these versions is different. The `nbiCsvJsonConverter-2` divides the task into two: Download and Conversion. Each of the subdivided tasks is run by separate scripts. The Conversion script also performs cross-check, item check, validations mentioned by [FHWA](https://www.fhwa.dot.gov/bridge/nbi/checks/), and populates JSON objects into MongoDB.
 
 **Recommended version is `nbiCsvJsonConverter-2`**
 
