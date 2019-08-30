@@ -3,6 +3,7 @@ Python
 Program ProcessMain.py
 This program will convert CSV files to JSON file
 
+Author: Akshay Kale
 '''
 #Importing Modules
 
@@ -15,13 +16,14 @@ from validationFunctions import *
 from crossValidationFunctions import *
 
 ####### MongoDB    ##########
-fillMongoDB = False
+fillMongoDB = True
 
 # Note: Default value for fillMongoDB is false
 #importing directly to MongoDB is not yet not properly implemented
 #the issue is being handled and will be updated as soon as possible
 ###### SELECT YEARS #########
 
+# Global variable
 years = [1992,
          1993,
          1994,
@@ -51,8 +53,7 @@ years = [1992,
        ]
 
 ###### SELECT STATES #######
-
-
+"""
 states = ["AK",
           "AZ",
           "AL",
@@ -105,7 +106,11 @@ states = ["AK",
           "WI",
           "WV",
           "WY"]
+"""
+# Global Variable
+states  = ["NE"]
 
+# Global LIST
 files = [] #global variable for Files
 
 #Connection to MongoDB
@@ -161,8 +166,8 @@ def countValidCoordinates(Longitude, Latitude, cvc, structureNumber, year,missin
 
 
 
-# how to close file with open technique
-def processFilesJSON(files):
+
+def processFilesJSON(files): # GLOBAL
     directory = 'ValidationLog'
     crossValidationDirectory = 'CrossValidationLog'
     mergedFile = open('mergedJSON.json','w')
@@ -171,15 +176,15 @@ def processFilesJSON(files):
     if not os.path.exists(directory):
        os.makedirs(directory)
        os.makedirs(crossValidationDirectory)
-    for f in files:
+    for f in files: # GLOBAL
         state , year = f[:2] , int(f[2:6])
         with open(os.path.join('NBIDATA',f),'r', encoding='utf-8', errors = 'ignore') as csvfile:
             reader = csv.reader(csvfile,delimiter = ',')
             headerRow = next(reader,None)
             validationFileName = f[:6] + 'validationLog.txt'
             crossValidationFileName = f[:6] + 'CrossValidationLog.txt'
-            validation = open(os.path.join(directory,validationFileName),'w')
-            crossValidation = open(os.path.join(crossValidationDirectory,crossValidationFileName),'w')
+            validation = open(os.path.join(directory, validationFileName),'w')
+            crossValidation = open(os.path.join(crossValidationDirectory, crossValidationFileName),'w')
             fieldErrorCountArray = []
             size = 150
             fieldErrorCountArray = initializeValidationArray(fieldErrorCountArray,size)
@@ -196,8 +201,8 @@ def processFilesJSON(files):
                     r = r.strip(" ")
                     temp.append(r)
                 ErrorCheck = []
-                temp, ErrorCheck = validateNBIfields(temp, ErrorCheck, fieldErrorCountArray,validation,size,year)
-                crossCheckValidation(temp,crossValidation)
+                temp, ErrorCheck = validateNBIfields(temp, ErrorCheck, fieldErrorCountArray, validation, size, year)
+                crossCheckValidation(temp, crossValidation)
                 fieldSize = len(temp)
                 fieldSizeCount.append(fieldSize)
                 fieldErrorCountArray[fieldSize] = fieldErrorCountArray[fieldSize] + 1
@@ -206,9 +211,9 @@ def processFilesJSON(files):
                 else:
                    structureNumber = temp[1]
                    Longitude, Latitude = convertLongLat(temp[20],temp[19])
-                   cvc = countValidCoordinates(Longitude, Latitude, cvc,structureNumber,year,missingGeo)
+                   cvc = countValidCoordinates(Longitude, Latitude, cvc, structureNumber, year, missingGeo)
                    try:
-                      x = nbiEncoder(temp,year,Longitude,Latitude)
+                      x = nbiEncoder(temp, year, Longitude, Latitude)
                    except IndexError as i:
                       IndexErrorCount = IndexErrorCount + 1
                       print("IndexError: ", i)
@@ -216,11 +221,11 @@ def processFilesJSON(files):
                    #print(x)
                    mergedFile.write(x)
             fieldSizeDict = {x: fieldSizeCount.count(x) for x in fieldSizeCount}
-            print("===================================",file=summary)
-            print('Year: %s, State: %s' %(year, state),file=summary)
-            print("Valid Coordinates:", RowCount - cvc, file=summary) #valid coordinates includes coordinates which have longitude latitude with in proper range.
-            print("Invalid Coordinates:", cvc, file=summary) #Invalid coordinates includes coordinates which have value'0' or ' '
-            print("Total Records:", RowCount, file=summary)
+            print("===================================",file = summary)
+            print('Year: %s, State: %s' %(year, state),file = summary)
+            print("Valid Coordinates:", RowCount - cvc, file = summary) #valid coordinates includes coordinates which have longitude latitude with in proper range.
+            print("Invalid Coordinates:", cvc, file = summary) #Invalid coordinates includes coordinates which have value'0' or ' '
+            print("Total Records:", RowCount, file = summary)
             print('Index Error Count: ', IndexErrorCount)
             print('Year: %s, State: %s' %(year, state))
             print(fieldSizeDict)
@@ -232,7 +237,7 @@ def processFilesJSON(files):
 
 def processFilesMongo(files):
     myDb = get_db()
-    myCollection =myDb['nbi']
+    myCollection = myDb['nbi']
     directory = 'ValidationLog'
     crossValidationDirectory = 'CrossValidationLog'
     summary = open('Summary.txt','w')
@@ -241,8 +246,8 @@ def processFilesMongo(files):
        os.makedirs(directory)
        os.makedirs(crossValidationDirectory)
     for f in files:
-        state , year = f[:2] , int(f[2:6])
-        with open(os.path.join('NBIDATA',f),'r', encoding='utf-8', errors = 'ignore') as csvfile:
+        state, year = f[:2] , int(f[2:6])
+        with open(os.path.join('NBIDATA', f),'r', encoding='utf-8', errors = 'ignore') as csvfile:
             reader = csv.reader(csvfile,delimiter = ',')
             headerRow = next(reader,None)
             validationFileName = f[:6] + 'validationLog.txt'
@@ -284,11 +289,11 @@ def processFilesMongo(files):
                       continue
                    myCollection.insert_one(json.loads(x))
             fieldSizeDict = {x: fieldSizeCount.count(x) for x in fieldSizeCount}
-            print("===================================",file=summary)
-            print('Year: %s, State: %s' %(year, state),file=summary)
-            print("Valid Coordinates:", RowCount - cvc, file=summary) #valid coordinates includes coordinates which have longitude latitude with in proper range.
-            print("Invalid Coordinates:", cvc, file=summary) #Invalid coordinates includes coordinates which have value'0' or ' '
-            print("Total Records:", RowCount, file=summary)
+            print("===================================",file = summary)
+            print('Year: %s, State: %s' %(year, state),file = summary)
+            print("Valid Coordinates:", RowCount - cvc, file = summary) #valid coordinates includes coordinates which have longitude latitude with in proper range.
+            print("Invalid Coordinates:", cvc, file = summary) #Invalid coordinates includes coordinates which have value'0' or ' '
+            print("Total Records:", RowCount, file = summary)
             print('Index Error Count: ', IndexErrorCount)
             print('Year: %s, State: %s' %(year, state))
             print(fieldSizeDict)
