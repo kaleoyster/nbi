@@ -1,12 +1,18 @@
-"""
+#!/Usr/bin/env python
+
+""" Provides operations for processing National Bridge Inventory (NBI) inspection record.
     
- 
 """
 import csv
 import pandas as pd
 import numpy as np
 import requests 
 import io
+
+__author__ = "Akshay Kale"
+__copyright__ = "GPL"
+__credits__ = ['Jonathan Monical']
+__email__ = "akale@unomaha.edu"
 
 class Data():
     def __init__(self):
@@ -18,8 +24,8 @@ class Data():
                               'SERVICE_LEVEL_005C': '5C: Designated Level of Service',
                               'ROUTE_NUMBER_005D': '5D: Route Number',
                               'DIRECTION_005E': '5E: Directional Suffix',
-                              'HIGHWAY_DISTRICT_002':'2: Highway Agency District',
-                              'COUNTY_CODE_003' :'3: County (Parish) Code',
+                              'HIGHWAY_DISTRICT_002': '2: Highway Agency District',
+                              'COUNTY_CODE_003': '3: County (Parish) Code',
                               'PLACE_CODE_004': '4: Place Code',
                               'FEATURES_DESC_006A': '6A: Features Intersected',
                               'CRITICAL_FACILITY_006B': '6B: Critical Facility Indicator',
@@ -57,7 +63,7 @@ class Data():
                               'NAV_HORR_CLR_MT_040': '40: Navigation Horizontal Clearance',
                               'OPEN_CLOSED_POSTED_041': '41: Structure Open/Posted/Closed',
                               'SERVICE_ON_042A': '42A: Type of Service On Bridge',
-                              'SERVICE_UND_042B':'42B: Type of Service Under Bridge',
+                              'SERVICE_UND_042B': '42B: Type of Service Under Bridge',
                               'STRUCTURE_KIND_043A': '43A: Kind of Material/Design',
                               'STRUCTURE_TYPE_043B': '43B: Type of Design/Construction',
                               'APPR_KIND_044A': '44A: Kind of Material/Design',
@@ -152,8 +158,7 @@ class Data():
                              'CAT29'
                              ]
 
-        self.DATACENTER_CODES = {31:317, 
-                                }
+        self.DATACENTER_CODES = {31:317}
 
 
     def getData(self, url):
