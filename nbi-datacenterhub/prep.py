@@ -16,7 +16,9 @@ __email__ = "akale@unomaha.edu"
 
 class Data():
     def __init__(self):
-        self.DF = None
+        self.url = None
+        self.state = None
+        self.year = None
         self.NEW_NAMES_DICT ={'STATE_CODE_001': '1: State Code',
                               'STRUCTURE_NUMBER_008': '8: Structure Number',
                               'RECORD_TYPE_005A': '5A: Record Type',
@@ -190,7 +192,31 @@ class Data():
                     + (int(geocoordinate[2:4]) / 600) \
                     + (int(geocoordinate[4:]) / 360000)    
             return result
+    
+    def createCaseName(self, df):
+        """ """
+        pass 
+        return df
 
+    def createCaseId(self, df):
+        """ """
+        pass
+        return df
+
+    def createYear(self, df):
+        """ """
+        pass
+        return df
+
+    def createMaterialColumn(self, df):
+        """ """
+        pass
+        return df
+
+    def createConstructionTypeColumn(self, df):
+        """ """
+        pass
+        return df
 
 def main():
     nbi = Data()
