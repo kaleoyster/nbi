@@ -16,6 +16,8 @@ __email__ = "akale@unomaha.edu"
 
 class Data():
     def __init__(self):
+        """ Returns a new data object 
+        """
         self.url = None
         self.state = None
         self.year = None
@@ -164,23 +166,49 @@ class Data():
 
 
     def getData(self, url):
+        """Returns a pandas dataframe by downloading the csvfile from url
+            
+            url: A valid url to a csvfile
+        """
         requested_csv = requests.get(url).content
         return pd.read_csv(io.StringIO(requested_csv.decode('utf-8')), low_memory = False)
 
     def renameDataColumns(self, df):
+        """Renames the columns of the dataframe and returns the new dataframe
+           
+           df: A pandas dataframe who's Column names to be renamed
+
+           NOTE: df's column name will be changed according to the global variable NEW_NAMES_DICT
+        """
         # get DF and names dict and return new named DF
         df = df.rename(columns=self.NEW_NAMES_DICT)
         return df
 
     def dropIgnoredColumns(self, df):
+        """drops columns of the dataframe and specified by global variable COL_IGNORED and returns the dataframe
+           
+           df: A pandas dataframe who's Column names are to be renamed
+
+           NOTE: df's column name will be changed according to the global variable COL_IGNORED
+        """
         df = df.drop(self.COL_IGNORED, axis = 1)
         return df
 
     def renameStateCodes(self, df):
+        """Return pandas dataframe with renamed column '1: State Code' according to the global variable DATACENTER_CODES
+          
+          df: A pandas dataframe
+          
+          NOTE: df's column '1: State Code' will be changed according to the global variabe DATACENTER_CODES
+        """
         df['1: State Code'] = df['1: State Code'].map(self.DATACENTER_CODES)
         return df
 
     def convertGeocoordinate(self, geocoordinate):
+        """Returns pandas dataframe with converted geo-coordinates
+           
+           geocoordinate: A valid longitude or longitude in the format: " "
+        """
         if len(geocoordinate) == 9 and geocoordinate[0] == '1':
             result = int(geocoordinate[:3]) \
                      + (int(geocoordinate[3:5]) / 600) \
