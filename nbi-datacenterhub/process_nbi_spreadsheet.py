@@ -170,6 +170,7 @@ class Data():
             
             url: A valid url to a csvfile
         """
+        self.url = url
         requested_csv = requests.get(url).content
         return pd.read_csv(io.StringIO(requested_csv.decode('utf-8')), low_memory = False)
 
@@ -224,27 +225,70 @@ class Data():
     def createCaseName(self, df):
         """Return a pandas dataframe with a new column Case Name, Case Name = 'df[column14] at df[column16] at df[column17]' """
         
-        df['Case Name'] = df[]
+        df["Case Name"] = df[['6A: Features Intersected', '7: Facility Carried By Structure', '9: Location']].apply(lambda x: ' at '.join(x), axis = 1)
         return df
 
     def createCaseId(self, df):
-        """ """
-        pass
+        """Return a pandas dataframe with a new column CaseId, CaseId = df['8: Structure Number']"""
+
+        df['Case Id'] = df['8: Structure Number']
         return df
 
     def createYear(self, df):
-        """ """
-        pass
+        """Returns a pandas dataframe with a new column Year, Year = url-of-the-file[6th position]"""
+        df['Year'] =  int(self.url.split("/")[5])
         return df
 
     def createMaterialColumn(self, df):
-        """ """
-        pass
+        """Returns a pandas dataframe with a new column Material, Material = kind_of_material['43A: Kind of Material/Design'] """
+           
+        kind_of_material = {
+                            1:"Concrete",
+                            2:"Concrete Continuous",
+                            3:"Steel",
+                            4:"Steel Continuous",
+                            5:"Prestressed Concrete",
+                            6:"Prestressed Concrete Continuous",
+                            7:"Wood or Timber",
+                            8:"Masonry",
+                            9:"Aluminum, Wrought Iron, or Cast Iron",
+                            0:"Other",
+                       }
+    
+        df['Material'] = df['43A: Kind of Material/Design'].map(kind_of_material)
+
         return df
 
     def createConstructionTypeColumn(self, df):
-        """ """
-        pass
+        """Returns a pandas dataframe with a new column Construction Type, ConstructionType = type_of_construction['43B: Type of Design/Construction'] """
+        
+        type_of_construction = {
+                                1:"Slab",
+                                2:"Stringer/Multi-beam or Girder",
+                                3:"Girder and Floorbeam System",
+                                4:"Tee Beam",
+                                5:"Box Beam or Girders - Multiple",
+                                6:"Box Beam or Girders - Single ofinr Spread",
+                                7:"Frame (except culverts)",
+                                8:"Orthotropic",
+                                9:"Truss - Deck",
+                                10:"Truss - Thru",
+                                11:"Arch - Deck",
+                                12:"Arch - Thru",
+                                13:"Suspension",
+                                14:"Stayed Girder",
+                                15:"Movable - Lift",
+                                16:"Movable - Bascule",
+                                17:"Movable - Swing",
+                                18:"Tunnel",
+                                19:"Culvert (includes frame culverts)",
+                                20:"Mixed types",
+                                21:"Segmental Box Girder",
+                                22:"Channel Beam",
+                                0:"Other"
+                                }
+
+        df['Construction Type'] = df['43B: Type of Design/Construction'].map(type_of_construction)
         return df
 
 def main():
@@ -262,7 +306,13 @@ def main():
     df['17: Longitude'] = df['17: Longitude'].apply(str).apply(nbi.convertGeocoordinate)
     df['39: Navigation Vertical Clearance'] = df['39: Navigation Vertical Clearance'] / 10
     df['40: Navigation Horizontal Clearance'] = df['40: Navigation Horizontal Clearance'] / 10
-      
+    
+    df = nbi.createCaseName(df)
+    df = nbi.createCaseId(df)
+    df = nbi.createYear(df)
+    df = nbi.createMaterialColumn(df)
+    df = nbi.createConstructionTypeColumn(df)
+
     df.to_excel("processed NBI spreadsheet.xls", index = False)
 
 if __name__ == '__main__':
