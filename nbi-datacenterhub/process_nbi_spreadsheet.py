@@ -222,8 +222,9 @@ class Data():
             return result
     
     def createCaseName(self, df):
-        """ """
-        pass 
+        """Return a pandas dataframe with a new column Case Name, Case Name = 'df[column14] at df[column16] at df[column17]' """
+        
+        df['Case Name'] = df[]
         return df
 
     def createCaseId(self, df):
