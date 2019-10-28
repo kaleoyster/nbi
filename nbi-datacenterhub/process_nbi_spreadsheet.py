@@ -162,6 +162,28 @@ class Data():
                              'CAT29'
                              ]
 
+        self.RENAMECOLS = { '1: State Code':'State',
+                            '16: Latitude':'Latitude',
+                            '17: Longitude':'Longitude',
+                            '27: Year Built':'Built in',
+                            '58: Deck':'Deck',
+                            '59: Superstructure':'Super',
+                            '60: Substructure':'Sub',
+                            '62: Culverts':'Culvert',
+                            '28A: Lanes on Structure':'Lanes',
+                            '29: Average Daily Traffic':'ADT',
+                            '109: AVERAGE DAILY TRUCK TRAFFIC':'ADTT (% ADT)',
+                            '31: Design Load':'Design Load',
+                            '45: Number Of Spans In Main Unit':'# Spans',
+                            '48: Length of Maximum Span':'Span Max Len',
+                            '49: Structure Length':'Struct Length',
+                            '70: Bridge Posting':'Posting',
+                            '106: Year Reconstructed':'Reconst. Year',
+                            '108A: Type of Wearing Surface':'Wearing Surface',
+                            '108B: Type of Membrane':'Membrane',
+                            '108C: Deck Protection':'Deck Proctection',
+                          }
+
         self.DATACENTER_CODES = {31:317}
 
 
@@ -291,6 +313,143 @@ class Data():
         df['Construction Type'] = df['43B: Type of Design/Construction'].map(type_of_construction)
         return df
 
+    def renameCols(self, df):
+        """ Returns a pandas dataframe with new renamed columns """
+        df = df.rename(columns=self.RENAMECOLS)
+        return df
+
+    def rearrangeCols(self, df):
+        
+        rearrange = [   'Case Name',
+                'Case Id',
+                'Year',
+                'State',
+                '8: Structure Number',
+                '5A: Record Type',
+                '5B: Route Signing Prefix',
+                '5C: Designated Level of Service',
+                '5D: Route Number',
+                '5E: Directional Suffix',
+                '2: Highway Agency District',
+                '3: County (Parish) Code',
+                '4: Place Code',
+                '6A: Features Intersected',
+                '6B: Critical Facility Indicator',
+                '7: Facility Carried By Structure',
+                '9: Location',
+                '10: Inventory Rte, Min Vert Clearance',
+                '11: Kilometerpoint',
+                '12: Base Highway Network',
+                '13A: LRS Inventory Route',
+                '13B: Subroute Number',
+                'Latitude',
+                'Longitude',
+                '19: Bypass/Detour Length',
+                '20: Toll',
+                '21: Maintenance Responsibility',
+                '22: Owner',
+                '26: Functional Class Of Inventory Rte.',
+                'Built in',
+                'Material',
+                'Construction Type',
+                'Deck',
+                'Super',
+                'Sub',
+                'Culvert',
+                'Lanes',
+                '28B: Lanes Under Structure',
+                'ADT',
+                'ADTT (% ADT)',
+                '30: Year Of Average Daily Traffic',
+                'Design Load',
+                '32: Approach Roadway Width',
+                '33: Bridge Median',
+                '34: Skew',
+                '35: Structure Flared',
+                '36A: Bridge Railings',
+                '36B: Transitions',
+                '36C: Approach Guardrail',
+                '36D: Approach Guardrail Ends',
+                '37: Historical significance',
+                '38: Navigation Control',
+                '39: Navigation Vertical Clearance',
+                '40: Navigation Horizontal Clearance',
+                '41: Structure Open/Posted/Closed',
+                '42A: Type of Service On Bridge',
+                '42B: Type of Service Under Bridge',
+                '43A: Kind of Material/Design',
+                '43B: Type of Design/Construction',
+                '44A: Kind of Material/Design',
+                '44B: Type of Design/Construction',
+                '# Spans',
+                '46: Number Of Approach Spans',
+                '47: Inventory Rte Total Horz Clearance',
+                'Span Max Len',
+                'Struct Length',
+                '50A: Left Curb/Sidewalk Width',
+                '50B: Right Curb/Sidewalk Width',
+                '51: Bridge Roadway Width Curb-To-Curb',
+                '52: Deck Width, Out-To-Out',
+                '53: Min Vert Clear Over Bridge Roadway',
+                '54A: Reference Feature',
+                '54B: Minimum Vertical Underclearance',
+                '55A: Reference Feature',
+                '55B: Minimum Lateral Underclearance',
+                '56: Min Lateral Underclear On Left',
+                '61: Channel/Channel Protection',
+                '63: Method Used To Determine Operating Rating',
+                '64: Operating Rating',
+                '65: Method Used To Determine Inventory Rating',
+                '66: Inventory Rating',
+                '67: Structural Evaluation',
+                '68: Deck Geometry',
+                '69: Underclear, Vertical & Horizontal',
+                'Posting',
+                '71: Waterway Adequacy',
+                '72: Approach Roadway Alignment',
+                '75A: Type of Work Proposed',
+                '75B: Work Done By',
+                '76: Length Of Structure Improvement',
+                '90: Inspection Date',
+                '91: Designated Inspection Frequency',
+                '92A: Fracture Critical Details',
+                '92B: Underwater Inspection',
+                '92C: Other Special Inspection',
+                '93A: Fracture Critical Details Date',
+                '93B: Underwater Inspection Date',
+                '93C: Other Special Inspection Date',
+                '94: Bridge Improvement Cost',
+                '95: Roadway Improvement Cost',
+                '96: Total Project Cost',
+                '97: Year Of Improvement Cost Estimate',
+                '98A: Neighboring State Code',
+                '98B: Percent Responsibility',
+                '99: Border Bridge Structure Number',
+                '100: STRAHNET Highway Designation',
+                '101: Parallel Structure Designation',
+                '102: Direction Of Traffic',
+                '103: Temporary Structure Designation',
+                '104: Highway System Of Inventory Route',
+                '105: Federal Lands Highways',
+                'Reconst. Year',
+                '107: Deck Structure Type',
+                'Wearing Surface',
+                'Membrane',
+                'Deck Protection',
+                '110: DESIGNATED NATIONAL NETWORK',
+                '111: PIER/ABUTMENT PROTECTION',
+                '112: NBIS BRIDGE LENGTH',
+                '113: SCOUR CRITICAL BRIDGES',
+                '114: FUTURE AVERAGE DAILY TRAFFIC',
+                '115: YEAR OF FUTURE AVG DAILY TRAFFIC',
+                '116: MINIMUM NAVIGATION VERTICAL CLEARANCE VERTICAL LIFT BRIDGE',
+                'Federal Agency',
+                'SR'
+            ]
+        df = df[rearrange]
+        return df
+        
+
 def main():
     nbi = Data()
     df = nbi.getData('https://www.fhwa.dot.gov/bridge/nbi/2018/delimited/NE18.txt')
@@ -314,6 +473,12 @@ def main():
     df = nbi.createConstructionTypeColumn(df)
 
     df.to_excel("processed NBI spreadsheet.xls", index = False)
+
+    df = nbi.renameCols(df)
+
+    df = nbi.rearrangeCols(df)
+
+    df.to_excel("rearranged.xls", index = False)
 
 if __name__ == '__main__':
     main()
