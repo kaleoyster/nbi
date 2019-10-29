@@ -98,7 +98,7 @@ class Data():
                               'INVENTORY_RATING_066': '66: Inventory Rating',
                               'STRUCTURAL_EVAL_067': '67: Structural Evaluation',
                               'DECK_GEOMETRY_EVAL_068': '68: Deck Geometry',
-                              'UNDCLRENCE_EVAL_069': '69: Underclear, Vertical &amp; Horizontal',
+                              'UNDCLRENCE_EVAL_069': '69: Underclear, Vertical & Horizontal',
                               'POSTING_EVAL_070': '70: Bridge Posting',
                               'WATERWAY_EVAL_071': '71: Waterway Adequacy',
                               'APPR_ROAD_EVAL_072': '72: Approach Roadway Alignment',
@@ -170,7 +170,7 @@ class Data():
                             '59: Superstructure':'Super',
                             '60: Substructure':'Sub',
                             '62: Culverts':'Culvert',
-                            '28A: Lanes on Structure':'Lanes',
+                            '28A: Lanes On Structure':'Lanes',
                             '29: Average Daily Traffic':'ADT',
                             '109: AVERAGE DAILY TRUCK TRAFFIC':'ADTT (% ADT)',
                             '31: Design Load':'Design Load',
@@ -181,7 +181,11 @@ class Data():
                             '106: Year Reconstructed':'Reconst. Year',
                             '108A: Type of Wearing Surface':'Wearing Surface',
                             '108B: Type of Membrane':'Membrane',
-                            '108C: Deck Protection':'Deck Proctection',
+                            '108C: Deck Protection':'Deck Protection',
+                            '55B: Minimum Lateral Underclearance on Right':'55B: Minimum Lateral Underclearance',
+
+                             '76: Length of Structure Improvement':'76: Length Of Structure Improvement',
+                             '51: Bridge Roadway Width, Curb-To-Curb':'51: Bridge Roadway Width Curb-To-Curb'
                           }
 
         self.DATACENTER_CODES = {31:317}
@@ -475,10 +479,11 @@ def main():
     df.to_excel("processed NBI spreadsheet.xls", index = False)
 
     df = nbi.renameCols(df)
+    df.to_excel("rearranged.xls", index = False)
 
     df = nbi.rearrangeCols(df)
 
-    df.to_excel("rearranged.xls", index = False)
+    #df.to_excel("rearranged.xls", index = False)
 
 if __name__ == '__main__':
     main()
