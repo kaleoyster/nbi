@@ -475,15 +475,11 @@ def main():
     df = nbi.createYear(df)
     df = nbi.createMaterialColumn(df)
     df = nbi.createConstructionTypeColumn(df)
-
     df.to_excel("processed NBI spreadsheet.xls", index = False)
 
     df = nbi.renameCols(df)
-    df.to_excel("rearranged.xls", index = False)
-
     df = nbi.rearrangeCols(df)
-
-    #df.to_excel("rearranged.xls", index = False)
+    df.to_excel("transformed NBI spreadsheet.xls", index = False)
 
 if __name__ == '__main__':
     main()
