@@ -212,10 +212,8 @@ class Data():
         return df
 
     def dropIgnoredColumns(self, df):
-        """drops columns of the dataframe and specified by global variable COL_IGNORED and returns the dataframe
+        """drops columns of the dataframe specified by global variable COL_IGNORED and returns the dataframe
            
-           df: A pandas dataframe who's Column names are to be renamed
-
            NOTE: df's column name will be changed according to the global variable COL_IGNORED
         """
         df = df.drop(self.COL_IGNORED, axis = 1)
