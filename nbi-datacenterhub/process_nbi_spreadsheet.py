@@ -459,12 +459,12 @@ def main():
     #df = nbi.getData('https://www.fhwa.dot.gov/bridge/nbi/2018/delimited/NE18.txt')
     
     #Set path of the csv here
-    path = "" 
+    path = "ne18.csv" 
 
     # Set year of the csv here
     year_of_survey = 2018 
 
-    df = pd.get_csv(path)
+    df = pd.read_csv(path, low_memory = False)
     df = nbi.renameDataColumns(df)
     df = nbi.dropIgnoredColumns(df)
     df = nbi.renameStateCodes(df)
