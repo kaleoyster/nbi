@@ -454,7 +454,17 @@ class Data():
 
 def main():
     nbi = Data()
-    df = nbi.getData('https://www.fhwa.dot.gov/bridge/nbi/2018/delimited/NE18.txt')
+
+    # function to detect a link or a path on the local computer and return a df
+    #df = nbi.getData('https://www.fhwa.dot.gov/bridge/nbi/2018/delimited/NE18.txt')
+    
+    #Set path of the csv here
+    path = "" 
+
+    # Set year of the csv here
+    year_of_survey = 2018 
+
+    df = pd.get_csv(path)
     df = nbi.renameDataColumns(df)
     df = nbi.dropIgnoredColumns(df)
     df = nbi.renameStateCodes(df)
@@ -470,14 +480,17 @@ def main():
     
     df = nbi.createCaseName(df)
     df = nbi.createCaseId(df)
-    df = nbi.createYear(df)
+    #df = nbi.createYear(df)
+
+    df['Year'] = year_of_survey
+
     df = nbi.createMaterialColumn(df)
     df = nbi.createConstructionTypeColumn(df)
     df.to_excel("processed NBI spreadsheet.xls", index = False)
 
     df = nbi.renameCols(df)
     df = nbi.rearrangeCols(df)
-    df.to_excel("transformed NBI spreadsheet.xls", index = False)
+    df.to_csv("transformed NBI spreadsheet.csv", index = False)
 
 if __name__ == '__main__':
     main()
