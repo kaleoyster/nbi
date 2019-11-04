@@ -1,7 +1,6 @@
 #!/Usr/bin/env python
 
 """ Provides operations for processing National Bridge Inventory (NBI) inspection record.
-    
 """
 import csv
 import pandas as pd
@@ -183,9 +182,8 @@ class Data():
                             '108B: Type of Membrane':'Membrane',
                             '108C: Deck Protection':'Deck Protection',
                             '55B: Minimum Lateral Underclearance on Right':'55B: Minimum Lateral Underclearance',
-
-                             '76: Length of Structure Improvement':'76: Length Of Structure Improvement',
-                             '51: Bridge Roadway Width, Curb-To-Curb':'51: Bridge Roadway Width Curb-To-Curb'
+                            '76: Length of Structure Improvement':'76: Length Of Structure Improvement',
+                            '51: Bridge Roadway Width, Curb-To-Curb':'51: Bridge Roadway Width Curb-To-Curb'
                           }
 
         self.DATACENTER_CODES = {31:317}
@@ -193,8 +191,8 @@ class Data():
 
     def getData(self, url):
         """Returns a pandas dataframe by downloading the csvfile from url
-            
-            url: A valid url to a csvfile
+          
+           url: A valid url to a csvfile
         """
         self.url = url
         requested_csv = requests.get(url).content
@@ -203,7 +201,7 @@ class Data():
     def renameDataColumns(self, df):
         """Renames the columns of the dataframe and returns the new dataframe
            
-           df: A pandas dataframe who's Column names to be renamed
+           df: A pandas dataframe
 
            NOTE: df's column name will be changed according to the global variable NEW_NAMES_DICT
         """
@@ -224,7 +222,7 @@ class Data():
           
           df: A pandas dataframe
           
-          NOTE: df's column '1: State Code' will be changed according to the global variabe DATACENTER_CODES
+          NOTE: df's column '1: State Code' will be changed according to the global variable DATACENTER_CODES
         """
         df['1: State Code'] = df['1: State Code'].map(self.DATACENTER_CODES)
         return df
@@ -232,24 +230,25 @@ class Data():
     def convertGeocoordinate(self, geocoordinate):
         """Returns pandas dataframe with converted geo-coordinates
            
-           geocoordinate: A valid longitude or longitude in the format: " "
+           geocoordinate: A valid longitude or longitude in the format: "XXX degrees XX minutes XX.XX seconds"
         """
         if len(geocoordinate) == 9 and geocoordinate[0] == '1':
             result = int(geocoordinate[:3]) \
-                     + (int(geocoordinate[3:5]) / 600) \
+                     + (int(geocoordinate[3:5]) / 60) \
                      + (int(geocoordinate[5:]) / 360000)
             return result
 
         else:
             result = int(geocoordinate[:2]) \
-                    + (int(geocoordinate[2:4]) / 600) \
+                    + (int(geocoordinate[2:4]) / 60) \
                     + (int(geocoordinate[4:]) / 360000)    
             return result
     
     def createCaseName(self, df):
-        """Return a pandas dataframe with a new column Case Name, Case Name = 'df[column14] at df[column16] at df[column17]' """
+        """Return a pandas dataframe with a new column Case Name, Case Name = 'df[column16] at df[column14] at df[column17]' """
         
-        df["Case Name"] = df[['6A: Features Intersected', '7: Facility Carried By Structure', '9: Location']].apply(lambda x: ' at '.join(x), axis = 1)
+        df["Case Name"] = df[['7: Facility Carried By Structure', '6A: Features Intersected', '9: Location']].apply(lambda x: ' at '.join(x), axis = 1)
+        
         return df
 
     def createCaseId(self, df):
@@ -316,137 +315,137 @@ class Data():
         return df
 
     def renameCols(self, df):
-        """ Returns a pandas dataframe with new renamed columns """
+        """Returns a pandas dataframe with new renamed columns"""
         df = df.rename(columns=self.RENAMECOLS)
         return df
 
     def rearrangeCols(self, df):
         
         rearrange = [   'Case Name',
-                'Case Id',
-                'Year',
-                'State',
-                '8: Structure Number',
-                '5A: Record Type',
-                '5B: Route Signing Prefix',
-                '5C: Designated Level of Service',
-                '5D: Route Number',
-                '5E: Directional Suffix',
-                '2: Highway Agency District',
-                '3: County (Parish) Code',
-                '4: Place Code',
-                '6A: Features Intersected',
-                '6B: Critical Facility Indicator',
-                '7: Facility Carried By Structure',
-                '9: Location',
-                '10: Inventory Rte, Min Vert Clearance',
-                '11: Kilometerpoint',
-                '12: Base Highway Network',
-                '13A: LRS Inventory Route',
-                '13B: Subroute Number',
-                'Latitude',
-                'Longitude',
-                '19: Bypass/Detour Length',
-                '20: Toll',
-                '21: Maintenance Responsibility',
-                '22: Owner',
-                '26: Functional Class Of Inventory Rte.',
-                'Built in',
-                'Material',
-                'Construction Type',
-                'Deck',
-                'Super',
-                'Sub',
-                'Culvert',
-                'Lanes',
-                '28B: Lanes Under Structure',
-                'ADT',
-                'ADTT (% ADT)',
-                '30: Year Of Average Daily Traffic',
-                'Design Load',
-                '32: Approach Roadway Width',
-                '33: Bridge Median',
-                '34: Skew',
-                '35: Structure Flared',
-                '36A: Bridge Railings',
-                '36B: Transitions',
-                '36C: Approach Guardrail',
-                '36D: Approach Guardrail Ends',
-                '37: Historical significance',
-                '38: Navigation Control',
-                '39: Navigation Vertical Clearance',
-                '40: Navigation Horizontal Clearance',
-                '41: Structure Open/Posted/Closed',
-                '42A: Type of Service On Bridge',
-                '42B: Type of Service Under Bridge',
-                '43A: Kind of Material/Design',
-                '43B: Type of Design/Construction',
-                '44A: Kind of Material/Design',
-                '44B: Type of Design/Construction',
-                '# Spans',
-                '46: Number Of Approach Spans',
-                '47: Inventory Rte Total Horz Clearance',
-                'Span Max Len',
-                'Struct Length',
-                '50A: Left Curb/Sidewalk Width',
-                '50B: Right Curb/Sidewalk Width',
-                '51: Bridge Roadway Width Curb-To-Curb',
-                '52: Deck Width, Out-To-Out',
-                '53: Min Vert Clear Over Bridge Roadway',
-                '54A: Reference Feature',
-                '54B: Minimum Vertical Underclearance',
-                '55A: Reference Feature',
-                '55B: Minimum Lateral Underclearance',
-                '56: Min Lateral Underclear On Left',
-                '61: Channel/Channel Protection',
-                '63: Method Used To Determine Operating Rating',
-                '64: Operating Rating',
-                '65: Method Used To Determine Inventory Rating',
-                '66: Inventory Rating',
-                '67: Structural Evaluation',
-                '68: Deck Geometry',
-                '69: Underclear, Vertical & Horizontal',
-                'Posting',
-                '71: Waterway Adequacy',
-                '72: Approach Roadway Alignment',
-                '75A: Type of Work Proposed',
-                '75B: Work Done By',
-                '76: Length Of Structure Improvement',
-                '90: Inspection Date',
-                '91: Designated Inspection Frequency',
-                '92A: Fracture Critical Details',
-                '92B: Underwater Inspection',
-                '92C: Other Special Inspection',
-                '93A: Fracture Critical Details Date',
-                '93B: Underwater Inspection Date',
-                '93C: Other Special Inspection Date',
-                '94: Bridge Improvement Cost',
-                '95: Roadway Improvement Cost',
-                '96: Total Project Cost',
-                '97: Year Of Improvement Cost Estimate',
-                '98A: Neighboring State Code',
-                '98B: Percent Responsibility',
-                '99: Border Bridge Structure Number',
-                '100: STRAHNET Highway Designation',
-                '101: Parallel Structure Designation',
-                '102: Direction Of Traffic',
-                '103: Temporary Structure Designation',
-                '104: Highway System Of Inventory Route',
-                '105: Federal Lands Highways',
-                'Reconst. Year',
-                '107: Deck Structure Type',
-                'Wearing Surface',
-                'Membrane',
-                'Deck Protection',
-                '110: DESIGNATED NATIONAL NETWORK',
-                '111: PIER/ABUTMENT PROTECTION',
-                '112: NBIS BRIDGE LENGTH',
-                '113: SCOUR CRITICAL BRIDGES',
-                '114: FUTURE AVERAGE DAILY TRAFFIC',
-                '115: YEAR OF FUTURE AVG DAILY TRAFFIC',
-                '116: MINIMUM NAVIGATION VERTICAL CLEARANCE VERTICAL LIFT BRIDGE',
-                'Federal Agency',
-                'SR'
+                        'Case Id',
+                        'Year',
+                        'State',
+                        '8: Structure Number',
+                        '5A: Record Type',
+                        '5B: Route Signing Prefix',
+                        '5C: Designated Level of Service',
+                        '5D: Route Number',
+                        '5E: Directional Suffix',
+                        '2: Highway Agency District',
+                        '3: County (Parish) Code',
+                        '4: Place Code',
+                        '6A: Features Intersected',
+                        '6B: Critical Facility Indicator',
+                        '7: Facility Carried By Structure',
+                        '9: Location',
+                        '10: Inventory Rte, Min Vert Clearance',
+                        '11: Kilometerpoint',
+                        '12: Base Highway Network',
+                        '13A: LRS Inventory Route',
+                        '13B: Subroute Number',
+                        'Latitude',
+                        'Longitude',
+                        '19: Bypass/Detour Length',
+                        '20: Toll',
+                        '21: Maintenance Responsibility',
+                        '22: Owner',
+                        '26: Functional Class Of Inventory Rte.',
+                        'Built in',
+                        'Material',
+                        'Construction Type',
+                        'Deck',
+                        'Super',
+                        'Sub',
+                        'Culvert',
+                        'Lanes',
+                        '28B: Lanes Under Structure',
+                        'ADT',
+                        'ADTT (% ADT)',
+                        '30: Year Of Average Daily Traffic',
+                        'Design Load',
+                        '32: Approach Roadway Width',
+                        '33: Bridge Median',
+                        '34: Skew',
+                        '35: Structure Flared',
+                        '36A: Bridge Railings',
+                        '36B: Transitions',
+                        '36C: Approach Guardrail',
+                        '36D: Approach Guardrail Ends',
+                        '37: Historical significance',
+                        '38: Navigation Control',
+                        '39: Navigation Vertical Clearance',
+                        '40: Navigation Horizontal Clearance',
+                        '41: Structure Open/Posted/Closed',
+                        '42A: Type of Service On Bridge',
+                        '42B: Type of Service Under Bridge',
+                        '43A: Kind of Material/Design',
+                        '43B: Type of Design/Construction',
+                        '44A: Kind of Material/Design',
+                        '44B: Type of Design/Construction',
+                        '# Spans',
+                        '46: Number Of Approach Spans',
+                        '47: Inventory Rte Total Horz Clearance',
+                        'Span Max Len',
+                        'Struct Length',
+                        '50A: Left Curb/Sidewalk Width',
+                        '50B: Right Curb/Sidewalk Width',
+                        '51: Bridge Roadway Width Curb-To-Curb',
+                        '52: Deck Width, Out-To-Out',
+                        '53: Min Vert Clear Over Bridge Roadway',
+                        '54A: Reference Feature',
+                        '54B: Minimum Vertical Underclearance',
+                        '55A: Reference Feature',
+                        '55B: Minimum Lateral Underclearance',
+                        '56: Min Lateral Underclear On Left',
+                        '61: Channel/Channel Protection',
+                        '63: Method Used To Determine Operating Rating',
+                        '64: Operating Rating',
+                        '65: Method Used To Determine Inventory Rating',
+                        '66: Inventory Rating',
+                        '67: Structural Evaluation',
+                        '68: Deck Geometry',
+                        '69: Underclear, Vertical & Horizontal',
+                        'Posting',
+                        '71: Waterway Adequacy',
+                        '72: Approach Roadway Alignment',
+                        '75A: Type of Work Proposed',
+                        '75B: Work Done By',
+                        '76: Length Of Structure Improvement',
+                        '90: Inspection Date',
+                        '91: Designated Inspection Frequency',
+                        '92A: Fracture Critical Details',
+                        '92B: Underwater Inspection',
+                        '92C: Other Special Inspection',
+                        '93A: Fracture Critical Details Date',
+                        '93B: Underwater Inspection Date',
+                        '93C: Other Special Inspection Date',
+                        '94: Bridge Improvement Cost',
+                        '95: Roadway Improvement Cost',
+                        '96: Total Project Cost',
+                        '97: Year Of Improvement Cost Estimate',
+                        '98A: Neighboring State Code',
+                        '98B: Percent Responsibility',
+                        '99: Border Bridge Structure Number',
+                        '100: STRAHNET Highway Designation',
+                        '101: Parallel Structure Designation',
+                        '102: Direction Of Traffic',
+                        '103: Temporary Structure Designation',
+                        '104: Highway System Of Inventory Route',
+                        '105: Federal Lands Highways',
+                        'Reconst. Year',
+                        '107: Deck Structure Type',
+                        'Wearing Surface',
+                        'Membrane',
+                        'Deck Protection',
+                        '110: DESIGNATED NATIONAL NETWORK',
+                        '111: PIER/ABUTMENT PROTECTION',
+                        '112: NBIS BRIDGE LENGTH',
+                        '113: SCOUR CRITICAL BRIDGES',
+                        '114: FUTURE AVERAGE DAILY TRAFFIC',
+                        '115: YEAR OF FUTURE AVG DAILY TRAFFIC',
+                        '116: MINIMUM NAVIGATION VERTICAL CLEARANCE VERTICAL LIFT BRIDGE',
+                        'Federal Agency',
+                        'SR'
             ]
         df = df[rearrange]
         return df
@@ -455,13 +454,10 @@ class Data():
 def main():
     nbi = Data()
 
-    # function to detect a link or a path on the local computer and return a df
-    #df = nbi.getData('https://www.fhwa.dot.gov/bridge/nbi/2018/delimited/NE18.txt')
-    
     #Set path of the csv here
     path = "ne18.csv" 
 
-    # Set year of the csv here
+    #Set year of the csv here
     year_of_survey = 2018 
 
     df = pd.read_csv(path, low_memory = False)
@@ -480,7 +476,6 @@ def main():
     
     df = nbi.createCaseName(df)
     df = nbi.createCaseId(df)
-    #df = nbi.createYear(df)
 
     df['Year'] = year_of_survey
 
