@@ -1,5 +1,3 @@
-#!/Usr/bin/env python
-
 """ Provides operations for processing National Bridge Inventory (NBI) inspection record.
 """
 import csv
@@ -255,6 +253,7 @@ class Data():
         """Return a pandas dataframe with a new column CaseId, CaseId = df['8: Structure Number']"""
 
         df['Case Id'] = df['8: Structure Number']
+
         return df
 
     def createYear(self, df):
@@ -319,6 +318,11 @@ class Data():
         df = df.rename(columns=self.RENAMECOLS)
         return df
 
+    def findNewCases(self, df, df_case_id):
+        """ Returns a pandas dataframe with new case id found from the previous year"""
+        new_cases_df  = df[~df['Case Id'].isin(df_case_id['Case Id'])]
+
+        return  new_cases_df
     def rearrangeCols(self, df):
         
         rearrange = [   'Case Name',
@@ -455,12 +459,15 @@ def main():
     nbi = Data()
 
     #Set path of the csv here
-    path = "ne18.csv" 
+    nbi_path = "ne18.csv" 
+    case_id_path = "ne18.csv"
 
     #Set year of the csv here
     year_of_survey = 2018 
 
-    df = pd.read_csv(path, low_memory = False)
+    df = pd.read_csv(nbi_path, low_memory = False)
+    df_case_id = pd.read_csv(case_id_path, low_memory = False)
+
     df = nbi.renameDataColumns(df)
     df = nbi.dropIgnoredColumns(df)
     df = nbi.renameStateCodes(df)
