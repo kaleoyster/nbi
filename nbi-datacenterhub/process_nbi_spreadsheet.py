@@ -318,9 +318,70 @@ class Data():
         df = df.rename(columns=self.RENAMECOLS)
         return df
 
+    def preProcessCaseInfo(self, case_id_path):
+        """Returns a pandas dataframe after the case_id_path preprocessing"""
+        
+        # preprocessing the data
+        with open(case_id_path) as f:
+            lines = f.readlines()
+            dont_remove_line = lines[0]
+            column_names = lines[1]
+            date_format = lines[2]
+            add_remove_message  = lines[3]
+
+            column_names = lines[1].split(",")
+            column_names = [col.strip("\n") for col in column_names]
+            
+            data = []
+            for line in lines[4:]:
+                stack = []
+                string = ''
+                words = ''
+                string_no_processing = ''
+                for letter in line:
+                    if letter == '"':
+                        if len(stack) == 0:
+                            stack.append(letter)
+                            words = words + string_no_processing
+                            string_no_processing = ''
+                        else:
+                            string = string + letter
+                            string = string.replace(",", "+")
+                            words = words + string
+                            string = ''
+                            string_no_processing = ''
+                            stack.pop()
+                    if len(stack) !=  0:
+                        string = string + letter
+                    string_no_processing = string_no_processing + letter
+                list_of_words = words.split(",")
+                data.append(list_of_words)
+
+        df_case_id = pd.DataFrame(data, columns = column_names)
+
+        # Export the dont_remove_line, date_format, add_remove_message
+        export_lines = [dont_remove_line, date_format, add_remove_message]
+
+        return df_case_id, export_lines
+
+# Next steps:
+# 1. Compare the case ids
+# 2. Extract Source, keywords (structure type), start date, end date, latitude, longitude, Technical lead, Compiled
+# 3. Create a new files of the case id uploads
+
     def findNewCases(self, df, df_case_id):
         """ Returns a pandas dataframe with new case id found from the previous year"""
         new_cases_df  = df[~df['Case Id'].isin(df_case_id['Case Id'])]
+        #new_cases_df['Case Name']
+        #new_cases_df['Case ID']
+        #new_cases_df['Latitude']
+        #new_cases_df['Longitude']
+        #new_cases_df['Technical Lead']
+        #Compiled = 'Jonathan Monical'
+        #Technical_lead = 'Robin Gandhi, Chungwook Sim'
+        #Start_date = ''
+        #End_date = ''
+        #Description = '' 
 
         return  new_cases_df
     def rearrangeCols(self, df):
@@ -460,13 +521,16 @@ def main():
 
     #Set path of the csv here
     nbi_path = "ne18.csv" 
-    case_id_path = "ne18.csv"
+   
+    case_id_path = "Case Information - 131.csv"
 
     #Set year of the csv here
     year_of_survey = 2018 
-
+    
+    df_case_id, export_lines = nbi.preProcessCaseInfo(case_id_path)
+    print(df_case_id)
     df = pd.read_csv(nbi_path, low_memory = False)
-    df_case_id = pd.read_csv(case_id_path, low_memory = False)
+    df_case_id = preProcess(case_id_path)
 
     df = nbi.renameDataColumns(df)
     df = nbi.dropIgnoredColumns(df)
