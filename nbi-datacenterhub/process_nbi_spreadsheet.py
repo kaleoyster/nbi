@@ -5,6 +5,9 @@ import pandas as pd
 import numpy as np
 import requests 
 import io
+import time
+import datetime
+from collections import OrderedDict
 
 __author__ = "Akshay Kale"
 __copyright__ = "GPL"
@@ -358,11 +361,26 @@ class Data():
                 data.append(list_of_words)
 
         df_case_id = pd.DataFrame(data, columns = column_names)
-
+        
         # Export the dont_remove_line, date_format, add_remove_message
         export_lines = [dont_remove_line, date_format, add_remove_message]
 
         return df_case_id, export_lines
+    
+    def cleanDataFrame(self, df_case_id):
+        """Returns a pandas Dataframe that contains the corrected strings and coumn names"""
+        
+        df_case_id.columns = ['id', 'Case Name', 'Case ID', 'Description', 'Keywords', 
+                              'Source', 'Start Date', 'End Date', 'Latitude', 'Longitude',  
+                              'Technical Lead', 'Compiled By']
+
+        df_case_id['Source'] = [row[:-1].replace("+", ",") for row in df_case_id['Source']]
+        df_case_id['Case Name'] = [row[:-1].replace("+", ",") for row in df_case_id['Case Name']]
+        df_case_id['Description'] = [row[:-1].replace("+", ",") for row in df_case_id['Description']]
+        df_case_id['Keywords'] = [row[:-1].replace("+", ",") for row in df_case_id['Keywords']]
+        df_case_id['Technical Lead'] =[row[:-1].replace("+", ",") for row in df_case_id['Technical Lead']]
+
+        return df_case_id
 
 # Next steps:
 # 1. Compare the case ids
@@ -371,19 +389,38 @@ class Data():
 
     def findNewCases(self, df, df_case_id):
         """ Returns a pandas dataframe with new case id found from the previous year"""
-        new_cases_df  = df[~df['Case Id'].isin(df_case_id['Case Id'])]
-        #new_cases_df['Case Name']
-        #new_cases_df['Case ID']
-        #new_cases_df['Latitude']
-        #new_cases_df['Longitude']
-        #new_cases_df['Technical Lead']
-        #Compiled = 'Jonathan Monical'
-        #Technical_lead = 'Robin Gandhi, Chungwook Sim'
-        #Start_date = ''
-        #End_date = ''
-        #Description = '' 
-
-        return  new_cases_df
+        new_cases_df  = df[~df['Case Id'].isin(df_case_id['Case ID'])]
+        
+        # Columns
+        _id =''*len(new_cases_df)
+        case_id = new_cases_df['Case Id'].astype(str)
+        case_name = new_cases_df['Case Name']
+        start_date = ['01/01/'+str(year) for year in  new_cases_df['Built in']]
+        end_date =  datetime.date.today().strftime("%m/%d/%Y")
+        keyword = new_cases_df['Material']+', '+new_cases_df['Construction Type'] 
+        latitude = new_cases_df['Latitude']
+        longitude = new_cases_df['Longitude']
+        description = "The National Bridge Inventory (NBI) for Nebraska contains information including geographic location, condition ratings for the superstructure and substructure, load ratings, bridge dimensions, average daily truck traffic, and sufficiency rating."
+        source = "Bureau of Reclamation"
+        technical_lead = "Robin Gandhi, Chungwook Sim"
+        compiled_by = "Jonathan Monical"
+       
+        df_exportable_new_cases = pd.DataFrame([case_id])
+        
+        # New exportable new cases
+        df_exportable_new_cases = pd.DataFrame(OrderedDict({'id':_id, 'Case Name': case_name,
+                                                           'Case ID':case_id,
+                                                           'Description':description, 
+                                                           'Keywords': keyword, 
+                                                           'Source': source,
+                                                           'Start Date': start_date, 
+                                                           'End Date': end_date,
+                                                           'Latitude': latitude, 
+                                                           'Longitude': longitude,
+                                                           'Technical Lead': technical_lead, 
+                                                           'Compiled By': compiled_by}))
+         
+        return  new_cases_df, df_exportable_new_cases
     def rearrangeCols(self, df):
         
         rearrange = [   'Case Name',
@@ -526,11 +563,14 @@ def main():
 
     #Set year of the csv here
     year_of_survey = 2018 
-    
     df_case_id, export_lines = nbi.preProcessCaseInfo(case_id_path)
-    print(df_case_id)
+    df_case_id = nbi.cleanDataFrame(df_case_id)
+     
+    #Get data of the new case ids
+    #And create the same datafile
+
     df = pd.read_csv(nbi_path, low_memory = False)
-    df_case_id = preProcess(case_id_path)
+    #df_case_id = preProcess(case_id_path)
 
     df = nbi.renameDataColumns(df)
     df = nbi.dropIgnoredColumns(df)
@@ -558,5 +598,9 @@ def main():
     df = nbi.rearrangeCols(df)
     df.to_csv("transformed NBI spreadsheet.csv", index = False)
 
+    # Find new cases
+    df_new_cases, df_exportable  = nbi.findNewCases(df, df_case_id)
+    df_exportable.to_csv("Case Information_new - 131.csv", index = False)
+    
 if __name__ == '__main__':
     main()
