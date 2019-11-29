@@ -556,19 +556,20 @@ class Data():
 def main():
     nbi = Data()
 
-    #Set path of the csv here
+    # Set path of the csv here
     nbi_path = "ne18.csv" 
-   
-    case_id_path = "Case Information - 131.csv"
+    
+    # Set path of the Case Information
+    case_id_path = "Case Information - 131.csv" 
+    
+    # Set path of the NBI Inspections Data
+    case_info_path = "NBI Inspections Data - 131.csv"
 
     #Set year of the csv here
     year_of_survey = 2018 
     df_case_id, export_lines = nbi.preProcessCaseInfo(case_id_path)
     df_case_id = nbi.cleanDataFrame(df_case_id)
      
-    #Get data of the new case ids
-    #And create the same datafile
-
     df = pd.read_csv(nbi_path, low_memory = False)
     #df_case_id = preProcess(case_id_path)
 
@@ -582,6 +583,7 @@ def main():
     df['9: Location'] = df['9: Location'].str.strip("'").str.strip()
     df['16: Latitude'] = df['16: Latitude'].apply(str).apply(nbi.convertGeocoordinate)
     df['17: Longitude'] = df['17: Longitude'].apply(str).apply(nbi.convertGeocoordinate)
+    df['17: Longitude'] = [0 - coord for coord in df['17: Longitude']]
     df['39: Navigation Vertical Clearance'] = df['39: Navigation Vertical Clearance'] / 10
     df['40: Navigation Horizontal Clearance'] = df['40: Navigation Horizontal Clearance'] / 10
     
@@ -601,6 +603,7 @@ def main():
     # Find new cases
     df_new_cases, df_exportable  = nbi.findNewCases(df, df_case_id)
     df_exportable.to_csv("Case Information_new - 131.csv", index = False)
-    
+    df_new_cases.to_csv("Case Information_All - 131.csv", index = False)
+
 if __name__ == '__main__':
     main()
