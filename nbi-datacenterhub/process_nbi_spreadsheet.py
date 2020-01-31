@@ -322,7 +322,7 @@ class Data():
         return df
 
     def preProcessCaseInfo(self, case_id_path):
-        """Returns a pandas dataframe after the case_id_path preprocessing"""
+        """Returns a pandas dataframe after the case_id_path (csv file) preprocessing"""
         
         # preprocessing the data
         with open(case_id_path) as f:
@@ -331,11 +331,13 @@ class Data():
             column_names = lines[1]
             date_format = lines[2]
             add_remove_message  = lines[3]
-
+ 
+            headers = [dont_remove_line, column_names, date_format, add_remove_message]
             column_names = lines[1].split(",")
             column_names = [col.strip("\n") for col in column_names]
             
             data = []
+            
             for line in lines[4:]:
                 stack = []
                 string = ''
@@ -365,10 +367,10 @@ class Data():
         # Export the dont_remove_line, date_format, add_remove_message
         export_lines = [dont_remove_line, date_format, add_remove_message]
 
-        return df_case_id, export_lines
+        return df_case_id, export_lines, headers
     
     def cleanDataFrame(self, df_case_id):
-        """Returns a pandas Dataframe that contains the corrected strings and coumn names"""
+        """Returns a pandas Dataframe that contains the corrected strings and column names"""
         
         df_case_id.columns = ['id', 'Case Name', 'Case ID', 'Description', 'Keywords', 
                               'Source', 'Start Date', 'End Date', 'Latitude', 'Longitude',  
@@ -379,7 +381,7 @@ class Data():
         df_case_id['Description'] = [row[:-1].replace("+", ",") for row in df_case_id['Description']]
         df_case_id['Keywords'] = [row[:-1].replace("+", ",") for row in df_case_id['Keywords']]
         df_case_id['Technical Lead'] =[row[:-1].replace("+", ",") for row in df_case_id['Technical Lead']]
-
+        
         return df_case_id
 
 # Next steps:
@@ -388,7 +390,7 @@ class Data():
 # 3. Create a new files of the case id uploads
 
     def findNewCases(self, df, df_case_id):
-        """ Returns a pandas dataframe with new case id found from the previous year"""
+        """ Returns a pandas dataframe with new case id found from the previous year""" 
         new_cases_df  = df[~df['Case Id'].isin(df_case_id['Case ID'])]
         
         # Columns
@@ -407,8 +409,9 @@ class Data():
        
         df_exportable_new_cases = pd.DataFrame([case_id])
         
-        # New exportable new cases
-        df_exportable_new_cases = pd.DataFrame(OrderedDict({'id':_id, 'Case Name': case_name,
+        # New exportable new cases, creating a new dataframe
+        df_exportable_new_cases = pd.DataFrame(OrderedDict({'id':_id, 
+                                                           'Case Name': case_name,
                                                            'Case ID':case_id,
                                                            'Description':description, 
                                                            'Keywords': keyword, 
@@ -552,7 +555,28 @@ class Data():
         df = df[rearrange]
         return df
         
+def insertHeader(inputFileName, outputFileName, headers):
+    """ Insert the first-four headers on in the final header"""
+    do_not_remove = headers[0]
+    main_header = headers[1]
+    date_format = headers[2]
+    warning = headers[3]
 
+   # Modify and add new columns
+    with open(inputFileName, 'r') as inFile, open(outputFileName, 'w') as outFile:
+        r = csv.reader(inFile)
+        w = csv.writer(outFile)
+        lines_reader  = inFile.readlines()
+        w.writerow(["DO NOT REMOVE THIS LINE"])
+        w.writerow(lines_reader[0].split(","))
+        w.writerow(date_format.split(","))
+        w.writerow(warning.split(","))
+        for row in lines_reader[1:]:
+            write_row = row.split(",")
+            w.writerow(write_row)
+        
+
+  
 def main():
     nbi = Data()
 
@@ -567,7 +591,7 @@ def main():
 
     #Set year of the csv here
     year_of_survey = 2018 
-    df_case_id, export_lines = nbi.preProcessCaseInfo(case_id_path)
+    df_case_id, export_lines, headers = nbi.preProcessCaseInfo(case_id_path)
     df_case_id = nbi.cleanDataFrame(df_case_id)
      
     df = pd.read_csv(nbi_path, low_memory = False)
@@ -600,10 +624,15 @@ def main():
     df = nbi.rearrangeCols(df)
     df.to_csv("transformed NBI spreadsheet.csv", index = False)
 
-    # Find new cases
+    # Need to insert two more extras headers as there is in original header -> Find new cases
     df_new_cases, df_exportable  = nbi.findNewCases(df, df_case_id)
-    df_exportable.to_csv("Case Information_new - 131.csv", index = False)
-    df_new_cases.to_csv("Case Information_All - 131.csv", index = False)
+    
+
+    df_exportable.to_csv("Case Information_new - 131.csv", index=False)
+    
+    # Open the case information_new csv file and insert the first - four lines 
+    insertHeader("Case Information_new - 131.csv", "Case Information_mod - 131.csv", headers)
+    df_new_cases.to_csv("Case Information_All - 131.csv", index=False)
 
 if __name__ == '__main__':
     main()
