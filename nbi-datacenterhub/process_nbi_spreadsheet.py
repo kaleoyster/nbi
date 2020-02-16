@@ -352,13 +352,15 @@ class Data():
                         else:
                             string = string + letter
                             string = string.replace(",", "+")
-                            words = words + string
+                            words = words + string.strip('"')
                             string = ''
-                            string_no_processing = ''
+                            string_no_processing = '' 
                             stack.pop()
                     if len(stack) !=  0:
                         string = string + letter
-                    string_no_processing = string_no_processing + letter
+                    #string_no_processing = string_no_processing + letter
+                    if letter !='"':
+                        string_no_processing = string_no_processing + letter
                 list_of_words = words.split(",")
                 data.append(list_of_words)
 
@@ -601,7 +603,7 @@ def main():
     df = nbi.dropIgnoredColumns(df)
     df = nbi.renameStateCodes(df)
     
-    df['8: Structure Number'] = df['8: Structure Number'].str.strip()
+    df['8: Structure Number'] = df['8: Structure Number'].str.strip().map(str)
     df['6A: Features Intersected'] = df['6A: Features Intersected'].str.strip("'").str.strip()
     df['7: Facility Carried By Structure'] = df['7: Facility Carried By Structure'].str.strip("'").str.strip()
     df['9: Location'] = df['9: Location'].str.strip("'").str.strip()
