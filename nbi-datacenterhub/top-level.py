@@ -272,6 +272,7 @@ columns = ['Case Id', 'Latitude', 'Longitude', 'Year Built', 'Material',
 
 # Arranging df columns
 df = df[columns]
+df = df[1:]
 
 # Saving df_top_file
 df.to_csv("new_top_file.csv", index=False)
@@ -289,7 +290,7 @@ with open(headerFileName, 'r') as headerfile:
 
 
 # Modify and add new columns
-with open(inputFileName, 'r') as inFile, open(outputFileName, 'w') as outFile:
+with open(inputFileName, 'r') as inFile, open(outputFileName, 'w', newline ='') as outFile:
     r = csv.reader(inFile)
     w = csv.writer(outFile)
     
@@ -298,7 +299,7 @@ with open(inputFileName, 'r') as inFile, open(outputFileName, 'w') as outFile:
     new_column = [word.strip('"') for word in new_column]
     new_column[0] = 'Case Id'
     w.writerow(new_column)
-
+    
     for row in lines_reader[1:]:
         write_row = row.split(",")
         write_row[-1] = write_row[-1].strip()
