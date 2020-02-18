@@ -7,8 +7,8 @@ from collections import OrderedDict
 # Reading the Inspection data files
 df = pd.read_csv("NBI Inspections Data - 131.csv", low_memory = True, index_col = False)
 df_new_cases = pd.read_csv("transformed NBI spreadsheet.csv", low_memory = False)
-# Dropping columns
 
+# Dropping columns
 df = df.drop(['2018', '2019'], axis = 1)
 
 # Creating columns from the transformed NBI spreadsheet
@@ -49,19 +49,19 @@ substructure =  df_new_cases['Sub']
 sub_og = df['Substructure']
 
 # creating new dataframe for transformed NBI spreadsheet
-df_top_level = pd.DataFrame({'Case Id.27': case_id,
-                                         '2018': year,
-                                         'Latitude': latitude,
-                                         'Longitude': longitude,
-                                         'Year Built': year_built,
-                                         'Material': material,
-                                         'Construction Type': construction,
-                                         'ADT.27': ADT,
-                                         'ADTT.27': ADTT,
-                                         'Deck.27': deck,
-                                         'Superstructure.27': superstructure,
-                                         'Substructure.27': substructure,
-                             })
+#df_top_level = pd.DataFrame({'Case Id.27': case_id,                                                                  '2018': year,
+#                             'Latitude': latitude,
+#                             'Longitude': longitude,
+#                             'Year Built': year_built, 
+#                             'Material': material,
+#                             'Construction Type': construction,
+#                             'ADT.27': ADT,
+#                             'ADTT.27': ADTT,
+#                             'Deck.27': deck,
+#                             'Superstructure.27': superstructure,
+#                             'Substructure.27': substructure,
+#                             })
+#
 
 # Add new case Id at the bottom the top-level df
 new_bridges = list(set(case_id) - set(df['Case Id']))
@@ -140,7 +140,6 @@ for key, value in _id_construct_og_dict.items():
         _id_construct_og_dict[key] = _id_construct_dict[key]
 
 update_construct = df['Case Id'].map(_id_construct_og_dict) 
-
 
 ## Average Daily Traffic
 # Create dictionary of average daily traffic with respect to the case id
@@ -221,54 +220,56 @@ update_super = df['Case Id'].map(_id_super_og_dict)
 df['Longitude'] = update_longitude
 df['Latitutde'] = update_latitude
 df['Year Built'] = update_year
-df['Superstructure'] = update_super
-df['Substructure'] = update_sub
-df['Deck'] = update_deck
+#df['Superstructure'] = update_super
+#df['Substructure'] = update_sub
+#df['Deck'] = update_deck
+
 df['Construction Type'] = update_construct
 df['Material'] = update_mat
-df['ADT'] = update_adt
-df['ADTT'] = update_adtt
+
+#df['ADT'] = update_adt
+#df['ADTT'] = update_adtt
 
 # Add new columns
-df['2018'] = year
-df['ADT.27'] = update_adt
-df['ADTT.27'] = update_adtt
-df['Deck.27'] = update_deck
-df['Superstructure.27'] = update_super
-df['Substructure.27'] = update_sub
+#df['2018'] = year
+#df['ADT.27'] = update_adt
+#df['ADTT.27'] = update_adtt
+#df['Deck.27'] = update_deck
+#df['Superstructure.27'] = update_super
+#df['Substructure.27'] = update_sub
 
 
 # rearrange columns
-columns = ['Case Id', 'Latitude', 'Longitude', 'Year Built', 'Material',
-           'Construction Type', 'ADT', 'ADTT', 'Deck', 'Superstructure', 'Substructure',
-           '1992', 'ADT.1','ADTT.1', 'Deck.1', 'Superstructure.1', 'Substructure.1',
-           '1993', 'ADT.2','ADTT.2', 'Deck.2', 'Superstructure.2', 'Substructure.2',
-           '1994', 'ADT.3','ADTT.3', 'Deck.3', 'Superstructure.3', 'Substructure.3',
-           '1995', 'ADT.4','ADTT.4', 'Deck.4', 'Superstructure.4', 'Substructure.4',
-           '1996', 'ADT.5','ADTT.5', 'Deck.5', 'Superstructure.5', 'Substructure.5',
-           '1997', 'ADT.6','ADTT.6', 'Deck.6', 'Superstructure.6', 'Substructure.6',
-           '1998', 'ADT.7','ADTT.7', 'Deck.7', 'Superstructure.7', 'Substructure.7',
-           '1999', 'ADT.8','ADTT.8', 'Deck.8', 'Superstructure.8', 'Substructure.8',
-           '2000', 'ADT.9','ADTT.9', 'Deck.9', 'Superstructure.9', 'Substructure.9',
-           '2001', 'ADT.10','ADTT.10', 'Deck.10', 'Superstructure.10', 'Substructure.10',
-           '2002', 'ADT.11','ADTT.11', 'Deck.11', 'Superstructure.11', 'Substructure.11',
-           '2003', 'ADT.12','ADTT.12', 'Deck.12', 'Superstructure.12', 'Substructure.12',
-           '2004', 'ADT.13','ADTT.13', 'Deck.13', 'Superstructure.13', 'Substructure.13',
-           '2005', 'ADT.14','ADTT.14', 'Deck.14', 'Superstructure.14', 'Substructure.14',
-           '2006', 'ADT.15','ADTT.15', 'Deck.15', 'Superstructure.15', 'Substructure.15',
-           '2007', 'ADT.16','ADTT.16', 'Deck.16', 'Superstructure.16', 'Substructure.16',
-           '2008', 'ADT.17','ADTT.17', 'Deck.17', 'Superstructure.17', 'Substructure.17',
-           '2009', 'ADT.18','ADTT.18', 'Deck.18', 'Superstructure.18', 'Substructure.18',
-           '2010', 'ADT.19','ADTT.19', 'Deck.19', 'Superstructure.19', 'Substructure.19',
-           '2011', 'ADT.20','ADTT.20', 'Deck.20', 'Superstructure.20', 'Substructure.20',
-           '2012', 'ADT.21','ADTT.21', 'Deck.21', 'Superstructure.21', 'Substructure.21',
-           '2013', 'ADT.22','ADTT.22', 'Deck.22', 'Superstructure.22', 'Substructure.22',
-           '2014', 'ADT.23','ADTT.23', 'Deck.23', 'Superstructure.23', 'Substructure.23',
-           '2015', 'ADT.24','ADTT.24', 'Deck.24', 'Superstructure.24', 'Substructure.24',
-           '2016', 'ADT.25','ADTT.25', 'Deck.25', 'Superstructure.25', 'Substructure.25',
-           '2017', 'ADT.26','ADTT.26', 'Deck.26', 'Superstructure.26', 'Substructure.26',
-           '2018', 'ADT.27','ADTT.27', 'Deck.27', 'Superstructure.27', 'Substructure.27',
-           ]
+#columns = ['Case Id', 'Latitude', 'Longitude', 'Year Built', 'Material',
+#           'Construction Type', 'ADT', 'ADTT', 'Deck', 'Superstructure', 'Substructure',
+#           '1992', 'ADT.1','ADTT.1', 'Deck.1', 'Superstructure.1', 'Substructure.1',
+#           '1993', 'ADT.2','ADTT.2', 'Deck.2', 'Superstructure.2', 'Substructure.2',
+#           '1994', 'ADT.3','ADTT.3', 'Deck.3', 'Superstructure.3', 'Substructure.3',
+#           '1995', 'ADT.4','ADTT.4', 'Deck.4', 'Superstructure.4', 'Substructure.4',
+#           '1996', 'ADT.5','ADTT.5', 'Deck.5', 'Superstructure.5', 'Substructure.5',
+#           '1997', 'ADT.6','ADTT.6', 'Deck.6', 'Superstructure.6', 'Substructure.6',
+#           '1998', 'ADT.7','ADTT.7', 'Deck.7', 'Superstructure.7', 'Substructure.7',
+#           '1999', 'ADT.8','ADTT.8', 'Deck.8', 'Superstructure.8', 'Substructure.8',
+#           '2000', 'ADT.9','ADTT.9', 'Deck.9', 'Superstructure.9', 'Substructure.9',
+#           '2001', 'ADT.10','ADTT.10', 'Deck.10', 'Superstructure.10', 'Substructure.10',
+#           '2002', 'ADT.11','ADTT.11', 'Deck.11', 'Superstructure.11', 'Substructure.11',
+#           '2003', 'ADT.12','ADTT.12', 'Deck.12', 'Superstructure.12', 'Substructure.12',
+#           '2004', 'ADT.13','ADTT.13', 'Deck.13', 'Superstructure.13', 'Substructure.13',
+#           '2005', 'ADT.14','ADTT.14', 'Deck.14', 'Superstructure.14', 'Substructure.14',
+#           '2006', 'ADT.15','ADTT.15', 'Deck.15', 'Superstructure.15', 'Substructure.15',
+#           '2007', 'ADT.16','ADTT.16', 'Deck.16', 'Superstructure.16', 'Substructure.16',
+#           '2008', 'ADT.17','ADTT.17', 'Deck.17', 'Superstructure.17', 'Substructure.17',
+#           '2009', 'ADT.18','ADTT.18', 'Deck.18', 'Superstructure.18', 'Substructure.18',
+#           '2010', 'ADT.19','ADTT.19', 'Deck.19', 'Superstructure.19', 'Substructure.19',
+#           '2011', 'ADT.20','ADTT.20', 'Deck.20', 'Superstructure.20', 'Substructure.20',
+#           '2012', 'ADT.21','ADTT.21', 'Deck.21', 'Superstructure.21', 'Substructure.21',
+#           '2013', 'ADT.22','ADTT.22', 'Deck.22', 'Superstructure.22', 'Substructure.22',
+#           '2014', 'ADT.23','ADTT.23', 'Deck.23', 'Superstructure.23', 'Substructure.23',
+#           '2015', 'ADT.24','ADTT.24', 'Deck.24', 'Superstructure.24', 'Substructure.24',
+#           '2016', 'ADT.25','ADTT.25', 'Deck.25', 'Superstructure.25', 'Substructure.25',
+#           '2017', 'ADT.26','ADTT.26', 'Deck.26', 'Superstructure.26', 'Substructure.26',
+#           '2018', 'ADT.27','ADTT.27', 'Deck.27', 'Superstructure.27', 'Substructure.27',
+#           ]
 
 # Arranging df columns
 df = df[columns]
@@ -297,7 +298,7 @@ with open(inputFileName, 'r') as inFile, open(outputFileName, 'w', newline ='') 
     lines_reader  = inFile.readlines()
     new_column = headers.split(",")[:-2] + ['2018', 'ADT', 'ADTT', 'Deck', 'Superstructure', 'Substructure']
     new_column = [word.strip('"') for word in new_column]
-    new_column[0] = 'Case Id'
+    new_column[0] = 'id'
     w.writerow(new_column)
     
     for row in lines_reader[1:]:
