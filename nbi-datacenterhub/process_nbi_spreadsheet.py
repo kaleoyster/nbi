@@ -617,23 +617,30 @@ def main():
     df = nbi.createCaseId(df)
 
     df['Year'] = year_of_survey
-
+    
+    
     df = nbi.createMaterialColumn(df)
     df = nbi.createConstructionTypeColumn(df)
+    
+    # OUTPUT
     df.to_csv("processed NBI spreadsheet.csv", index = False)
 
     df = nbi.renameCols(df)
     df = nbi.rearrangeCols(df)
+    
+    # OUTPUT
     df.to_csv("transformed NBI spreadsheet.csv", index = False)
 
     # Need to insert two more extras headers as there is in original header -> Find new cases
     df_new_cases, df_exportable  = nbi.findNewCases(df, df_case_id)
     
-
+    # OUTPUT
     df_exportable.to_csv("Case Information_new - 131.csv", index=False)
     
     # Open the case information_new csv file and insert the first - four lines 
     insertHeader("Case Information_new - 131.csv", "Case Information_mod - 131.csv", headers)
+    
+    #OUTPUT
     df_new_cases.to_csv("Case Information_All - 131.csv", index=False)
 
 if __name__ == '__main__':

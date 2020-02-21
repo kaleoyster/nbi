@@ -5,7 +5,11 @@ import numpy as np
 from collections import OrderedDict
 
 # Reading the Inspection data files
+
+# INPUT
 df = pd.read_csv("NBI Inspections Data - 131.csv", low_memory = True, index_col = False)
+
+# INPUT
 df_new_cases = pd.read_csv("transformed NBI spreadsheet.csv", low_memory = False)
 
 # Dropping columns
@@ -264,7 +268,6 @@ condition_rating_dict = {
                            'N': None,
                         }
 
-print(update_deck.unique())
 
 # Add new columns
 df['2018'] = year
@@ -310,6 +313,7 @@ columns = ['Case Id', 'Latitude', 'Longitude', 'Year Built', 'Material',
 df = df[columns]
 df = df[1:]
 
+# OUTPUT
 # Saving df_top_file
 df.to_csv("new_top_file.csv", index=False)
 
@@ -318,6 +322,8 @@ inputFileName = "new_top_file.csv"
 
 # Use the NBI inspection data file to extract columns
 headerFileName = "NBI Inspections Data - 131.csv"
+
+# OUTPUT
 outputFileName = "NBI Inspections Data - 131_modified.csv"
 
 # Extract header/column name
@@ -341,4 +347,3 @@ with open(inputFileName, 'r') as inFile, open(outputFileName, 'w', newline ='') 
         write_row = row.split(",")
         write_row[-1] = write_row[-1].strip()
         w.writerow(write_row)
-
