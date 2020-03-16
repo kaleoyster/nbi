@@ -269,11 +269,11 @@ class Data():
            
         kind_of_material = {
                             1:"Concrete",
-                            2:"Concrete Continuous",
+                            2:"Concrete continuous",
                             3:"Steel",
-                            4:"Steel Continuous",
-                            5:"Prestressed Concrete",
-                            6:"Prestressed Concrete Continuous",
+                            4:"Steel continuous",
+                            5:"Prestressed concrete *",
+                            6:"Prestressed concrete continuous *",
                             7:"Wood or Timber",
                             8:"Masonry",
                             9:"Aluminum, Wrought Iron, or Cast Iron",
@@ -293,8 +293,8 @@ class Data():
                                 3:"Girder and Floorbeam System",
                                 4:"Tee Beam",
                                 5:"Box Beam or Girders - Multiple",
-                                6:"Box Beam or Girders - Single ofinr Spread",
-                                7:"Frame (except culverts)",
+                                6:"Box Beam or Girders - Single or Spread",
+                                7:"Frame (except frame culverts)",
                                 8:"Orthotropic",
                                 9:"Truss - Deck",
                                 10:"Truss - Thru",
@@ -311,7 +311,7 @@ class Data():
                                 21:"Segmental Box Girder",
                                 22:"Channel Beam",
                                 0:"Other"
-                                }
+                            }
 
         df['Construction Type'] = df['43B: Type of Design/Construction'].map(type_of_construction)
         return df
@@ -554,7 +554,7 @@ class Data():
                         'Federal Agency',
                         'SR'
             ]
-        df = df[rearrange]
+        d = df[rearrange]
         return df
         
 def insertHeader(inputFileName, outputFileName, headers):
@@ -583,16 +583,25 @@ def main():
     nbi = Data()
 
     # Set path of the csv here
+    # get this data file from the website (FHWA)
     nbi_path = "ne18.csv" 
-    
+      
     # Set path of the Case Information
     case_id_path = "Case Information - 131.csv" 
     
+
     # Set path of the NBI Inspections Data
+    # replace this file with NB2018_no_id 
+
     case_info_path = "NBI Inspections Data - 131.csv"
 
     #Set year of the csv here
-    year_of_survey = 2018 
+    #year_of_survey = 2018
+    year_of_survey = int(input("Year: "))
+
+    # Set name here 
+    name = input("Name: ")
+
     df_case_id, export_lines, headers = nbi.preProcessCaseInfo(case_id_path)
     df_case_id = nbi.cleanDataFrame(df_case_id)
      
