@@ -8,6 +8,7 @@ import io
 import time
 import datetime
 from collections import OrderedDict
+import sys
 
 __author__ = "Akshay Kale"
 __copyright__ = "GPL"
@@ -580,6 +581,8 @@ def insertHeader(inputFileName, outputFileName, headers):
 
   
 def main():
+    #list_of_agrs = [arg for arg for sys.argv]
+    #codename, cases-template, cases1992-20XX, nbifile, name, year = list_of_agrs 
     nbi = Data()
 
     # Set path of the csv here
