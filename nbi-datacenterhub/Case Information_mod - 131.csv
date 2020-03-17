@@ -5,5 +5,5 @@ id,Case Name,Case ID,Description,Keywords,Source,Start Date,End Date,Latitude,Lo
 "
 DATASTART,"""Only add/remove/update data after this row. Do not change the id column for existing entries"," leave the id column blank for new entries""
 "
-,FDR 259 at MIDDLE LOUP RIVER at 1.3 MI. E. OF THEDFORD,020701000003001,"""The National Bridge Inventory (NBI) for Nebraska contains information including geographic location", condition ratings for the superstructure and substructure, load ratings, bridge dimensions, average daily truck traffic," and sufficiency rating.""","""Wood or Timber"," Stringer/Multi-beam or Girder""",Bureau of Reclamation,01/01/1965,02/21/2020,41.97725833333334,-100.51086944444444,"""Robin Gandhi"," Chungwook Sim""","Jonathan Monical
+,FDR 259 at MIDDLE LOUP RIVER at 1.3 MI. E. OF THEDFORD,020701000003001,"""The National Bridge Inventory (NBI) for Nebraska contains information including geographic location", condition ratings for the superstructure and substructure, load ratings, bridge dimensions, average daily truck traffic," and sufficiency rating.""","""Wood or Timber"," Stringer/Multi-beam or Girder""",Bureau of Reclamation,01/01/1965,03/17/2020,41.97725833333334,-100.51086944444444,"""Robin Gandhi"," Chungwook Sim""","Jonathan Monical
 "

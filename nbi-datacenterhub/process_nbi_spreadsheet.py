@@ -200,6 +200,7 @@ class Data():
         requested_csv = requests.get(url).content
         return pd.read_csv(io.StringIO(requested_csv.decode('utf-8')), low_memory = False)
 
+
     def renameDataColumns(self, df):
         """Renames the columns of the dataframe and returns the new dataframe
            
@@ -427,9 +428,11 @@ class Data():
                                                            'Compiled By': compiled_by}))
          
         return  new_cases_df, df_exportable_new_cases
+
     def rearrangeCols(self, df):
         
-        rearrange = [   'Case Name',
+        rearrange = [   'id',
+                        'Case Name',
                         'Case Id',
                         'Year',
                         'State',
@@ -555,7 +558,8 @@ class Data():
                         'Federal Agency',
                         'SR'
             ]
-        d = df[rearrange]
+
+        df = df[rearrange]
         return df
         
 def insertHeader(inputFileName, outputFileName, headers):
@@ -581,17 +585,19 @@ def insertHeader(inputFileName, outputFileName, headers):
 
   
 def main():
+
+    ########################## Argument management ###################
     #list_of_agrs = [arg for arg for sys.argv]
     #codename, cases-template, cases1992-20XX, nbifile, name, year = list_of_agrs 
     nbi = Data()
+    nbi_text_file = "NBI_text_file.csv" # replace with NBI_text_file
+    cases_template =  "CasesTemplate.csv"
+    case1992_20XX  =  "Cases1992-2017.csv"
 
-    # Set path of the csv here
-    # get this data file from the website (FHWA)
-    nbi_path = "ne18.csv" 
-      
+    
     # Set path of the Case Information
     case_id_path = "Case Information - 131.csv" 
-    
+    #case_id_path = case1992_20XX
 
     # Set path of the NBI Inspections Data
     # replace this file with NB2018_no_id 
@@ -599,22 +605,22 @@ def main():
     case_info_path = "NBI Inspections Data - 131.csv"
 
     #Set year of the csv here
-    #year_of_survey = 2018
-    year_of_survey = int(input("Year: "))
+    year_of_survey = 2018
 
-    # Set name here 
-    name = input("Name: ")
+     
 
+    #################################################################
     df_case_id, export_lines, headers = nbi.preProcessCaseInfo(case_id_path)
     df_case_id = nbi.cleanDataFrame(df_case_id)
      
-    df = pd.read_csv(nbi_path, low_memory = False)
+    df = pd.read_csv(nbi_text_file, low_memory = False)
     #df_case_id = preProcess(case_id_path)
 
     df = nbi.renameDataColumns(df)
     df = nbi.dropIgnoredColumns(df)
     df = nbi.renameStateCodes(df)
     
+    df['id'] = ['']*len(df['8: Structure Number'])
     df['8: Structure Number'] = df['8: Structure Number'].str.strip().map(str)
     df['6A: Features Intersected'] = df['6A: Features Intersected'].str.strip("'").str.strip()
     df['7: Facility Carried By Structure'] = df['7: Facility Carried By Structure'].str.strip("'").str.strip()
@@ -630,29 +636,33 @@ def main():
 
     df['Year'] = year_of_survey
     
-    
     df = nbi.createMaterialColumn(df)
     df = nbi.createConstructionTypeColumn(df)
     
     # OUTPUT
-    df.to_csv("processed NBI spreadsheet.csv", index = False)
+    #df.to_csv("processed NBI spreadsheet.csv", index = False)
 
     df = nbi.renameCols(df)
     df = nbi.rearrangeCols(df)
     
     # OUTPUT
-    df.to_csv("transformed NBI spreadsheet.csv", index = False)
+    # df.to_csv("transformed NBI spreadsheet.csv", index = False)
+    df.to_csv('NBI2018_no_ids.csv', index=False)
 
+    
     # Need to insert two more extras headers as there is in original header -> Find new cases
     df_new_cases, df_exportable  = nbi.findNewCases(df, df_case_id)
     
-    # OUTPUT
+    # OUTPUT (NEED TO MODIFY) 
     df_exportable.to_csv("Case Information_new - 131.csv", index=False)
     
-    # Open the case information_new csv file and insert the first - four lines 
+
+    # Open the case information_new csv file and insert the first - four lines (NEED TO MODIFY)
+    template_file = 'CasesTemplate.csv'
     insertHeader("Case Information_new - 131.csv", "Case Information_mod - 131.csv", headers)
     
-    #OUTPUT
+    #OUTPUT (NEED TO MODIFY) -> Creates final ouput 
+    final_output =  'Cases2018_no_ids.csv'
     df_new_cases.to_csv("Case Information_All - 131.csv", index=False)
 
 if __name__ == '__main__':
