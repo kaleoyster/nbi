@@ -364,28 +364,52 @@ class Data():
                     if letter !='"':
                         string_no_processing = string_no_processing + letter
                 list_of_words = words.split(",")
+                list_of_words.append('Akshay Kale')  
                 data.append(list_of_words)
-
-        df_case_id = pd.DataFrame(data, columns = column_names)
         
+        df_case_id = pd.DataFrame(data, columns = column_names)
+        #df_case_id = column_names
+
         # Export the dont_remove_line, date_format, add_remove_message
         export_lines = [dont_remove_line, date_format, add_remove_message]
 
         return df_case_id, export_lines, headers
     
+    def replaceCharacter(df_case_id, replace_string, field):
+        rows = []
+        for row in df_case_id[field]:
+            if row != None:
+                rows.append(row[:-1].replace(string))               
+        return rows
+
     def cleanDataFrame(self, df_case_id):
         """Returns a pandas Dataframe that contains the corrected strings and column names"""
         
         df_case_id.columns = ['id', 'Case Name', 'Case ID', 'Description', 'Keywords', 
                               'Source', 'Start Date', 'End Date', 'Latitude', 'Longitude',  
                               'Technical Lead', 'Compiled By']
-
+        
+        fields = ['Source', 'Case Name', 'Description', 'Keywords', 'Technical Lead']
+        
+        def replaceCharacter(df_case_id,  field):
+            rows = []
+            for row in df_case_id[field]:
+                if row != None:
+                    rows.append(row[:-1].replace("+", ","))
+                else:
+                    rows.append(None)
+            return rows
+ 
+        for field in fields:
+            df_case_id[field] = replaceCharacter(df_case_id, field)
+        
+        """
         df_case_id['Source'] = [row[:-1].replace("+", ",") for row in df_case_id['Source']]
         df_case_id['Case Name'] = [row[:-1].replace("+", ",") for row in df_case_id['Case Name']]
         df_case_id['Description'] = [row[:-1].replace("+", ",") for row in df_case_id['Description']]
         df_case_id['Keywords'] = [row[:-1].replace("+", ",") for row in df_case_id['Keywords']]
         df_case_id['Technical Lead'] =[row[:-1].replace("+", ",") for row in df_case_id['Technical Lead']]
-        
+        """
         return df_case_id
 
 # Next steps:
@@ -596,8 +620,9 @@ def main():
 
     
     # Set path of the Case Information
-    case_id_path = "Case Information - 131.csv" 
-    #case_id_path = case1992_20XX
+    #case_id_path = "Case Information - 131.csv" 
+   
+    case_id_path = case1992_20XX
 
     # Set path of the NBI Inspections Data
     # replace this file with NB2018_no_id 
@@ -611,10 +636,21 @@ def main():
 
     #################################################################
     df_case_id, export_lines, headers = nbi.preProcessCaseInfo(case_id_path)
+    #df_case_id, export_lines, headers = nbi.preProcessCaseInfo(case1992_20XX)
+    # DEBUG
+    #print("size of the columns 1: ", len(df_case_id))
+    #print("size of the columns 2: ", len(df_case_id_1))
+
+    #print("Size of the data1: ", np.shape(data1))
+    #print("Size of the data2: ", np.shape(data2))
+    
+    #print(data1[0], file=open("data1.txt", "a"))
+    #print(data2[0], file=open("data2.txt", "a"))
+
     df_case_id = nbi.cleanDataFrame(df_case_id)
-     
+    print(df_case_id)
+    #--------------------- Clean ----------------#
     df = pd.read_csv(nbi_text_file, low_memory = False)
-    #df_case_id = preProcess(case_id_path)
 
     df = nbi.renameDataColumns(df)
     df = nbi.dropIgnoredColumns(df)
@@ -656,7 +692,6 @@ def main():
     # OUTPUT (NEED TO MODIFY) 
     df_exportable.to_csv("Case Information_new - 131.csv", index=False)
     
-
     # Open the case information_new csv file and insert the first - four lines (NEED TO MODIFY)
     template_file = 'CasesTemplate.csv'
     insertHeader("Case Information_new - 131.csv", "Case Information_mod - 131.csv", headers)
