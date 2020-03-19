@@ -623,17 +623,10 @@ def insertHeader(inputFileName, outputFileName, template):
 
   
 def main():
-
-    #list_of_agrs = [arg for arg for sys.argv]
-    #codename, cases-template, cases1992-20XX, nbifile, name, year = list_of_agrs 
+    list_of_agrs = [arg for arg in sys.argv]
+    codename, cases_template, case_id_path, nbi_text_file, compiled_by, year_of_survey = list_of_agrs 
     nbi = Data()
-    nbi_text_file = "NBI_text_file.csv" # replace with NBI_text_file
-    cases_template =  "CasesTemplate.csv"
-    case1992_20XX  =  "Cases1992-2017.csv"
-    case_id_path = case1992_20XX
 
-    year_of_survey = 2018
-    compiled_by = "Akshay Kale"     
     df_case_id, export_lines, headers = nbi.preProcessCaseInfo(case_id_path, compiled_by)
     
     df_case_id = nbi.cleanDataFrame(df_case_id)
@@ -662,14 +655,11 @@ def main():
     df = nbi.createMaterialColumn(df)
     df = nbi.createConstructionTypeColumn(df)
     
-    # OUTPUT
-    #df.to_csv("processed NBI spreadsheet.csv", index = False)
 
     df = nbi.renameCols(df)
     df = nbi.rearrangeCols(df)
     
     # OUTPUT
-    # df.to_csv("transformed NBI spreadsheet.csv", index = False)
     df.to_csv('NBI2018_no_ids.csv', index=False)
 
     df_new_cases, df_exportable  = nbi.findNewCases(df, df_case_id, compiled_by)
