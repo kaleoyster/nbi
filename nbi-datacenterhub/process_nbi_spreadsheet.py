@@ -1,5 +1,4 @@
-""" Provides operations for processing National Bridge Inventory (NBI) inspection record.
-"""
+""" Provides operations for processing National Bridge Inventory (NBI) inspection record."""
 import csv
 import pandas as pd
 import numpy as np
@@ -17,8 +16,7 @@ __email__ = "akale@unomaha.edu"
 
 class Data():
     def __init__(self):
-        """ Returns a new data object 
-        """
+        """ Returns a new data object """
         self.url = None
         self.state = None
         self.year = None
@@ -323,7 +321,7 @@ class Data():
         df = df.rename(columns=self.RENAMECOLS)
         return df
 
-    def preProcessCaseInfo(self, case_id_path):
+    def preProcessCaseInfo(self, case_id_path, compiled_by):
         """Returns a pandas dataframe after the case_id_path (csv file) preprocessing"""
         
         # preprocessing the data
@@ -339,7 +337,6 @@ class Data():
             column_names = [col.strip("\n") for col in column_names]
             
             data = []
-            
             for line in lines[4:]:
                 stack = []
                 string = ''
@@ -360,17 +357,13 @@ class Data():
                             stack.pop()
                     if len(stack) !=  0:
                         string = string + letter
-                    #string_no_processing = string_no_processing + letter
                     if letter !='"':
                         string_no_processing = string_no_processing + letter
                 list_of_words = words.split(",")
-                list_of_words.append('Akshay Kale')  
+                list_of_words.append(compiled_by)  
                 data.append(list_of_words)
         
         df_case_id = pd.DataFrame(data, columns = column_names)
-        #df_case_id = column_names
-
-        # Export the dont_remove_line, date_format, add_remove_message
         export_lines = [dont_remove_line, date_format, add_remove_message]
 
         return df_case_id, export_lines, headers
@@ -403,19 +396,8 @@ class Data():
         for field in fields:
             df_case_id[field] = replaceCharacter(df_case_id, field)
         
-        """
-        df_case_id['Source'] = [row[:-1].replace("+", ",") for row in df_case_id['Source']]
-        df_case_id['Case Name'] = [row[:-1].replace("+", ",") for row in df_case_id['Case Name']]
-        df_case_id['Description'] = [row[:-1].replace("+", ",") for row in df_case_id['Description']]
-        df_case_id['Keywords'] = [row[:-1].replace("+", ",") for row in df_case_id['Keywords']]
-        df_case_id['Technical Lead'] =[row[:-1].replace("+", ",") for row in df_case_id['Technical Lead']]
-        """
         return df_case_id
 
-# Next steps:
-# 1. Compare the case ids
-# 2. Extract Source, keywords (structure type), start date, end date, latitude, longitude, Technical lead, Compiled
-# 3. Create a new files of the case id uploads
 
     def findNewCases(self, df, df_case_id, compiled_by):
         """ Returns a pandas dataframe with new case id found from the previous year""" 
@@ -433,7 +415,6 @@ class Data():
         description = "The National Bridge Inventory (NBI) for Nebraska contains information including geographic location, condition ratings for the superstructure and substructure, load ratings, bridge dimensions, average daily truck traffic, and sufficiency rating."
         source = "Bureau of Reclamation"
         technical_lead = "Robin Gandhi, Chungwook Sim"
-        #compiled_by = "Jonathan Monical"
        
         df_exportable_new_cases = pd.DataFrame([case_id])
         
@@ -586,14 +567,16 @@ class Data():
         df = df[rearrange]
         return df
         
-def insertHeader(inputFileName, outputFileName, headers):
+def insertHeader(inputFileName, outputFileName, template):
     """ Insert the first-four headers on in the final header"""
-    do_not_remove = headers[0]
-    main_header = headers[1]
-    date_format = headers[2]
-    warning = headers[3]
+    with open(template) as f:
+        lines = f.readlines()
+        do_not_remove = lines[0]
+        main_header = lines[1]
+        date_format = lines[2]
+        warning = lines[3] 
+        warning_line = [warning[:10], warning[10:]]
     
-    # Modify and add new columns
     with open(inputFileName, 'r') as inFile, open(outputFileName, 'w') as outFile:
         r = csv.reader(inFile)
         w = csv.writer(outFile)
@@ -601,7 +584,7 @@ def insertHeader(inputFileName, outputFileName, headers):
         w.writerow(["DO NOT REMOVE THIS LINE"])
         w.writerow(lines_reader[0].split(","))
         w.writerow(date_format.split(","))
-        w.writerow(warning.split(","))
+        w.writerow(warning_line)
        
         def change_state(current):
             if current == 'No concat':
@@ -616,7 +599,7 @@ def insertHeader(inputFileName, outputFileName, headers):
             last_letter = -1
             for word in row.split(","):
                 if len(word) != 0: 
-                    if  word[first_letter] == '"' or word[last_letter] == '"':
+                    if word[first_letter] == '"' or word[last_letter] == '"':
                         current = change_state(current)
                     if current == 'Concat' and len(string) == 0:
                         string = string + word
@@ -641,7 +624,6 @@ def insertHeader(inputFileName, outputFileName, headers):
   
 def main():
 
-    ########################## Argument management ###################
     #list_of_agrs = [arg for arg for sys.argv]
     #codename, cases-template, cases1992-20XX, nbifile, name, year = list_of_agrs 
     nbi = Data()
@@ -650,20 +632,10 @@ def main():
     case1992_20XX  =  "Cases1992-2017.csv"
     case_id_path = case1992_20XX
 
-    # Set path of the NBI Inspections Data
-    # replace this file with NB2018_no_id 
-
-    case_info_path = "NBI Inspections Data - 131.csv"
-
-    #Set year of the csv here
     year_of_survey = 2018
-
     compiled_by = "Akshay Kale"     
-
-    #################################################################
-    df_case_id, export_lines, headers = nbi.preProcessCaseInfo(case_id_path)
+    df_case_id, export_lines, headers = nbi.preProcessCaseInfo(case_id_path, compiled_by)
     
-
     df_case_id = nbi.cleanDataFrame(df_case_id)
     df = pd.read_csv(nbi_text_file, low_memory = False)
 
@@ -700,21 +672,16 @@ def main():
     # df.to_csv("transformed NBI spreadsheet.csv", index = False)
     df.to_csv('NBI2018_no_ids.csv', index=False)
 
-    #--------------------------------Modify----------------------# 
-    # Need to insert two more extras headers as there is in original header -> Find new cases
     df_new_cases, df_exportable  = nbi.findNewCases(df, df_case_id, compiled_by)
-    #print(df_exportable)
 
-    # OUTPUT (NEED TO MODIFY) 
+    # OUTPUT  
     df_exportable.to_csv("Case Information_new - 131.csv", index=False)
     
-    # Open the case information_new csv file and insert the first - four lines (NEED TO MODIFY)
     template_file = 'CasesTemplate.csv'
-    insertHeader("Case Information_new - 131.csv", "Case Information_mod - 131.csv", headers)
+     
+    # OUTPUTS cases1992-2017
+    insertHeader("Case Information_new - 131.csv", "Case1992-2017.csv", template_file) 
     
-    #OUTPUT (NEED TO MODIFY) -> Creates final ouput 
-    final_output =  'Cases2018_no_ids.csv'
-    #df_new_cases.to_csv("Case Information_All - 131.csv", index=False)
 
 if __name__ == '__main__':
     main()
