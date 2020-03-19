@@ -680,7 +680,7 @@ def main():
     template_file = 'CasesTemplate.csv'
      
     # OUTPUTS cases1992-2017
-    insertHeader("Case Information_new - 131.csv", "Case1992-2017.csv", template_file) 
+    insertHeader("Case Information_new - 131.csv", "Cases2018_no_ids.csv", template_file) 
     
 
 if __name__ == '__main__':
