@@ -417,7 +417,7 @@ class Data():
 # 2. Extract Source, keywords (structure type), start date, end date, latitude, longitude, Technical lead, Compiled
 # 3. Create a new files of the case id uploads
 
-    def findNewCases(self, df, df_case_id):
+    def findNewCases(self, df, df_case_id, compiled_by):
         """ Returns a pandas dataframe with new case id found from the previous year""" 
         new_cases_df  = df[~df['Case Id'].isin(df_case_id['Case ID'])]
         
@@ -433,7 +433,7 @@ class Data():
         description = "The National Bridge Inventory (NBI) for Nebraska contains information including geographic location, condition ratings for the superstructure and substructure, load ratings, bridge dimensions, average daily truck traffic, and sufficiency rating."
         source = "Bureau of Reclamation"
         technical_lead = "Robin Gandhi, Chungwook Sim"
-        compiled_by = "Jonathan Monical"
+        #compiled_by = "Jonathan Monical"
        
         df_exportable_new_cases = pd.DataFrame([case_id])
         
@@ -592,8 +592,8 @@ def insertHeader(inputFileName, outputFileName, headers):
     main_header = headers[1]
     date_format = headers[2]
     warning = headers[3]
-
-   # Modify and add new columns
+    
+    # Modify and add new columns
     with open(inputFileName, 'r') as inFile, open(outputFileName, 'w') as outFile:
         r = csv.reader(inFile)
         w = csv.writer(outFile)
@@ -602,8 +602,39 @@ def insertHeader(inputFileName, outputFileName, headers):
         w.writerow(lines_reader[0].split(","))
         w.writerow(date_format.split(","))
         w.writerow(warning.split(","))
+       
+        def change_state(current):
+            if current == 'No concat':
+                return 'Concat'
+            return 'No concat'
+
+        def custom_split(row):
+            current = 'No concat'
+            words = []
+            string = ''
+            first_letter = 0
+            last_letter = -1
+            for word in row.split(","):
+                if len(word) != 0: 
+                    if  word[first_letter] == '"' or word[last_letter] == '"':
+                        current = change_state(current)
+                    if current == 'Concat' and len(string) == 0:
+                        string = string + word
+                    elif current == 'Concat' and len(string) != 0:
+                        string = string + ',' + word
+                    elif current == 'No concat' and len(string) != 0:
+                        string = string + ',' + word
+                        words.append(string)
+                        string = ''
+                    else:
+                        words.append(word)
+                else:
+                    words.append(word.rstrip())
+            return words 
+            
         for row in lines_reader[1:]:
-            write_row = row.split(",")
+            write_row = custom_split(row)
+            write_row = [word.rstrip() for word in write_row]
             w.writerow(write_row)
         
 
@@ -617,11 +648,6 @@ def main():
     nbi_text_file = "NBI_text_file.csv" # replace with NBI_text_file
     cases_template =  "CasesTemplate.csv"
     case1992_20XX  =  "Cases1992-2017.csv"
-
-    
-    # Set path of the Case Information
-    #case_id_path = "Case Information - 131.csv" 
-   
     case_id_path = case1992_20XX
 
     # Set path of the NBI Inspections Data
@@ -632,24 +658,13 @@ def main():
     #Set year of the csv here
     year_of_survey = 2018
 
-     
+    compiled_by = "Akshay Kale"     
 
     #################################################################
     df_case_id, export_lines, headers = nbi.preProcessCaseInfo(case_id_path)
-    #df_case_id, export_lines, headers = nbi.preProcessCaseInfo(case1992_20XX)
-    # DEBUG
-    #print("size of the columns 1: ", len(df_case_id))
-    #print("size of the columns 2: ", len(df_case_id_1))
-
-    #print("Size of the data1: ", np.shape(data1))
-    #print("Size of the data2: ", np.shape(data2))
     
-    #print(data1[0], file=open("data1.txt", "a"))
-    #print(data2[0], file=open("data2.txt", "a"))
 
     df_case_id = nbi.cleanDataFrame(df_case_id)
-    print(df_case_id)
-    #--------------------- Clean ----------------#
     df = pd.read_csv(nbi_text_file, low_memory = False)
 
     df = nbi.renameDataColumns(df)
@@ -685,10 +700,11 @@ def main():
     # df.to_csv("transformed NBI spreadsheet.csv", index = False)
     df.to_csv('NBI2018_no_ids.csv', index=False)
 
-    
+    #--------------------------------Modify----------------------# 
     # Need to insert two more extras headers as there is in original header -> Find new cases
-    df_new_cases, df_exportable  = nbi.findNewCases(df, df_case_id)
-    
+    df_new_cases, df_exportable  = nbi.findNewCases(df, df_case_id, compiled_by)
+    #print(df_exportable)
+
     # OUTPUT (NEED TO MODIFY) 
     df_exportable.to_csv("Case Information_new - 131.csv", index=False)
     
@@ -698,7 +714,7 @@ def main():
     
     #OUTPUT (NEED TO MODIFY) -> Creates final ouput 
     final_output =  'Cases2018_no_ids.csv'
-    df_new_cases.to_csv("Case Information_All - 131.csv", index=False)
+    #df_new_cases.to_csv("Case Information_All - 131.csv", index=False)
 
 if __name__ == '__main__':
     main()
