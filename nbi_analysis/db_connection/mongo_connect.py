@@ -1,5 +1,5 @@
 """Contains functions to connect to Mongo"""
-import pymongo import MongoClient
+from  pymongo import MongoClient
 
 __author__ = "Akshay Kale"
 __copyright__ = "GPL"
@@ -13,8 +13,8 @@ def connect_to_mongo_nbi(collection_name, connection_string):
         
         Returns: (string) collection """
 
-        Client = MongoClient(connection_sting)
-        database = Client.nbi
-        return database[collection_name]
+    Client = MongoClient(connection_sting)
+    database = Client.nbi
+    return database[collection_name]
 
     
