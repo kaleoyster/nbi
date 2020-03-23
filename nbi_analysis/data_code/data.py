@@ -12,7 +12,12 @@ __email__ = 'akale@unomaha.edu'
 class DataChef:
     """ Contains function that operate on list, dictionary, dataframe, and series """
     def __init__(self):
-        pass
+        #maintains paths name 
+        #self.PATH
+        #self.PATH1
+        #self.PATH2
+        #self.maintains filename
+        #
 
     def get_values(self, keys, dictionary):
         """ Return a list of values for a given key """
@@ -139,6 +144,21 @@ class DataChef:
             else:
                 class_of_bridges_adtt.append('IDK')
         return class_of_bridges_adtt
+    
+    def make_filename():
+        pass
+
+    def get_path():
+        # return snow path
+        # return feeze path
+        # return nbi path
+        # return sample path
+        # return 
+
+    def sampler(self, dataframe, sample=50):
+        pass
+
+
 
         
 
