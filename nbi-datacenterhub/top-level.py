@@ -4,12 +4,16 @@ import os
 import numpy as np
 from collections import OrderedDict
 
-# Reading the Inspection data files
+# TODO
+## 1. Create mapping of input-files and output-files
+## 2. Create a new function generate a columns list according to the current years
+## 3. Remove deadcode 
 
-# INPUT
+# Reading the Inspection data files
+# INPUT : NBI2019_no_ids.csv
 df = pd.read_csv("NBI Inspections Data - 131.csv", low_memory = True, index_col = False)
 
-# INPUT
+# INPUT : Cases1992-2019.csv
 df_new_cases = pd.read_csv("transformed NBI spreadsheet.csv", low_memory = False)
 
 # Dropping columns
@@ -53,7 +57,8 @@ substructure =  df_new_cases['Sub']
 sub_og = df['Substructure']
 
 # creating new dataframe for transformed NBI spreadsheet
-#df_top_level = pd.DataFrame({'Case Id.27': case_id,                                                                  '2018': year,
+#df_top_level = pd.DataFrame({'Case Id.27': case_id,
+#                             '2018': year,
 #                             'Latitude': latitude,
 #                             'Longitude': longitude,
 #                             'Year Built': year_built, 
@@ -277,7 +282,9 @@ df['Deck.26'] = update_deck.map(condition_rating_dict)
 df['Superstructure.26'] = update_super.map(condition_rating_dict)
 df['Substructure.26'] = update_sub.map(condition_rating_dict)
 
-# rearrange column
+# rearrange column 
+# TODO 
+    # Write a script to create a a list of columns
 columns = ['Case Id', 'Latitude', 'Longitude', 'Year Built', 'Material',
            'Construction Type', 'ADT', 'ADTT', 'Deck', 'Superstructure', 'Substructure',
            '1992', 'ADT.1','ADTT.1', 'Deck.1', 'Superstructure.1', 'Substructure.1',
@@ -329,7 +336,6 @@ outputFileName = "NBI Inspections Data - 131_modified.csv"
 # Extract header/column name
 with open(headerFileName, 'r') as headerfile:
     headers = headerfile.readlines()[0]
-
 
 # Modify and add new columns
 with open(inputFileName, 'r') as inFile, open(outputFileName, 'w', newline ='') as outFile:
