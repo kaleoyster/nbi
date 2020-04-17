@@ -1,3 +1,4 @@
+import pdb
 import pandas as pd
 import csv
 import os
@@ -6,28 +7,35 @@ from collections import OrderedDict
 
 # TODO
 ## 1. Create mapping of input-files and output-files
+##          1. TopLevel1992-2018_no2018data :  TopLevel data should look like
+##          2. NBI2018_no_ids : this is the nbi data
+##          3. Cases1992_2018 : this is the file of all bridges from 1992 to 2018
+##
 ## 2. Create a new function generate a columns list according to the current years
 ## 3. Remove deadcode 
 
+# The idea was to use the new cases and then add into top level file in their format.
+
 # Reading the Inspection data files
-# INPUT : NBI2019_no_ids.csv
-df = pd.read_csv("NBI Inspections Data - 131.csv", low_memory = True, index_col = False)
+# INPUT : Cases1992-2018.csv
+df = pd.read_csv("Cases1992-2018.csv", skiprows=[0, 2, 3])
 
-# INPUT : Cases1992-2019.csv
-df_new_cases = pd.read_csv("transformed NBI spreadsheet.csv", low_memory = False)
+# INPUT : NBI2018_no_ids.csv    
+df_new_cases = pd.read_csv("NBI2018_no_ids.csv", low_memory = False)
 
+# Remove hardcoding
 # Dropping columns
-df = df.drop(['2018', '2019'], axis = 1)
+#df = df.drop(['2018', '2019'], axis = 1)
 
+print(df.head())
 # Creating columns from the transformed NBI spreadsheet
 case_id = df_new_cases['Case Id'].astype(str)
-case_id_og = df['Case Id'].astype(str)
-
+case_id_og = df['Case ID'].astype(str)
+#-------------------------------- Break Point-------------------------#
 year = ''*len(df_new_cases['Case Id'])
 
 latitude = df_new_cases['Latitude']
 latitude_og = df['Latitude']
-
 
 longitude = df_new_cases['Longitude']
 longitude_og = df['Longitude']
@@ -179,7 +187,6 @@ for key, value in _id_adtt_og_dict.items():
 
 update_adtt = df['Case Id'].map(_id_adtt_og_dict) 
 
-
 ## Deck
 # Create dictionary of deck with respect to the case id
 _id_dec_dict =  {_id: dec for _id, dec in zip(case_id, deck)}
@@ -316,6 +323,21 @@ columns = ['Case Id', 'Latitude', 'Longitude', 'Year Built', 'Material',
            '2018' 
            ]
 
+base_headers = ['Case Id', 'Latitude', 'Longitude', 'Year Built', 'Material', 'Construction Type', 'ADT', 'ADTT', 'Deck', 'Superstructure', 'Substructure']
+
+def create_colnames(year):
+    repeat_headers = ['ADT', 'ADTT', 'Deck',
+            'Superstructure', 'Substructure']
+    
+    headers = []
+    for index, yr in enumerate(range(1992, year+1)):
+        attr_cols = repeat_headers
+        temp_cols = [attr + '.' + str(index+1) for attr in attr_cols]
+        headers = headers + [str(yr)] + temp_cols
+    return headers
+
+
+columns = create_colnames(year)
 # Arranging df columns
 df = df[columns]
 df = df[1:]
@@ -324,6 +346,7 @@ df = df[1:]
 # Saving df_top_file
 df.to_csv("new_top_file.csv", index=False)
 
+# INPUT (TODO)
 # Use the newly saved and modified new_top_file as input
 inputFileName = "new_top_file.csv"
 
