@@ -1,0 +1,74 @@
+import pandas as pd
+import csv
+import os
+import numpy as np
+from collections import OrderedDict
+
+# The new procedure updates the previous
+df_cases = pd.read_csv("Cases1992-2018.csv", skiprows=[0, 2, 3])
+df_top_level = pd.read_csv("TopLevel1992-2018_no2018data.csv")
+df_nbi = pd.read_csv("NBI2018_no_ids.csv")
+
+# Find the new cases
+# To find new cases that have to updated at Top level files,
+# I perform a set operation in which cases of top level's - cases from cases 1992-2018
+set_cases_top = set(df_top_level['Case Id'])
+set_cases_nbi = set(df_nbi['Case Id']) 
+set_cases_cases = set(df_cases['Case ID'])
+
+# Find new cases
+new_cases = set_cases_cases - set_cases_top
+
+# Check if the cases exist in the nbi files
+if new_cases in set_cases_nbi:
+    print(True)
+else:
+    print(False)
+for case in new_cases:
+    #print(df_nbi[df_nbi['Case Id'] == case ])
+    print(case)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#print(df_cases[df_cases['Case ID'] == '20701000003001'])
+#print(df_top_level[df_top_level['Case Id'] == '20701000003001'])
+# Update 
+#print(df_top_level['Case Name'].head())
+
+# Case Name
+# Case id
+# Latitude
+# Longitude
+# Year Built
+# Material
+# Construction
+# ADT
+# ADTT
+# Deck
+# Superstructure
+# Substructure
+
+#print(df_cases.head())
+#print(df_top_level.head())
+#print(df_nbi.head())
+
+

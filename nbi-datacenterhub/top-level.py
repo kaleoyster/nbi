@@ -5,37 +5,20 @@ import os
 import numpy as np
 from collections import OrderedDict
 
-# TODO
-## 1. Create mapping of input-files and output-files
-##          1. TopLevel1992-2018_no2018data :  TopLevel data should look like
-##          2. NBI2018_no_ids : this is the nbi data
-##          3. Cases1992_2018 : this is the file of all bridges from 1992 to 2018
-##
-## 2. Create a new function generate a columns list according to the current years
-## 3. Remove deadcode 
-
-# The idea was to use the new cases and then add into top level file in their format.
-
-# Reading the Inspection data files
-# INPUT : Cases1992-2018.csv
 df = pd.read_csv("Cases1992-2018.csv", skiprows=[0, 2, 3])
 
 # INPUT : NBI2018_no_ids.csv    
 df_new_cases = pd.read_csv("NBI2018_no_ids.csv", low_memory = False)
 
-# Remove hardcoding
-# Dropping columns
-#df = df.drop(['2018', '2019'], axis = 1)
-
 print(df.head())
 # Creating columns from the transformed NBI spreadsheet
 case_id = df_new_cases['Case Id'].astype(str)
 case_id_og = df['Case ID'].astype(str)
-#-------------------------------- Break Point-------------------------#
+
 year = ''*len(df_new_cases['Case Id'])
 
-latitude = df_new_cases['Latitude']
-latitude_og = df['Latitude']
+latitude = df_new_cases['Latitude'] # This should come from the df_new_cases. 
+latitude_og = df['Latitude'] 
 
 longitude = df_new_cases['Longitude']
 longitude_og = df['Longitude']
@@ -64,27 +47,10 @@ sup_og = df['Superstructure']
 substructure =  df_new_cases['Sub']
 sub_og = df['Substructure']
 
-# creating new dataframe for transformed NBI spreadsheet
-#df_top_level = pd.DataFrame({'Case Id.27': case_id,
-#                             '2018': year,
-#                             'Latitude': latitude,
-#                             'Longitude': longitude,
-#                             'Year Built': year_built, 
-#                             'Material': material,
-#                             'Construction Type': construction,
-#                             'ADT.27': ADT,
-#                             'ADTT.27': ADTT,
-#                             'Deck.27': deck,
-#                             'Superstructure.27': superstructure,
-#                             'Substructure.27': substructure,
-#                             })
-#
-
 # Add new case Id at the bottom the top-level df
 new_bridges = list(set(case_id) - set(df['Case Id']))
 new_bridge = pd.DataFrame({'Case Id': new_bridges})
 df = df.append(new_bridge, ignore_index=True)
-
 
 ## Longitude
 # Create dictionary Longitude with respect to the case id
@@ -114,7 +80,6 @@ for key, value in _id_lati_og_dict.items():
 
 update_latitude = df['Case Id'].map(_id_lati_og_dict)
 
-
 ## Year Built
 # Create dictionary of year built with respect to the case id
 _id_year_dict =  {_id: year for _id, year in zip(case_id, year_built)}
@@ -142,7 +107,6 @@ for key, value in _id_mat_og_dict.items():
         _id_mat_og_dict[key] = _id_mat_dict[key]
 
 update_mat = df['Case Id'].map(_id_mat_og_dict) 
-
   
 ## Construction
 # Create dictionary of construction type with respect to the case id
@@ -322,7 +286,7 @@ columns = ['Case Id', 'Latitude', 'Longitude', 'Year Built', 'Material',
            '2017', 'ADT.26','ADTT.26', 'Deck.26', 'Superstructure.26', 'Substructure.26',
            '2018' 
            ]
-
+#  
 base_headers = ['Case Id', 'Latitude', 'Longitude', 'Year Built', 'Material', 'Construction Type', 'ADT', 'ADTT', 'Deck', 'Superstructure', 'Substructure']
 
 def create_colnames(year):
