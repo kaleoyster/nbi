@@ -281,7 +281,8 @@ def processFilesMongo(files):
                    Longitude, Latitude = convertLongLat(temp[20],temp[19])
                    cvc = countValidCoordinates(Longitude, Latitude, cvc, structureNumber, year, missingGeo)
                    try:
-                      x = nbiEncoder(temp,year, Longitude, Latitude) except IndexError as i:
+                      x = nbiEncoder(temp,year, Longitude, Latitude)
+                   except IndexError as i:
                       IndexErrorCount = IndexErrorCount + 1
                       print("IndexError: ", i)
                       continue
