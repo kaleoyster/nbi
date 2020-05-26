@@ -2,7 +2,7 @@
 import csv
 import pandas as pd
 import numpy as np
-import requests 
+import requests
 import io
 import time
 import datetime
@@ -191,7 +191,6 @@ class Data():
 
     def getData(self, url):
         """Returns a pandas dataframe by downloading the csvfile from url
-          
            url: A valid url to a csvfile
         """
         self.url = url
@@ -201,7 +200,7 @@ class Data():
 
     def renameDataColumns(self, df):
         """Renames the columns of the dataframe and returns the new dataframe
-           
+
            df: A pandas dataframe
 
            NOTE: df's column name will be changed according to the global variable NEW_NAMES_DICT
@@ -212,7 +211,7 @@ class Data():
 
     def dropIgnoredColumns(self, df):
         """drops columns of the dataframe specified by global variable COL_IGNORED and returns the dataframe
-           
+
            NOTE: df's column name will be changed according to the global variable COL_IGNORED
         """
         df = df.drop(self.COL_IGNORED, axis = 1)
@@ -220,9 +219,9 @@ class Data():
 
     def renameStateCodes(self, df):
         """Return pandas dataframe with renamed column '1: State Code' according to the global variable DATACENTER_CODES
-          
+
           df: A pandas dataframe
-          
+
           NOTE: df's column '1: State Code' will be changed according to the global variable DATACENTER_CODES
         """
         df['1: State Code'] = df['1: State Code'].map(self.DATACENTER_CODES)
@@ -230,7 +229,7 @@ class Data():
 
     def convertGeocoordinate(self, geocoordinate):
         """Returns pandas dataframe with converted geo-coordinates
-           
+
            geocoordinate: A valid longitude or longitude in the format: "XXX degrees XX minutes XX.XX seconds"
         """
         if len(geocoordinate) == 9 and geocoordinate[0] == '1':
@@ -242,14 +241,16 @@ class Data():
         else:
             result = int(geocoordinate[:2]) \
                     + (int(geocoordinate[2:4]) / 60) \
-                    + (int(geocoordinate[4:]) / 360000)    
+                    + (int(geocoordinate[4:]) / 360000)
             return result
-    
+
     def createCaseName(self, df):
         """Return a pandas dataframe with a new column Case Name, Case Name = 'df[column16] at df[column14] at df[column17]' """
-        
+        df['6A: Features Intersected'] = df['6A: Features Intersected'].apply(lambda x: " ".join(x.split()))
+        df['9: Location'] = df['9: Location'].apply(lambda x: " ".join(x.split()))
+        df['7: Facility Carried By Structure'] = df['7: Facility Carried By Structure'].apply(lambda x: " ".join(x.split()))
+
         df["Case Name"] = df[['7: Facility Carried By Structure', '6A: Features Intersected', '9: Location']].apply(lambda x: ' at '.join(x), axis = 1)
-        
         return df
 
     def createCaseId(self, df):
@@ -266,27 +267,27 @@ class Data():
 
     def createMaterialColumn(self, df):
         """Returns a pandas dataframe with a new column Material, Material = kind_of_material['43A: Kind of Material/Design'] """
-           
+
         kind_of_material = {
                             1:"Concrete",
                             2:"Concrete continuous",
                             3:"Steel",
                             4:"Steel continuous",
-                            5:"Prestressed concrete *",
-                            6:"Prestressed concrete continuous *",
+                            5:"Prestressed concrete",
+                            6:"Prestressed concrete continuous",
                             7:"Wood or Timber",
                             8:"Masonry",
                             9:"Aluminum, Wrought Iron, or Cast Iron",
                             0:"Other",
                        }
-    
+
         df['Material'] = df['43A: Kind of Material/Design'].map(kind_of_material)
 
         return df
 
     def createConstructionTypeColumn(self, df):
         """Returns a pandas dataframe with a new column Construction Type, ConstructionType = type_of_construction['43B: Type of Design/Construction'] """
-        
+
         type_of_construction = {
                                 1:"Slab",
                                 2:"Stringer/Multi-beam or Girder",
@@ -323,7 +324,7 @@ class Data():
 
     def preProcessCaseInfo(self, case_id_path, compiled_by):
         """Returns a pandas dataframe after the case_id_path (csv file) preprocessing"""
-        
+
         # preprocessing the data
         with open(case_id_path) as f:
             lines = f.readlines()
@@ -331,11 +332,11 @@ class Data():
             column_names = lines[1]
             date_format = lines[2]
             add_remove_message  = lines[3]
- 
+
             headers = [dont_remove_line, column_names, date_format, add_remove_message]
             column_names = lines[1].split(",")
             column_names = [col.strip("\n") for col in column_names]
-            
+
             data = []
             for line in lines[4:]:
                 stack = []
@@ -353,37 +354,37 @@ class Data():
                             string = string.replace(",", "+")
                             words = words + string.strip('"')
                             string = ''
-                            string_no_processing = '' 
+                            string_no_processing = ''
                             stack.pop()
                     if len(stack) !=  0:
                         string = string + letter
                     if letter !='"':
                         string_no_processing = string_no_processing + letter
                 list_of_words = words.split(",")
-                list_of_words.append(compiled_by)  
+                list_of_words.append(compiled_by)
                 data.append(list_of_words)
-        
+
         df_case_id = pd.DataFrame(data, columns = column_names)
         export_lines = [dont_remove_line, date_format, add_remove_message]
 
         return df_case_id, export_lines, headers
-    
+
     def replaceCharacter(df_case_id, replace_string, field):
         rows = []
         for row in df_case_id[field]:
             if row != None:
-                rows.append(row[:-1].replace(string))               
+                rows.append(row[:-1].replace(string))
         return rows
 
     def cleanDataFrame(self, df_case_id):
         """Returns a pandas Dataframe that contains the corrected strings and column names"""
-        
-        df_case_id.columns = ['id', 'Case Name', 'Case ID', 'Description', 'Keywords', 
-                              'Source', 'Start Date', 'End Date', 'Latitude', 'Longitude',  
+
+        df_case_id.columns = ['id', 'Case Name', 'Case ID', 'Description', 'Keywords',
+                              'Source', 'Start Date', 'End Date', 'Latitude', 'Longitude',
                               'Technical Lead', 'Compiled By']
-        
+
         fields = ['Source', 'Case Name', 'Description', 'Keywords', 'Technical Lead']
-        
+
         def replaceCharacter(df_case_id,  field):
             rows = []
             for row in df_case_id[field]:
@@ -392,50 +393,51 @@ class Data():
                 else:
                     rows.append(None)
             return rows
- 
+
         for field in fields:
             df_case_id[field] = replaceCharacter(df_case_id, field)
-        
+
         return df_case_id
 
 
     def findNewCases(self, df, df_case_id, compiled_by):
-        """ Returns a pandas dataframe with new case id found from the previous year""" 
+        """ Returns a pandas dataframe with new case id found from the previous year"""
         new_cases_df  = df[~df['Case Id'].isin(df_case_id['Case ID'])]
-        
+
         # Columns
         _id =''*len(new_cases_df)
         case_id = new_cases_df['Case Id'].astype(str)
+
+        # Case Name 
         case_name = new_cases_df['Case Name']
         start_date = ['01/01/'+str(year) for year in  new_cases_df['Built in']]
         end_date =  datetime.date.today().strftime("%m/%d/%Y")
-        keyword = new_cases_df['Material']+', '+new_cases_df['Construction Type'] 
+        keyword = new_cases_df['Material']+', '+new_cases_df['Construction Type']
         latitude = new_cases_df['Latitude']
         longitude = new_cases_df['Longitude']
         description = "The National Bridge Inventory (NBI) for Nebraska contains information including geographic location, condition ratings for the superstructure and substructure, load ratings, bridge dimensions, average daily truck traffic, and sufficiency rating."
         source = "Bureau of Reclamation"
         technical_lead = "Robin Gandhi, Chungwook Sim"
-       
+
         df_exportable_new_cases = pd.DataFrame([case_id])
-        
+
         # New exportable new cases, creating a new dataframe
-        df_exportable_new_cases = pd.DataFrame(OrderedDict({'id':_id, 
+        df_exportable_new_cases = pd.DataFrame(OrderedDict({'id':_id,
                                                            'Case Name': case_name,
                                                            'Case ID':case_id,
-                                                           'Description':description, 
-                                                           'Keywords': keyword, 
+                                                           'Description':description,
+                                                           'Keywords': keyword,
                                                            'Source': source,
-                                                           'Start Date': start_date, 
+                                                           'Start Date': start_date,
                                                            'End Date': end_date,
-                                                           'Latitude': latitude, 
+                                                           'Latitude': latitude,
                                                            'Longitude': longitude,
-                                                           'Technical Lead': technical_lead, 
+                                                           'Technical Lead': technical_lead,
                                                            'Compiled By': compiled_by}))
-         
         return  new_cases_df, df_exportable_new_cases
 
     def rearrangeCols(self, df):
-        
+
         rearrange = [   'id',
                         'Case Name',
                         'Case Id',
@@ -563,10 +565,9 @@ class Data():
                         'Federal Agency',
                         'SR'
             ]
-
         df = df[rearrange]
         return df
-        
+
 def insertHeader(inputFileName, outputFileName, template):
     """ Insert the first-four headers on in the final header"""
     with open(template) as f:
@@ -574,9 +575,9 @@ def insertHeader(inputFileName, outputFileName, template):
         do_not_remove = lines[0]
         main_header = lines[1]
         date_format = lines[2]
-        warning = lines[3] 
+        warning = lines[3]
         warning_line = [warning[:10], warning[10:]]
-    
+
     with open(inputFileName, 'r') as inFile, open(outputFileName, 'w') as outFile:
         r = csv.reader(inFile)
         w = csv.writer(outFile)
@@ -585,7 +586,7 @@ def insertHeader(inputFileName, outputFileName, template):
         w.writerow(lines_reader[0].split(","))
         w.writerow(date_format.split(","))
         w.writerow(warning_line)
-       
+
         def change_state(current):
             if current == 'No concat':
                 return 'Concat'
@@ -598,7 +599,7 @@ def insertHeader(inputFileName, outputFileName, template):
             first_letter = 0
             last_letter = -1
             for word in row.split(","):
-                if len(word) != 0: 
+                if len(word) != 0:
                     if word[first_letter] == '"' or word[last_letter] == '"':
                         current = change_state(current)
                     if current == 'Concat' and len(string) == 0:
@@ -613,29 +614,27 @@ def insertHeader(inputFileName, outputFileName, template):
                         words.append(word)
                 else:
                     words.append(word.rstrip())
-            return words 
-            
+            return words
+
         for row in lines_reader[1:]:
             write_row = custom_split(row)
             write_row = [word.rstrip() for word in write_row]
             w.writerow(write_row)
-        
 
-  
 def main():
     list_of_agrs = [arg for arg in sys.argv]
-    codename, cases_template, case_id_path, nbi_text_file, compiled_by, year_of_survey = list_of_agrs 
+    codename, cases_template, case_id_path, nbi_text_file, compiled_by, year_of_survey = list_of_agrs
     nbi = Data()
 
     df_case_id, export_lines, headers = nbi.preProcessCaseInfo(case_id_path, compiled_by)
-    
     df_case_id = nbi.cleanDataFrame(df_case_id)
     df = pd.read_csv(nbi_text_file, low_memory = False)
 
     df = nbi.renameDataColumns(df)
     df = nbi.dropIgnoredColumns(df)
     df = nbi.renameStateCodes(df)
-    
+
+    # Manipulation of the column names
     df['id'] = ['']*len(df['8: Structure Number'])
     df['8: Structure Number'] = df['8: Structure Number'].str.strip().map(str)
     df['6A: Features Intersected'] = df['6A: Features Intersected'].str.strip("'").str.strip()
@@ -646,32 +645,27 @@ def main():
     df['17: Longitude'] = [0 - coord for coord in df['17: Longitude']]
     df['39: Navigation Vertical Clearance'] = df['39: Navigation Vertical Clearance'] / 10
     df['40: Navigation Horizontal Clearance'] = df['40: Navigation Horizontal Clearance'] / 10
-    
     df = nbi.createCaseName(df)
     df = nbi.createCaseId(df)
 
     df['Year'] = year_of_survey
-    
     df = nbi.createMaterialColumn(df)
     df = nbi.createConstructionTypeColumn(df)
-    
 
     df = nbi.renameCols(df)
     df = nbi.rearrangeCols(df)
-    
+
     # OUTPUT
     df.to_csv('NBI2018_no_ids.csv', index=False)
-
     df_new_cases, df_exportable  = nbi.findNewCases(df, df_case_id, compiled_by)
+    # print 
 
     # OUTPUT  
     df_exportable.to_csv("Case Information_new - 131.csv", index=False)
-    
     template_file = 'CasesTemplate.csv'
-     
-    # OUTPUTS cases1992-2017
+
+    # OUTPUT cases1992-2017
     insertHeader("Case Information_new - 131.csv", "Cases2018_no_ids.csv", template_file) 
-    
 
 if __name__ == '__main__':
     main()

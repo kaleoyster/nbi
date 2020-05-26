@@ -1,4 +1,0 @@
-﻿DO NOT REMOVE THIS LINE
-id,"Case Name","Case ID",Description,Keywords,Source,"Start Date","End Date",Latitude,Longitude,"Technical Lead","Compiled By"
-,,,,,,mm/dd/yyyy,mm/dd/yyyy,,,,
-DATASTART,"Only add/remove/update data after this row. Do not change the id column for existing entries, leave the id column blank for new entries"
