@@ -49,7 +49,9 @@ years = [1992,
          2014,
          2015,
          2016,
-         2017
+         2017,
+         2018,
+         2019
        ]
 
 ###### SELECT STATES #######
@@ -164,9 +166,6 @@ def countValidCoordinates(Longitude, Latitude, cvc, structureNumber, year,missin
         print('year: %d, Structure Number: %s' % (year, structureNumber),file=missingGeo)
     return cvc
 
-
-
-
 def processFilesJSON(files): # GLOBAL
     directory = 'ValidationLog'
     crossValidationDirectory = 'CrossValidationLog'
@@ -187,7 +186,7 @@ def processFilesJSON(files): # GLOBAL
             crossValidation = open(os.path.join(crossValidationDirectory, crossValidationFileName),'w')
             fieldErrorCountArray = []
             size = 150
-            fieldErrorCountArray = initializeValidationArray(fieldErrorCountArray,size)
+            fieldErrorCountArray = initializeValidationArray(fieldErrorCountArray, size)
             cvc = 0
             RowCount = 0
             IndexErrorCount = 0
@@ -252,11 +251,11 @@ def processFilesMongo(files):
             headerRow = next(reader,None)
             validationFileName = f[:6] + 'validationLog.txt'
             crossValidationFileName = f[:6] + 'CrossValidationLog.txt'
-            validation = open(os.path.join(directory,validationFileName),'w')
-            crossValidation = open(os.path.join(crossValidationDirectory,crossValidationFileName),'w')
+            validation = open(os.path.join(directory, validationFileName),'w')
+            crossValidation = open(os.path.join(crossValidationDirectory, crossValidationFileName),'w')
             fieldErrorCountArray = []
             size = 150
-            fieldErrorCountArray = initializeValidationArray(fieldErrorCountArray,size)
+            fieldErrorCountArray = initializeValidationArray(fieldErrorCountArray, size)
             cvc = 0
             RowCount = 0
             IndexErrorCount = 0
@@ -270,8 +269,8 @@ def processFilesMongo(files):
                     r = r.strip(" ")
                     temp.append(r)
                 ErrorCheck = []
-                temp, ErrorCheck = validateNBIfields(temp, ErrorCheck, fieldErrorCountArray,validation,size,year)
-                crossCheckValidation(temp,crossValidation)
+                temp, ErrorCheck = validateNBIfields(temp, ErrorCheck, fieldErrorCountArray, validation, size, year)
+                crossCheckValidation(temp, crossValidation)
                 fieldSize = len(temp)
                 fieldSizeCount.append(fieldSize)
                 fieldErrorCountArray[fieldSize] = fieldErrorCountArray[fieldSize] + 1
@@ -280,17 +279,16 @@ def processFilesMongo(files):
                 else:
                    structureNumber = temp[1]
                    Longitude, Latitude = convertLongLat(temp[20],temp[19])
-                   cvc = countValidCoordinates(Longitude, Latitude, cvc,structureNumber,year,missingGeo)
+                   cvc = countValidCoordinates(Longitude, Latitude, cvc, structureNumber, year, missingGeo)
                    try:
-                      x = nbiEncoder(temp,year,Longitude,Latitude)
-                   except IndexError as i:
+                      x = nbiEncoder(temp,year, Longitude, Latitude) except IndexError as i:
                       IndexErrorCount = IndexErrorCount + 1
                       print("IndexError: ", i)
                       continue
                    myCollection.insert_one(json.loads(x))
             fieldSizeDict = {x: fieldSizeCount.count(x) for x in fieldSizeCount}
-            print("===================================",file = summary)
-            print('Year: %s, State: %s' %(year, state),file = summary)
+            print("===================================", file = summary)
+            print('Year: %s, State: %s' %(year, state), file = summary)
             print("Valid Coordinates:", RowCount - cvc, file = summary) #valid coordinates includes coordinates which have longitude latitude with in proper range.
             print("Invalid Coordinates:", cvc, file = summary) #Invalid coordinates includes coordinates which have value'0' or ' '
             print("Total Records:", RowCount, file = summary)
