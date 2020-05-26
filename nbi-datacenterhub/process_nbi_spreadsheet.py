@@ -188,7 +188,6 @@ class Data():
 
         self.DATACENTER_CODES = {31:317}
 
-
     def getData(self, url):
         """Returns a pandas dataframe by downloading the csvfile from url
            url: A valid url to a csvfile
@@ -324,7 +323,6 @@ class Data():
 
     def preProcessCaseInfo(self, case_id_path, compiled_by):
         """Returns a pandas dataframe after the case_id_path (csv file) preprocessing"""
-
         # preprocessing the data
         with open(case_id_path) as f:
             lines = f.readlines()
