@@ -1,4 +1,4 @@
-# National Bridge Inventory CSV to JSON Convertor
+# National Bridge Inventory CSV to JSON Converter
 
 ## About
 
@@ -7,13 +7,9 @@ National Bridge Inventory (NBI) represents bridge data submitted annually to FHW
 The Python script downloads CSV and zip file directly from the FHWA website. This features ensures that all transformations to the dataset are accounted for. 
 
 ## Addition information
-This repository contains two versions of CSV to JSON convertor
-1. `nbiCsvJsonConverter-1`
-2. `nbiCsvJsonConverter-2`
 
-The `nbiCsvJsonConverter-1` and `nbiCsvJsonConverter-2` will produce the same output, the only difference is the approach taken by each of these versions is different. The `nbiCsvJsonConverter-2` divides the task into two: Download and Conversion. Each of the subdivided tasks is run by separate scripts. The Conversion script also performs cross-check, item check, validations mentioned by [FHWA](https://www.fhwa.dot.gov/bridge/nbi/checks/), and populates JSON objects into MongoDB.
+ The `nbi-csv-json-converter` divides the task into two: Download and Conversion. Each of the subdivided tasks is run by separate scripts. The Conversion script also performs cross-check, item check, validations mentioned by [FHWA](https://www.fhwa.dot.gov/bridge/nbi/checks/), and populates JSON objects into MongoDB.
 
-**Recommended version is `nbiCsvJsonConverter-2`**
 
 ## Prerequisites libraries used by the scripts
 1. [io](https://docs.python.org/3.6/library/io.html)
@@ -28,20 +24,9 @@ The `nbiCsvJsonConverter-1` and `nbiCsvJsonConverter-2` will produce the same ou
 
 ## Steps
 
+###  `nbi-csv-json-converter`
 
-
-
-###  `nbiCsvJsonConverter-1`
-`nbiCsvJsonConverter-1` contains `NBIJsonFile` and `NBIMongo`.
-
-```bash
-
-python3 NbiCrawler.py
-
-```
-###  `nbiCsvJsonConverter-2`
-
-This crawler creates a local copy of NBI files. This prevents uncessary requests to the server during the processing stage.
+This crawler creates a local copy of NBI files. This prevents unnecessary requests to the server during the processing stage.
 `
 ```bash
 
@@ -72,7 +57,7 @@ ProcessMain.py, contains two global lists to configure the states and years for 
 states = ['NE']
 years = [1992,1993,1994,...]
 ```
-To connect to mongodb instance `dbConnect.txt` is required. you mayn create the file manually and add standard URI connection scheme given below:
+To connect to mongodb instance `dbConnect.txt` is required. you may create the file manually and add standard URI connection scheme given below:
 
 ```python
 mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
