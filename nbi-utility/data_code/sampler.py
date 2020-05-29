@@ -65,11 +65,7 @@ def main():
 
 def test():
     print(create_jsondump(19, 20))
-     
-
-
 
 if __name__=='__main__':
     #main()
     test()
-    

@@ -49,7 +49,7 @@ def extractXml(directory):
             zip_ref.close()
             os.remove(filename)
 
-def parseXml(directory):
+def parseXml(directory, structBsdDict):
     """
     Description:  Read and parses xml files
     Args:
@@ -61,10 +61,13 @@ def parseXml(directory):
     Record = namedtuple('Record', ['state', 'structure',
                                    'totalqty', 'elementNo',
                                    'cs1', 'cs2', 'cs3', 'c4'])
+    # TODO: Add score to the records
+    # TODO: Add year to the records
     records = list()
     for xmlfile in tqdm(os.listdir(directory), desc='Parsing XML'):
         if xmlfile.endswith('.xml'):
             os.chdir(directory)
+            #print(xmlfile)
             tree = ET.parse(xmlfile)
             root = tree.getroot()
             for element in root.findall('FHWAED'):
@@ -76,6 +79,8 @@ def parseXml(directory):
                 cs2 = element.find('CS2').text
                 cs3 = element.find('CS3').text
                 cs4 = element.find('CS4').text
+                score = structBsdDict[structure]
+                year = xmlfile[:4]
                 tempRecord = Record(state,
                                      structure,
                                      totalqty,
@@ -91,10 +96,11 @@ def getBSD(filename):
     """
     Description: Function to read NBI file
          and, extract structurenumber and baseline difference score
+
     Args:
         filename (string): Path of the xml files
     Returns:
-        structBsdDict (dictionary) : key (structure number)
+        structBsdDict (dictionary): key (structure number)
                                      value (baseline difference score)
     """
     with open(filename, 'r') as csvFile:
@@ -110,6 +116,7 @@ def getBSD(filename):
 def calcDictMean(structBsdDict):
     """
     Description: Calculates the mean of baseline difference scores
+
     Args:
         structuBsDict (dictionary): key (structure number)
                                     value (baseline difference score)
@@ -120,17 +127,45 @@ def calcDictMean(structBsdDict):
     structBsdMeanDict = {key:np.mean(val) for key, val in structBsdDict.items()}
     return structBsdMeanDict
 
+def getCategory(scores):
+    """
+    Description: Classifys brideges into good, bad, and average
+        standard deviation
+
+    Args:
+        scores (list): baseline difference score
+
+    Returns:
+        conditionCategory (list): baseline difference category
+    """
+    conditionCategory = list()
+    stdDevScore = np.std(scores)
+    meanScore = np.mean(score)
+
+    for score in tqdm(scores, desc='Computing Perf. Category'):
+        if score > (meanScore + stdDevScore):
+            conditionCategory.append('Good')
+        elif (meanScore - stdDevScore) >= score <= (meanScore + stdDevScore) :
+            conditionCategory.append('Average')
+        else:
+            conditionCategory.append('Bad')
+    return conditionCategory
+
 def main():
     directory ='/Users/AkshayKale/Documents/github/data/nbi/'
     directory_nbe ='/Users/AkshayKale/Documents/github/data/nbe/'
     csvFileName = '06-20-19-thesis-dataset_allstates_allstates.csv'
     filename = directory + csvFileName
 
-    elementDict = parseXml(directory_nbe)
     structBsdDict = getBSD(filename)
+    elementDict = parseXml(directory_nbe, structBsdDict)
     structBsdMeanDict = calcDictMean(structBsdDict)
 
     scores = structBsdMeanDict.values()
+    categories = getCategory(scores)
+    print(categories)
+
+    # TODO elementNo: 
     # Combine elementDict and structureBsdMeanDict
     # To split bridges that are doing good and bad
 
