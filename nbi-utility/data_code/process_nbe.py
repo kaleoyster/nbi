@@ -155,7 +155,7 @@ def getCategory(scores):
 
 def listOftupleToDict(tups):
     """
-    Description: Converts a list of named tuples into a list of dict 
+    Description: Converts a list of named tuples into a list of dict
 
     Args:
         elementList (list): A list of named tuples
@@ -190,7 +190,7 @@ def toCSV(elementList, path, filename):
     csvWriter.writerows(listOfDict)
     csvFile.close()
 
-def toJSON(elementList, path):
+def toJSON(elementList, path, filename):
     """
     Description: Converts named tuples into a JSON file
 
@@ -201,12 +201,11 @@ def toJSON(elementList, path):
     Returns:
         None
     """
-    filename = path + '2015-2019_nbe.json'
-
-    with open(filename) as csvFile:
-        csvWriter = csv.writer(csvFile, delimiter=',')
-        for row in csvFile:
-            print(row)
+    filename = '2015-2019_nbe.json'
+    os.chdir(path)
+    listOfDict = listOftupleToDict(elementList)
+    with open(filename, 'w') as jsonFile:
+        json.dump(filename, jsonFile)
 
 def main():
     directory ='/Users/AkshayKale/Documents/github/data/nbi/'
@@ -222,11 +221,9 @@ def main():
     categories = getCategory(scores)
     structCatDict = dict(zip(structNums, categories))
     elementList = parseXml(directory_nbe, structCatDict)
-    # Convert into CSV
-    print(toCSV(elementList, directory_nbe_pro, '2015-2019_nbe.csv'))
-    #print(elementList)
-    # CSV File
-    # Convert list of list into a csv file
+    print("Exporting files ...")
+    toCSV(elementList, directory_nbe_pro, '2015-2019_nbe.csv')
+    toJSON(elementList, directory_nbe_pro, '2015-2019_nbe.json')
 
 if __name__ == '__main__':
     main()
