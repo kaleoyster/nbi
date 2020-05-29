@@ -1,10 +1,14 @@
+"""
+The scripts provide functions to extract, read, and parse XML files.
+"""
+import os
 import csv
+from tqdm import tqdm
 import numpy as np
 from zipfile import ZipFile
 from collections import defaultdict
 from collections import namedtuple
 import xml.etree.ElementTree as ET
-import os
 
 __author__ = 'Akshay Kale'
 __copyright_ = 'GPL'
@@ -26,6 +30,25 @@ def readXml(zipFile):
     xml = arch.read(xmlfile)
     return xml
 
+def extractXml(directory):
+    """
+    Description: Extracts XML zip files
+    Args:
+        directory (string): Path of the xml files
+    Returns:
+        None
+    """
+    extension = ".zip"
+    for zfile in tqdm(os.listdir(directory), desc='Extracting XML'):
+        if zfile.endswith(extension):
+            os.chdir(directory)
+            filename = directory + '/' + zfile
+            filename = os.path.abspath(zfile)
+            zip_ref = ZipFile(filename)
+            zip_ref.extractall(directory)
+            zip_ref.close()
+            os.remove(filename)
+
 def parseXml(directory):
     """
     Description:  Read and parses xml files
@@ -34,12 +57,12 @@ def parseXml(directory):
     Returns:
         element_dictionary (dictionary)
     """
-    element_dictionary = defaultdict(list)
+    elementDictionary = defaultdict(list)
     Record = namedtuple('Record', ['state', 'structure',
                                    'totalqty', 'elementNo',
                                    'cs1', 'cs2', 'cs3', 'c4'])
     records = list()
-    for xmlfile in os.listdir(directory):
+    for xmlfile in tqdm(os.listdir(directory), desc='Parsing XML'):
         if xmlfile.endswith('.xml'):
             os.chdir(directory)
             tree = ET.parse(xmlfile)
@@ -53,7 +76,7 @@ def parseXml(directory):
                 cs2 = element.find('CS2').text
                 cs3 = element.find('CS3').text
                 cs4 = element.find('CS4').text
-                temp_record = Record(state,
+                tempRecord = Record(state,
                                      structure,
                                      totalqty,
                                      elementNo,
@@ -61,27 +84,8 @@ def parseXml(directory):
                                      cs2,
                                      cs3,
                                      cs4)
-                element_dictionary[structure] = temp_record
-    return element_dictionary
-
-def extractXml(directory):
-    """
-    Description: Extracts XML zip files
-    Args:
-        directory (string): Path of the xml files
-    Returns:
-        None
-    """
-    extension = ".zip"
-    for zfile in os.listdir(directory):
-        if zfile.endswith(extension):
-            os.chdir(directory)
-            filename = directory + '/' + zfile
-            filename = os.path.abspath(zfile)
-            zip_ref = ZipFile(filename)
-            zip_ref.extractall(directory)
-            zip_ref.close()
-            os.remove(filename)
+                elementDictionary[structure].append(tempRecord)
+    return elementDictionary
 
 def getBSD(filename):
     """
@@ -97,7 +101,7 @@ def getBSD(filename):
         csvReader = csv.reader(csvFile, delimiter=',')
         header = next(csvReader)
         structBsdDict = defaultdict(list)
-        for row in csvReader:
+        for row in tqdm(csvReader, desc='Extracting Score'):
             structureNumber = row[1][:-2]
             bsd = float(row[-2])
             structBsdDict[structureNumber].append(bsd)
@@ -118,11 +122,17 @@ def calcDictMean(structBsdDict):
 
 def main():
     directory ='/Users/AkshayKale/Documents/github/data/nbi/'
+    directory_nbe ='/Users/AkshayKale/Documents/github/data/nbe/'
     csvFileName = '06-20-19-thesis-dataset_allstates_allstates.csv'
     filename = directory + csvFileName
+
+    elementDict = parseXml(directory_nbe)
     structBsdDict = getBSD(filename)
     structBsdMeanDict = calcDictMean(structBsdDict)
-    print(structBsdMeanDict)
+
+    scores = structBsdMeanDict.values()
+    # Combine elementDict and structureBsdMeanDict
+    # To split bridges that are doing good and bad
 
 if __name__ == '__main__':
     main()
