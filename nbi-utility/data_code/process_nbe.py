@@ -3,6 +3,7 @@ The scripts provide functions to extract, read, and parse XML files.
 """
 import os
 import csv
+import json
 from tqdm import tqdm
 import numpy as np
 from zipfile import ZipFile
@@ -61,7 +62,7 @@ def parseXml(directory, structCatDict):
     records = list()
     Record = namedtuple('Record', ['year', 'state', 'structure',
                                    'totalQty', 'elementNo',
-                                   'cs1', 'cs2', 'cs3', 'c4',
+                                   'cs1', 'cs2', 'cs3', 'cs4',
                                    'perfCat'])
 
     for xmlfile in tqdm(os.listdir(directory), desc='Parsing XML files'):
@@ -152,9 +153,65 @@ def getCategory(scores):
             conditionCategory.append('Bad')
     return conditionCategory
 
+def listOftupleToDict(tups):
+    """
+    Description: Converts a list of named tuples into a list of dict 
+
+    Args:
+        elementList (list): A list of named tuples
+
+    Returns:
+        listOfDictionary (list)
+    """
+    listOfDictionary = [dict(tup._asdict()) for tup in tups]
+    return listOfDictionary
+
+def toCSV(elementList, path, filename):
+    """
+    Description: Converts named tuples into a csv file
+
+    Args:
+        elementList (list): A list of named tuples
+        path (string): path to save the csv file
+
+    Returns:
+        None
+    """
+    filename = '2015-2019_nbe.csv'
+    os.chdir(path)
+    listOfDict = listOftupleToDict(elementList)
+
+    csvFile = open(filename, 'w', newline='')
+    fields = ['year', 'state', 'structure', 'totalQty',
+              'elementNo', 'cs1', 'cs2', 'cs3', 'cs4',
+              'perfCat']
+    csvWriter = csv.DictWriter(csvFile, fieldnames=fields)
+    csvWriter.writeheader()
+    csvWriter.writerows(listOfDict)
+    csvFile.close()
+
+def toJSON(elementList, path):
+    """
+    Description: Converts named tuples into a JSON file
+
+    Args:
+        elementList (list): A list of named tuples
+        path (string): path to save the JSON file
+
+    Returns:
+        None
+    """
+    filename = path + '2015-2019_nbe.json'
+
+    with open(filename) as csvFile:
+        csvWriter = csv.writer(csvFile, delimiter=',')
+        for row in csvFile:
+            print(row)
+
 def main():
     directory ='/Users/AkshayKale/Documents/github/data/nbi/'
     directory_nbe ='/Users/AkshayKale/Documents/github/data/nbe/'
+    directory_nbe_pro ='/Users/AkshayKale/Documents/github/data/nbe_processed/'
     csvFileName = '06-20-19-thesis-dataset_allstates_allstates.csv'
     filename = directory + csvFileName
 
@@ -164,8 +221,11 @@ def main():
     scores = list(structBsdMeanDict.values())
     categories = getCategory(scores)
     structCatDict = dict(zip(structNums, categories))
-    elementDict = parseXml(directory_nbe, structCatDict)
-    #TODO: Convert the elementDict to list of list
+    elementList = parseXml(directory_nbe, structCatDict)
+    # Convert into CSV
+    print(toCSV(elementList, directory_nbe_pro, '2015-2019_nbe.csv'))
+    #print(elementList)
+    # CSV File
     # Convert list of list into a csv file
 
 if __name__ == '__main__':
