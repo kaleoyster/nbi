@@ -39,7 +39,7 @@ def extractXml(directory):
         None
     """
     extension = ".zip"
-    for zfile in tqdm(os.listdir(directory), desc='Extracting XML'):
+    for zfile in tqdm(os.listdir(directory), desc='Extracting XML files'):
         if zfile.endswith(extension):
             os.chdir(directory)
             filename = directory + '/' + zfile
@@ -49,48 +49,49 @@ def extractXml(directory):
             zip_ref.close()
             os.remove(filename)
 
-def parseXml(directory, structBsdDict):
+def parseXml(directory, structCatDict):
     """
     Description:  Read and parses xml files
     Args:
         directory (string): Path of the xml files
     Returns:
-        element_dictionary (dictionary)
+        elementList (List): A List of named tuples
     """
-    elementDictionary = defaultdict(list)
-    Record = namedtuple('Record', ['state', 'structure',
-                                   'totalqty', 'elementNo',
-                                   'cs1', 'cs2', 'cs3', 'c4'])
-    # TODO: Add score to the records
-    # TODO: Add year to the records
+    elementList = list()
     records = list()
-    for xmlfile in tqdm(os.listdir(directory), desc='Parsing XML'):
+    Record = namedtuple('Record', ['year', 'state', 'structure',
+                                   'totalQty', 'elementNo',
+                                   'cs1', 'cs2', 'cs3', 'c4',
+                                   'perfCat'])
+
+    for xmlfile in tqdm(os.listdir(directory), desc='Parsing XML files'):
         if xmlfile.endswith('.xml'):
             os.chdir(directory)
-            #print(xmlfile)
             tree = ET.parse(xmlfile)
             root = tree.getroot()
             for element in root.findall('FHWAED'):
+                year = xmlfile[:4]
                 state = element.find('STATE').text
                 structure = element.find('STRUCNUM').text
-                totalqty = element.find('TOTALQTY').text
+                totalQty = element.find('TOTALQTY').text
                 elementNo = element.find('EN').text
                 cs1 = element.find('CS1').text
                 cs2 = element.find('CS2').text
                 cs3 = element.find('CS3').text
                 cs4 = element.find('CS4').text
-                score = structBsdDict[structure]
-                year = xmlfile[:4]
-                tempRecord = Record(state,
+                perfCat = structCatDict.get(structure)
+                tempRecord = Record( year,
+                                     state,
                                      structure,
-                                     totalqty,
+                                     totalQty,
                                      elementNo,
                                      cs1,
                                      cs2,
                                      cs3,
-                                     cs4)
-                elementDictionary[structure].append(tempRecord)
-    return elementDictionary
+                                     cs4,
+                                     perfCat)
+                elementList.append(tempRecord)
+    return elementList
 
 def getBSD(filename):
     """
@@ -107,7 +108,7 @@ def getBSD(filename):
         csvReader = csv.reader(csvFile, delimiter=',')
         header = next(csvReader)
         structBsdDict = defaultdict(list)
-        for row in tqdm(csvReader, desc='Extracting Score'):
+        for row in tqdm(csvReader, desc='Extracting Bridge Score'):
             structureNumber = row[1][:-2]
             bsd = float(row[-2])
             structBsdDict[structureNumber].append(bsd)
@@ -140,9 +141,9 @@ def getCategory(scores):
     """
     conditionCategory = list()
     stdDevScore = np.std(scores)
-    meanScore = np.mean(score)
+    meanScore = np.mean(scores)
 
-    for score in tqdm(scores, desc='Computing Perf. Category'):
+    for score in tqdm(scores, desc='Computing Bridge Perf. Category'):
         if score > (meanScore + stdDevScore):
             conditionCategory.append('Good')
         elif (meanScore - stdDevScore) >= score <= (meanScore + stdDevScore) :
@@ -158,16 +159,14 @@ def main():
     filename = directory + csvFileName
 
     structBsdDict = getBSD(filename)
-    elementDict = parseXml(directory_nbe, structBsdDict)
     structBsdMeanDict = calcDictMean(structBsdDict)
-
-    scores = structBsdMeanDict.values()
+    structNums = list(structBsdDict.keys())
+    scores = list(structBsdMeanDict.values())
     categories = getCategory(scores)
-    print(categories)
-
-    # TODO elementNo: 
-    # Combine elementDict and structureBsdMeanDict
-    # To split bridges that are doing good and bad
+    structCatDict = dict(zip(structNums, categories))
+    elementDict = parseXml(directory_nbe, structCatDict)
+    #TODO: Convert the elementDict to list of list
+    # Convert list of list into a csv file
 
 if __name__ == '__main__':
     main()
