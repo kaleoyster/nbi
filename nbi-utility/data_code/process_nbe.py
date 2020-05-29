@@ -221,6 +221,7 @@ def main():
     categories = getCategory(scores)
     structCatDict = dict(zip(structNums, categories))
     elementList = parseXml(directory_nbe, structCatDict)
+
     print("Exporting files ...")
     toCSV(elementList, directory_nbe_pro, '2015-2019_nbe.csv')
     toJSON(elementList, directory_nbe_pro, '2015-2019_nbe.json')
