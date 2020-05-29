@@ -1,15 +1,24 @@
+import csv
+import numpy as np
 from zipfile import ZipFile
 from collections import defaultdict
 from collections import namedtuple
 import xml.etree.ElementTree as ET
 import os
 
+__author__ = 'Akshay Kale'
+__copyright_ = 'GPL'
+__credit__ =  []
+__email__ = 'akale@unomaha.edu'
+
 def readXml(zipFile):
     """
-    Description: function reads xml file from the zipfile,
+    Description: Function reads xml file from the zipfile,
     and returns a xml object.
-    args: zipfile (string)
-    returns: xml (xml file object)
+    Args:
+        zipfile (string)
+    Returns:
+        xml (xml file object)
     """
     arch = ZipFile(zipFile, 'r')
     zfile = zipFile[-22:]
@@ -17,19 +26,15 @@ def readXml(zipFile):
     xml = arch.read(xmlfile)
     return xml
 
-def parseSubroutine(tree):
-    """
-    """
-    pass
-
 def parseXml(directory):
     """
-    Description:  Read and parses xml files and parses
+    Description:  Read and parses xml files
+    Args:
+        directory (string): Path of the xml files
+    Returns:
+        element_dictionary (dictionary)
     """
-    # Dictionary  Key: structure number, values: element numbers
-    # Dictionary Key: structure number, value:
     element_dictionary = defaultdict(list)
-    # list all the xmlfiles in the directory
     Record = namedtuple('Record', ['state', 'structure',
                                    'totalqty', 'elementNo',
                                    'cs1', 'cs2', 'cs3', 'c4'])
@@ -56,13 +61,17 @@ def parseXml(directory):
                                      cs2,
                                      cs3,
                                      cs4)
-                print(temp_record)
                 element_dictionary[structure] = temp_record
-        break
     return element_dictionary
 
-
 def extractXml(directory):
+    """
+    Description: Extracts XML zip files
+    Args:
+        directory (string): Path of the xml files
+    Returns:
+        None
+    """
     extension = ".zip"
     for zfile in os.listdir(directory):
         if zfile.endswith(extension):
@@ -74,18 +83,46 @@ def extractXml(directory):
             zip_ref.close()
             os.remove(filename)
 
+def getBSD(filename):
+    """
+    Description: Function to read NBI file
+         and, extract structurenumber and baseline difference score
+    Args:
+        filename (string): Path of the xml files
+    Returns:
+        structBsdDict (dictionary) : key (structure number)
+                                     value (baseline difference score)
+    """
+    with open(filename, 'r') as csvFile:
+        csvReader = csv.reader(csvFile, delimiter=',')
+        header = next(csvReader)
+        structBsdDict = defaultdict(list)
+        for row in csvReader:
+            structureNumber = row[1][:-2]
+            bsd = float(row[-2])
+            structBsdDict[structureNumber].append(bsd)
+    return structBsdDict
+
+def calcDictMean(structBsdDict):
+    """
+    Description: Calculates the mean of baseline difference scores
+    Args:
+        structuBsDict (dictionary): key (structure number)
+                                    value (baseline difference score)
+    Returns:
+        structBsdMeanDict (dictionary): key (structure number)
+                                        value (baseline difference score)
+    """
+    structBsdMeanDict = {key:np.mean(val) for key, val in structBsdDict.items()}
+    return structBsdMeanDict
+
 def main():
-    # Get all the file names in the directory
-    # Directory relative directory
-    directory ='/Users/AkshayKale/Documents/github/data/nbe'
-    # extractXml(directory)
-    print(len(parseXml(directory)))
-    # parse xml file 
-
-    # convert it to json dump 
-    # append it into a list
-    # push into mongodb
-
+    directory ='/Users/AkshayKale/Documents/github/data/nbi/'
+    csvFileName = '06-20-19-thesis-dataset_allstates_allstates.csv'
+    filename = directory + csvFileName
+    structBsdDict = getBSD(filename)
+    structBsdMeanDict = calcDictMean(structBsdDict)
+    print(structBsdMeanDict)
 
 if __name__ == '__main__':
     main()
