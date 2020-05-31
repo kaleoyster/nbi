@@ -40,15 +40,12 @@ def create_jsondump(snow_map, freeze_map):
                             'freezethaw':freezethaw
                             })
                         })
-    # Retrieve from the mongodb
 
-    # Major Idea:
-    # Create se# 
     return json_dump
 
 def main():
    df = pd.read_csv(SNOWFALL_FREEZE, low_memory=True)
-   structure_number = df['structure_number'] 
+   structure_number = df['structure_number']
    freezethaw = df['NO_OF_FREEZE_THAW_CYCLES']
    snowfall = df['no_of_snowfalls']
 

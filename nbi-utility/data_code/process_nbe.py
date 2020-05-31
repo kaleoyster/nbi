@@ -169,6 +169,7 @@ def listOftupleToDict(tups):
 def toCSV(elementList, path, filename):
     """
     Description: Converts named tuples into a csv file
+        and saves a csv file in the provided directory
 
     Args:
         elementList (list): A list of named tuples

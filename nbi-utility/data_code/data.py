@@ -113,7 +113,7 @@ class DataChef:
         elif kind == 'current':
             return  now.year - year_built
 
-    def categorizeBridgesByADT(ADT):
+    def categorize_bridges_by_adt(ADT):
         # PERFECT
         """ returns A list of class of the bridge as define by Author in so and so """
         class_of_bridges_adt = []
@@ -131,13 +131,13 @@ class DataChef:
         return class_of_bridges_adt
 
 
-    def categorizeBridgesByADTT(ADTT): 
+    def categorize_bridges_by_adtt(ADTT):
         # PERFECT
         """ returns A list of class of the bridge as define by Author in so and so """
         class_of_bridges_adtt = []
         for adtt in ADTT:
             if adtt < 100:
-                class_of_bridges_adtt.append('Light')     
+                class_of_bridges_adtt.append('Light')
             elif 100 <= adtt < 500:
                 class_of_bridges_adtt.append('Moderate')
             elif 500 <= adtt:
