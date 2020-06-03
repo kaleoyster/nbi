@@ -25,11 +25,8 @@
 
 # 4. number of repeated records per year or number of repeated records per bridge
 
-# 5. Latest records that we have is for year 2018
-   
-
 ## Getting started
 
 ## Contact
 
-* Akshay Kale
+* Akshay Kale - akale@unomaha.edu
