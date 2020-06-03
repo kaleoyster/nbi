@@ -128,7 +128,8 @@ def calcDictMean(structBsdDict):
         structBsdMeanDict (dictionary): key (structure number)
                                         value (baseline difference score)
     """
-    structBsdMeanDict = {key: np.mean(val) for key, val in structBsdDict.items()}
+    items = structBsdDict.items()
+    structBsdMeanDict = {key: np.mean(val) for key, val in items}
     return structBsdMeanDict
 
 
