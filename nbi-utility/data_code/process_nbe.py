@@ -101,7 +101,6 @@ def getBSD(filename):
     """
     Description: Function to read NBI file
          and, extract structurenumber and baseline difference score
-
     Args:
         filename (string): Path of the xml files
     Returns:
@@ -122,7 +121,6 @@ def getBSD(filename):
 def calcDictMean(structBsdDict):
     """
     Description: Calculates the mean of baseline difference scores
-
     Args:
         structuBsDict (dictionary): key (structure number)
                                     value (baseline difference score)
@@ -160,7 +158,6 @@ def getCategory(scores):
 def listOftupleToDict(tups):
     """
     Description: Converts a list of named tuples into a list of dict
-
     Args:
         elementList (list): A list of named tuples
 
@@ -175,11 +172,9 @@ def toCSV(elementList, path, filename):
     """
     Description: Converts named tuples into a csv file
         and saves a csv file in the provided directory
-
     Args:
         elementList (list): A list of named tuples
         path (string): path to save the csv file
-
     Returns:
         None
     """
@@ -200,7 +195,6 @@ def toCSV(elementList, path, filename):
 def toJSON(elementList, path, filename):
     """
     Description: Converts named tuples into a JSON file
-
     Args:
         elementList (list): A list of named tuples
         path (string): path to save the JSON file
