@@ -12,7 +12,7 @@ from collections import namedtuple
 import xml.etree.ElementTree as ET
 
 __author__ = 'Akshay Kale'
-__copyright_ = 'GPL'
+__copyright__ = 'GPL'
 __credit__ =  []
 __email__ = 'akale@unomaha.edu'
 
