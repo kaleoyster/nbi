@@ -1,2 +1,2 @@
-# nbi-utility
+# nbi-utilities
 
