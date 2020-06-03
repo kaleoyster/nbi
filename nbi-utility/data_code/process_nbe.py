@@ -138,10 +138,8 @@ def getCategory(scores):
     """
     Description: Classifys brideges into good, bad, and average
         standard deviation
-
     Args:
         scores (list): baseline difference score
-
     Returns:
         conditionCategory (list): baseline difference category
     """
