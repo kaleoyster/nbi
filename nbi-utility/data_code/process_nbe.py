@@ -12,9 +12,10 @@ from collections import namedtuple
 import xml.etree.ElementTree as ET
 
 __author__ = 'Akshay Kale'
-__copyright_ = 'GPL'
-__credit__ =  []
+__copyright__ = 'GPL'
+__credit__ = []
 __email__ = 'akale@unomaha.edu'
+
 
 def readXml(zipFile):
     """
@@ -30,6 +31,7 @@ def readXml(zipFile):
     xmlfile = zfile[:-3] + 'xml'
     xml = arch.read(xmlfile)
     return xml
+
 
 def extractXml(directory):
     """
@@ -50,16 +52,16 @@ def extractXml(directory):
             zip_ref.close()
             os.remove(filename)
 
+
 def parseXml(directory, structCatDict):
     """
     Description:  Read and parses xml files
     Args:
         directory (string): Path of the xml files
     Returns:
-        elementList (List): A List of named tuples
+        elementList (list): A List of named tuples
     """
     elementList = list()
-    records = list()
     Record = namedtuple('Record', ['year', 'state', 'structure',
                                    'totalQty', 'elementNo',
                                    'cs1', 'cs2', 'cs3', 'cs4',
@@ -81,18 +83,19 @@ def parseXml(directory, structCatDict):
                 cs3 = element.find('CS3').text
                 cs4 = element.find('CS4').text
                 perfCat = structCatDict.get(structure)
-                tempRecord = Record( year,
-                                     state,
-                                     structure,
-                                     totalQty,
-                                     elementNo,
-                                     cs1,
-                                     cs2,
-                                     cs3,
-                                     cs4,
-                                     perfCat)
+                tempRecord = Record(year,
+                                    state,
+                                    structure,
+                                    totalQty,
+                                    elementNo,
+                                    cs1,
+                                    cs2,
+                                    cs3,
+                                    cs4,
+                                    perfCat)
                 elementList.append(tempRecord)
     return elementList
+
 
 def getBSD(filename):
     """
@@ -107,13 +110,14 @@ def getBSD(filename):
     """
     with open(filename, 'r') as csvFile:
         csvReader = csv.reader(csvFile, delimiter=',')
-        header = next(csvReader)
+        next(csvReader)
         structBsdDict = defaultdict(list)
         for row in tqdm(csvReader, desc='Extracting Bridge Score'):
             structureNumber = row[1][:-2]
             bsd = float(row[-2])
             structBsdDict[structureNumber].append(bsd)
     return structBsdDict
+
 
 def calcDictMean(structBsdDict):
     """
@@ -126,8 +130,9 @@ def calcDictMean(structBsdDict):
         structBsdMeanDict (dictionary): key (structure number)
                                         value (baseline difference score)
     """
-    structBsdMeanDict = {key:np.mean(val) for key, val in structBsdDict.items()}
+    structBsdMeanDict = {key: np.mean(val) for key, val in structBsdDict.items()}
     return structBsdMeanDict
+
 
 def getCategory(scores):
     """
@@ -147,11 +152,12 @@ def getCategory(scores):
     for score in tqdm(scores, desc='Computing Bridge Perf. Category'):
         if score > (meanScore + stdDevScore):
             conditionCategory.append('Good')
-        elif (meanScore - stdDevScore) >= score <= (meanScore + stdDevScore) :
+        elif (meanScore - stdDevScore) >= score <= (meanScore + stdDevScore):
             conditionCategory.append('Average')
         else:
             conditionCategory.append('Bad')
     return conditionCategory
+
 
 def listOftupleToDict(tups):
     """
@@ -165,6 +171,7 @@ def listOftupleToDict(tups):
     """
     listOfDictionary = [dict(tup._asdict()) for tup in tups]
     return listOfDictionary
+
 
 def toCSV(elementList, path, filename):
     """
@@ -191,6 +198,7 @@ def toCSV(elementList, path, filename):
     csvWriter.writerows(listOfDict)
     csvFile.close()
 
+
 def toJSON(elementList, path, filename):
     """
     Description: Converts named tuples into a JSON file
@@ -204,14 +212,14 @@ def toJSON(elementList, path, filename):
     """
     filename = '2015-2019_nbe.json'
     os.chdir(path)
-    listOfDict = listOftupleToDict(elementList)
     with open(filename, 'w') as jsonFile:
         json.dump(filename, jsonFile)
 
+
 def main():
-    directory ='/Users/AkshayKale/Documents/github/data/nbi/'
-    directory_nbe ='/Users/AkshayKale/Documents/github/data/nbe/'
-    directory_nbe_pro ='/Users/AkshayKale/Documents/github/data/nbe_processed/'
+    directory = '/Users/AkshayKale/Documents/github/data/nbi/'
+    directory_nbe = '/Users/AkshayKale/Documents/github/data/nbe/'
+    directory_nbe_pro = '/Users/AkshayKale/Documents/github/data/nbe_processed/'
     csvFileName = '06-20-19-thesis-dataset_allstates_allstates.csv'
     filename = directory + csvFileName
 
@@ -226,6 +234,7 @@ def main():
     print("Exporting files ...")
     toCSV(elementList, directory_nbe_pro, '2015-2019_nbe.csv')
     toJSON(elementList, directory_nbe_pro, '2015-2019_nbe.json')
+
 
 if __name__ == '__main__':
     main()
