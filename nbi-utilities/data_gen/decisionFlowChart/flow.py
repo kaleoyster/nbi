@@ -87,12 +87,9 @@ def read_csv(filename):
 
 
 def main():
-    directory = '../data/nbi/'
     # need the raw nbi file
     csvFileName = '../../../../data/datacenterhub/NBI_text_file.csv'
-
-    filename = directory + csvFileName
-    print(decision_flow_chart(filename))
+    print(read_csv(csvFileName))
 
 
 if __name__ == '__main__':
