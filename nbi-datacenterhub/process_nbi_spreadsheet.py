@@ -659,15 +659,17 @@ def main():
     df = nbi.rearrangeCols(df)
 
     # OUTPUT
-    df.to_csv('NBI2018_no_ids.csv', index=False)
+    filename_nbi_no_ids = 'NBI' + str(year_of_survey) + '_no_ids.csv'
+    df.to_csv(filename_nbi_no_ids, index=False)
     df_new_cases, df_exportable  = nbi.findNewCases(df, df_case_id, compiled_by)
 
     # OUTPUT  
     df_exportable.to_csv("Case Information_new - 131.csv", index=False)
     template_file = 'CasesTemplate.csv'
 
-    # OUTPUT cases1992-2017
-    insertHeader("Case Information_new - 131.csv", "Cases2018_no_ids.csv", template_file) 
+    # OUTPUT cases1992-201X
+    filename_cases_no_ids = 'Cases' + str(year_of_survey) + '_no_ids.csv'
+    insertHeader("Case Information_new - 131.csv", filename_cases_no_ids, template_file) 
 
 if __name__ == '__main__':
     main()
