@@ -1,342 +1,217 @@
-import pdb
+"""
+The script updates new cases to the top level file for the data-center hub
+"""
 import pandas as pd
 import csv
 import os
 import numpy as np
 from collections import OrderedDict
+from collections import defaultdict
+import sys
 
-df = pd.read_csv("Cases1992-2018.csv", skiprows=[0, 2, 3])
+__author__ = 'Akshay Kale'
+__copyright__ = 'GPL'
+__credits__ = ['Jonathan Monical']
+__email__ = 'akale@unomaha.edu'
 
-# INPUT : NBI2018_no_ids.csv    
-df_new_cases = pd.read_csv("NBI2018_no_ids.csv", low_memory = False)
+list_of_args = [arg for arg in sys.argv]
+codename, case_file, top_file, nbi_file, YEAR = list_of_args
 
-print(df.head())
-# Creating columns from the transformed NBI spreadsheet
-case_id = df_new_cases['Case Id'].astype(str)
-case_id_og = df['Case ID'].astype(str)
-
-year = ''*len(df_new_cases['Case Id'])
-
-latitude = df_new_cases['Latitude'] # This should come from the df_new_cases. 
-latitude_og = df['Latitude'] 
-
-longitude = df_new_cases['Longitude']
-longitude_og = df['Longitude']
-
-year_built = df_new_cases['Built in']
-year_built_og = df['Year Built']
-
-material = df_new_cases['Material']
-material_og = df['Material']
-
-construction = df_new_cases['Construction Type']
-construction_og = df['Construction Type']
-
-ADT = df_new_cases['ADT']
-ADT_og = df['ADT']
-
-ADTT = df_new_cases['ADTT (% ADT)']
-ADTT_og = df['ADTT']
-
-deck = df_new_cases['Deck']
-deck_og = df['Deck']
-
-superstructure = df_new_cases['Super']
-sup_og = df['Superstructure']
-
-substructure =  df_new_cases['Sub']
-sub_og = df['Substructure']
-
-# Add new case Id at the bottom the top-level df
-new_bridges = list(set(case_id) - set(df['Case Id']))
-new_bridge = pd.DataFrame({'Case Id': new_bridges})
-df = df.append(new_bridge, ignore_index=True)
-
-## Longitude
-# Create dictionary Longitude with respect to the case id
-_id_longi_dict =  {_id: longi for _id, longi in zip(case_id, longitude)}
-
-# Dictionary of the existing top-level file
-_id_longi_og_dict = {_id:longi_og for _id, longi_og in zip (case_id_og, longitude_og)}
-
-# Update longitude of the top-level dictionary
-for key, value in _id_longi_og_dict.items():
-    if (_id_longi_dict.get(key)) != None:
-        _id_longi_og_dict[key] = _id_longi_dict[key]
-
-update_longitude = df['Case Id'].map(_id_longi_og_dict)
-
-## Latitude
-# Create dictionary of latitude with respect to the case id
-_id_lati_dict =  {_id: lati for _id, lati in zip(case_id, latitude)}
-
-# Dictionary of the existing top-level file
-_id_lati_og_dict = {_id: lati_og for _id, lati_og in zip (case_id_og, latitude_og)}
-
-# Update latitude of the top-level dictionary
-for key, value in _id_lati_og_dict.items():
-    if (_id_lati_dict.get(key)) != None:
-        _id_lati_og_dict[key] = _id_lati_dict[key]
-
-update_latitude = df['Case Id'].map(_id_lati_og_dict)
-
-## Year Built
-# Create dictionary of year built with respect to the case id
-_id_year_dict =  {_id: year for _id, year in zip(case_id, year_built)}
-
-# Dictionary of the existing top-level file
-_id_year_og_dict = {_id: year_og for _id, year_og in zip (case_id_og, year_built_og)}
-
-# Update year built  of the top-level dictionary
-for key, value in _id_year_og_dict.items():
-    if (_id_year_dict.get(key)) != None:
-        _id_year_og_dict[key] = _id_year_dict[key]
-
-update_year = df['Case Id'].map(_id_year_og_dict) 
-
-## Material 
-# Create dictionary of material with respect to the case id
-_id_mat_dict =  {_id: mat for _id, mat in zip(case_id, material)}
-
-# Dictionary of the existing top-level file
-_id_mat_og_dict = {_id: mat_og for _id, mat_og in zip (case_id_og, material_og)}
-
-# Update material of the top-level dictionary
-for key, value in _id_mat_og_dict.items():
-    if (_id_mat_dict.get(key)) != None:
-        _id_mat_og_dict[key] = _id_mat_dict[key]
-
-update_mat = df['Case Id'].map(_id_mat_og_dict) 
-  
-## Construction
-# Create dictionary of construction type with respect to the case id
-_id_construct_dict =  {_id: construct for _id, construct in zip(case_id, construction)}
-
-# Dictionary of the existing top-level file
-_id_construct_og_dict = {_id: construct_og for _id, construct_og in zip (case_id_og, construction_og)}
-
-# Update construction type of the top-level dictionary
-for key, value in _id_construct_og_dict.items():
-    if (_id_construct_dict.get(key)) != None:
-        _id_construct_og_dict[key] = _id_construct_dict[key]
-
-update_construct = df['Case Id'].map(_id_construct_og_dict) 
-
-## Average Daily Traffic
-# Create dictionary of average daily traffic with respect to the case id
-_id_adt_dict =  {_id: adt for _id, adt in zip(case_id, ADT)}
-
-# Dictionary of the existing top-level file
-_id_adt_og_dict = {_id: adt_og for _id, adt_og in zip (case_id_og, ADT_og)}
-
-# Update average daily traffic of the top-level dictionary
-for key, value in _id_adt_og_dict.items():
-    if (_id_adt_dict.get(key)) != None:
-        _id_adt_og_dict[key] = _id_adt_dict[key]
-
-update_adt = df['Case Id'].map(_id_adt_og_dict) 
+# Import relevant files
+df_cases = pd.read_csv(case_file, skiprows=[0, 2, 3], low_memory=False)
+df_top_level = pd.read_csv(top_file, low_memory=False)
+df_nbi = pd.read_csv(nbi_file, low_memory=False)
 
 
-## Average Daily Truck Traffic
-# Create dictionary of average daily truck traffic with respect to the case id
-_id_adtt_dict =  {_id: adtt for _id, adtt in zip(case_id, ADTT)}
+# Get Cases ids from all the files
+set_cases_top = set(df_top_level['Case Id'])
+set_cases_nbi = set(df_nbi['Case Id'])
+set_cases_cases = set(df_cases['Case ID'])
 
-# Dictionary of the existing top-level file
-_id_adtt_og_dict = {_id: adtt_og for _id, adtt_og in zip (case_id_og, ADTT_og)}
+new_cases = set_cases_cases - set_cases_top
 
-# Update average daily truck traffic of the top-level dictionary
-for key, value in _id_adtt_og_dict.items():
-    if (_id_adtt_dict.get(key)) != None:
-        _id_adtt_og_dict[key] = _id_adtt_dict[key]
-
-update_adtt = df['Case Id'].map(_id_adtt_og_dict) 
-
-## Deck
-# Create dictionary of deck with respect to the case id
-_id_dec_dict =  {_id: dec for _id, dec in zip(case_id, deck)}
-
-# Dictionary of the existing top-level file
-_id_dec_og_dict = {_id: dec_og for _id, dec_og in zip (case_id_og, deck_og)}
-
-# Update deck of the top-level dictionary
-for key, value in _id_dec_og_dict.items():
-    if (_id_dec_dict.get(key)) != None:
-        _id_dec_og_dict[key] = _id_dec_dict[key]
-
-update_deck = df['Case Id'].map(_id_dec_og_dict) 
+# Check if the cases exist in the curent nbi survey records (DEAD CODE - Not used anywhere)
+def check_case_in_cases(new_cases):
+    if new_cases in set_cases_nbi:
+        return True
+    return False
 
 
-## Substructure
-# Create dictionary of substructure with respect to the case id
-_id_sub_dict =  {_id: sub for _id, sub in zip(case_id, substructure)}
-
-# Dictionary of the existing top-level file
-_id_sub_og_dict = {_id: subs_og for _id, subs_og in zip (case_id_og, sub_og)}
-
-# Update subtructure of the top-level dictionary
-for key, value in _id_sub_og_dict.items():
-    if (_id_sub_dict.get(key)) != None:
-        _id_sub_og_dict[key] = _id_sub_dict[key]
-
-update_sub = df['Case Id'].map(_id_sub_og_dict) 
-
-
-## Superstructure
-# Create dictionary of year built with respect to the case id
-_id_super_dict =  {_id: super_ for _id, super_ in zip(case_id, superstructure)}
-
-# Dictionary of the existing top-level file
-_id_super_og_dict = {_id: super_og for _id, super_og in zip (case_id_og, sup_og)}
-
-# Update superstructure of the top-level dictionary
-for key, value in _id_super_og_dict.items():
-    if (_id_super_dict.get(key)) != None:
-        _id_super_og_dict[key] = _id_super_dict[key]
-
-update_super = df['Case Id'].map(_id_super_og_dict) 
-
-
-# Update df dataframe with new values 
-df['Longitude'] = update_longitude
-df['Latitutde'] = update_latitude
-df['Year Built'] = update_year
-#df['Superstructure'] = update_super
-#df['Substructure'] = update_sub
-#df['Deck'] = update_deck
-
-df['Construction Type'] = update_construct
-df['Material'] = update_mat
-
-#df['ADT'] = update_adt
-#df['ADTT'] = update_adtt
-
-# condition rating dictionary
+# Condition rating coding
 condition_rating_dict = {
-                           1: 1,
-                          '1': 1,
+                             1: 1,
+                            '1': 1,
 
-                           2: 2,
-                           '2': 2,
-                           
-                           3: 3,
-                           '3': 3,
+                             2: 2,
+                             '2': 2,
 
-                           4: 4,
-                           '4': 4,
+                             3: 3,
+                             '3': 3,
 
-                           5: 5,
-                           '5': 5,
+                             4: 4,
+                             '4': 4,
 
-                           6: 6,
-                           '6': 6,
+                             5: 5,
+                             '5': 5,
 
-                           7: 7,
-                           '7': 7,
+                             6: 6,
+                             '6': 6,
 
-                           8: 8,
-                           '8':8,
+                             7: 7,
+                             '7': 7,
 
-                           '9': 9,
-                           9: 9, 
+                             8: 8,
+                             '8':8,
 
-                            0: 0,
-                           '0': 0,
-                           'N': None,
-                        }
+                             '9': 9,
+                             9: 9,
 
+                              0: 0,
+                             '0': 0,
+                             'N': None,
+                          }
+# Select columns
+selected_columns = [
+                      'Case Name', # Case Name
+                      'Longitude', # Longitude
+                      'Latitude',  # Latitude
+                      'Built in',  # Year Built 
+                      'Material',  # Material
+                      'Construction Type', # Construction
+                      'ADT', # ADT
+                      'ADTT (% ADT)', # ADTT
+                      'Deck', # Deck
+                      'Super', # Superstructure
+                      'Sub' # Substructure
+                 ]
 
-# Add new columns
-df['2018'] = year
-df['ADT.26'] = update_adt
-df['ADTT.26'] = update_adtt
-df['Deck.26'] = update_deck.map(condition_rating_dict)
-df['Superstructure.26'] = update_super.map(condition_rating_dict)
-df['Substructure.26'] = update_sub.map(condition_rating_dict)
+## Corresponding columns of selected columns in the top-level record
+top_level_columns = [
+                      'Case Name', # Case Name
+                      'Longitude', # Longitude
+                      'Latitude',  # Latitude
+                      'Year Built',  # Year Built 
+                      'Material',  # Material
+                      'Construction Type', # Construction
+                      'ADT', # ADT
+                      'ADTT', # ADTT
+                      'Deck', # Deck
+                      'Superstructure', # Superstructure
+                      'Substructure' # Substructure
+                      ]
 
-# rearrange column 
-# TODO 
-    # Write a script to create a a list of columns
-columns = ['Case Id', 'Latitude', 'Longitude', 'Year Built', 'Material',
-           'Construction Type', 'ADT', 'ADTT', 'Deck', 'Superstructure', 'Substructure',
-           '1992', 'ADT.1','ADTT.1', 'Deck.1', 'Superstructure.1', 'Substructure.1',
-           '1993', 'ADT.2','ADTT.2', 'Deck.2', 'Superstructure.2', 'Substructure.2',
-           '1994', 'ADT.3','ADTT.3', 'Deck.3', 'Superstructure.3', 'Substructure.3',
-           '1995', 'ADT.4','ADTT.4', 'Deck.4', 'Superstructure.4', 'Substructure.4',
-           '1996', 'ADT.5','ADTT.5', 'Deck.5', 'Superstructure.5', 'Substructure.5',
-           '1997', 'ADT.6','ADTT.6', 'Deck.6', 'Superstructure.6', 'Substructure.6',
-           '1998', 'ADT.7','ADTT.7', 'Deck.7', 'Superstructure.7', 'Substructure.7',
-           '1999', 'ADT.8','ADTT.8', 'Deck.8', 'Superstructure.8', 'Substructure.8',
-           '2000', 'ADT.9','ADTT.9', 'Deck.9', 'Superstructure.9', 'Substructure.9',
-           '2001', 'ADT.10','ADTT.10', 'Deck.10', 'Superstructure.10', 'Substructure.10',
-           '2002', 'ADT.11','ADTT.11', 'Deck.11', 'Superstructure.11', 'Substructure.11',
-           '2003', 'ADT.12','ADTT.12', 'Deck.12', 'Superstructure.12', 'Substructure.12',
-           '2004', 'ADT.13','ADTT.13', 'Deck.13', 'Superstructure.13', 'Substructure.13',
-           '2005', 'ADT.14','ADTT.14', 'Deck.14', 'Superstructure.14', 'Substructure.14',
-           '2006', 'ADT.15','ADTT.15', 'Deck.15', 'Superstructure.15', 'Substructure.15',
-           '2007', 'ADT.16','ADTT.16', 'Deck.16', 'Superstructure.16', 'Substructure.16',
-           '2008', 'ADT.17','ADTT.17', 'Deck.17', 'Superstructure.17', 'Substructure.17',
-           '2009', 'ADT.18','ADTT.18', 'Deck.18', 'Superstructure.18', 'Substructure.18',
-           '2010', 'ADT.19','ADTT.19', 'Deck.19', 'Superstructure.19', 'Substructure.19',
-           '2011', 'ADT.20','ADTT.20', 'Deck.20', 'Superstructure.20', 'Substructure.20',
-           '2012', 'ADT.21','ADTT.21', 'Deck.21', 'Superstructure.21', 'Substructure.21',
-           '2013', 'ADT.22','ADTT.22', 'Deck.22', 'Superstructure.22', 'Substructure.22',
-           '2014', 'ADT.23','ADTT.23', 'Deck.23', 'Superstructure.23', 'Substructure.23',
-           '2015', 'ADT.24','ADTT.24', 'Deck.24', 'Superstructure.24', 'Substructure.24',
-           '2016', 'ADT.25','ADTT.25', 'Deck.25', 'Superstructure.25', 'Substructure.25',
-           '2017', 'ADT.26','ADTT.26', 'Deck.26', 'Superstructure.26', 'Substructure.26',
-           '2018' 
-           ]
-#  
-base_headers = ['Case Id', 'Latitude', 'Longitude', 'Year Built', 'Material', 'Construction Type', 'ADT', 'ADTT', 'Deck', 'Superstructure', 'Substructure']
+identity_columns = [
+                     'Case Name',
+                     'Longitude',
+                     'Latitude',
+                     'Year Built',
+                     'Material',
+                     'Construction Type'
+                    ]
 
-def create_colnames(year):
-    repeat_headers = ['ADT', 'ADTT', 'Deck',
-            'Superstructure', 'Substructure']
-    
-    headers = []
-    for index, yr in enumerate(range(1992, year+1)):
-        attr_cols = repeat_headers
-        temp_cols = [attr + '.' + str(index+1) for attr in attr_cols]
-        headers = headers + [str(yr)] + temp_cols
-    return headers
+# Select the key: case ids
+key = 'Case Id'
 
+# Create list of the dictionaries
+def create_list_of_dicts(columns, key):
+    df_keys = df_nbi[key]
+    list_of_dictionary = []
 
-columns = create_colnames(year)
-# Arranging df columns
-df = df[columns]
-df = df[1:]
+    for column in columns:
+        temp_dict = defaultdict()
+        df_column = df_nbi[column]
 
-# OUTPUT
-# Saving df_top_file
-df.to_csv("new_top_file.csv", index=False)
+        for key, value in zip(df_keys, df_column):
+            temp_dict[key] = value
 
-# INPUT (TODO)
-# Use the newly saved and modified new_top_file as input
-inputFileName = "new_top_file.csv"
+        list_of_dictionary.append(temp_dict)
+    return list_of_dictionary
 
-# Use the NBI inspection data file to extract columns
-headerFileName = "NBI Inspections Data - 131.csv"
+list_of_dict = create_list_of_dicts(selected_columns, key)
 
-# OUTPUT
-outputFileName = "NBI Inspections Data - 131_modified.csv"
+# Create a updated list of attribute values from top level
+def create_update_list(top_level_columns):
+    list_of_updated_values = []
+    for index, column in enumerate(top_level_columns):
+        top_col = df_top_level[column] # Series
+        top_ids = df_top_level['Case Id'] # Series
+        nbi_col = list_of_dict[index] # Dictionary
+        temp_list = []
+        for top_id, top_val in zip(top_ids, top_col):
+            if column in identity_columns:
+                try:
+                     temp_list.append(nbi_col[top_id])
+                except:
+                     temp_list.append(top_val)
+            else:
+                try:
+                     temp_list.append(nbi_col[top_id])
+                except:
+                     temp_list.append(None)
+        list_of_updated_values.append(temp_list)
 
-# Extract header/column name
-with open(headerFileName, 'r') as headerfile:
-    headers = headerfile.readlines()[0]
+    return list_of_updated_values
 
-# Modify and add new columns
-with open(inputFileName, 'r') as inFile, open(outputFileName, 'w', newline ='') as outFile:
+list_of_updated_values = create_update_list(top_level_columns)
+
+# Update df_top_level 
+df_top_level['Longitude'] = list_of_updated_values[1]
+df_top_level['Latitude'] = list_of_updated_values[2]
+df_top_level['Year Built'] = list_of_updated_values[3]
+df_top_level['Material'] = list_of_updated_values[4]
+df_top_level['Construction Type'] = list_of_updated_values[5]
+
+# Get columns names
+ADT = df_top_level.columns[-6]
+ADTT = df_top_level.columns[-5]
+DECK  = df_top_level.columns[-4]
+SUPERSTRUCTURE = df_top_level.columns[-3]
+SUBSTRUCTURE  = df_top_level.columns[-2]
+
+# Update columns for the latest year in top level file
+df_top_level[ADT]  = list_of_updated_values[6]
+df_top_level[ADTT] = list_of_updated_values[7]
+df_top_level[DECK] = pd.Series(list_of_updated_values[8]).map(condition_rating_dict)
+df_top_level[SUPERSTRUCTURE] = pd.Series(list_of_updated_values[9]).map(condition_rating_dict)
+df_top_level[SUBSTRUCTURE] = pd.Series(list_of_updated_values[10]).map(condition_rating_dict)
+df_top_level[YEAR] = len(df_top_level)*[None]
+
+# Save intermediate top-level file
+df_top_level.to_csv('top-level-intermediate.csv')
+
+#------------------------Updating id in the nbi id-----------------------------#
+dict_case_id_name = defaultdict()
+for case_id, dc_id in zip(df_top_level['Case Id'], df_top_level['Id']):
+    dict_case_id_name[case_id] = dc_id
+
+df_nbi['Id'] = df_nbi['Case Id'].map(dict_case_id_name)
+filename_nbi = 'NBI' + YEAR + '.csv'
+df_nbi.to_csv(filename_nbi)
+
+#----------------Correcting the header of the top level file------------------------#
+filename_top = 'TopLevel1992-' + YEAR + '.csv'
+with open('top-level-intermediate.csv', 'r') as inFile, open(filename_top, 'w', newline = '') as outFile:
     r = csv.reader(inFile)
     w = csv.writer(outFile)
-    
-    lines_reader  = inFile.readlines()
-    new_column = headers.split(",")[:-2] + ['2018']
-            #'ADT', 'ADTT', 'Deck', 'Superstructure', 'Substructure']
-    new_column = [word.strip('"') for word in new_column]
-    new_column[0] = 'id'
-    w.writerow(new_column)
-    
-    for row in lines_reader[1:]:
+    lines = inFile.readlines()
+    lines_reader = lines[0].split(',')
+    new_words = []
+
+    #Following for loop removes '.Number' from the column names
+    for word in lines_reader:
+        if '.' in word:
+            temp_word = ''
+            for char in word:
+                if char == '.':
+                    new_words.append(temp_word)
+                    temp_word = ''
+                else:
+                    temp_word = temp_word + char
+        else:
+            new_words.append(word.strip('\n'))
+    next(r, None)
+    w.writerow(new_words)
+    for row in lines[1:]:
         write_row = row.split(",")
         write_row[-1] = write_row[-1].strip()
         w.writerow(write_row)
