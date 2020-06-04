@@ -320,10 +320,10 @@ class Data():
         """Returns a pandas dataframe with new renamed columns"""
         df = df.rename(columns=self.RENAMECOLS)
         return df
+        return df_case_id, export_lines, headers
 
     def preProcessCaseInfo(self, case_id_path, compiled_by):
         """Returns a pandas dataframe after the case_id_path (csv file) preprocessing"""
-        # preprocessing the data
         with open(case_id_path) as f:
             lines = f.readlines()
             dont_remove_line = lines[0]
@@ -334,12 +334,15 @@ class Data():
             headers = [dont_remove_line, column_names, date_format, add_remove_message]
             column_names = lines[1].split(",")
             column_names = [col.strip("\n") for col in column_names]
-
             data = []
             for line in lines[4:]:
+                # stack is a flag that stores only double qoutes
                 stack = []
+                # if there is something in stat then string will join
                 string = ''
+                # string and string no processing word together form words
                 words = ''
+                # string_no_processing do not have double qoutes
                 string_no_processing = ''
                 for letter in line:
                     if letter == '"':
@@ -347,6 +350,7 @@ class Data():
                             stack.append(letter)
                             words = words + string_no_processing
                             string_no_processing = ''
+                        # if stack no empty then join string 
                         else:
                             string = string + letter
                             string = string.replace(",", "+")
@@ -358,10 +362,11 @@ class Data():
                         string = string + letter
                     if letter !='"':
                         string_no_processing = string_no_processing + letter
+                #join the rest of the string
+                words = words + string_no_processing
                 list_of_words = words.split(",")
-                list_of_words.append(compiled_by)
+                list_of_words = list_of_words[:-1] + [compiled_by]
                 data.append(list_of_words)
-
         df_case_id = pd.DataFrame(data, columns = column_names)
         export_lines = [dont_remove_line, date_format, add_remove_message]
 
@@ -623,7 +628,7 @@ def main():
     list_of_agrs = [arg for arg in sys.argv]
     codename, cases_template, case_id_path, nbi_text_file, compiled_by, year_of_survey = list_of_agrs
     nbi = Data()
-
+    #Error 
     df_case_id, export_lines, headers = nbi.preProcessCaseInfo(case_id_path, compiled_by)
     df_case_id = nbi.cleanDataFrame(df_case_id)
     df = pd.read_csv(nbi_text_file, low_memory = False)
@@ -656,7 +661,6 @@ def main():
     # OUTPUT
     df.to_csv('NBI2018_no_ids.csv', index=False)
     df_new_cases, df_exportable  = nbi.findNewCases(df, df_case_id, compiled_by)
-    # print 
 
     # OUTPUT  
     df_exportable.to_csv("Case Information_new - 131.csv", index=False)
