@@ -18,16 +18,14 @@ list_of_args = [arg for arg in sys.argv]
 codename, case_file, top_file, nbi_file, YEAR = list_of_args
 
 # Import relevant files
-df_cases = pd.read_csv("Cases1992-2018.csv", skiprows=[0, 2, 3])
-df_top_level = pd.read_csv("TopLevel1992-2018_no2018data.csv")
-df_nbi = pd.read_csv("NBI2018_no_ids.csv")
+df_cases = pd.read_csv(case_file, skiprows=[0, 2, 3], low_memory=False)
+df_top_level = pd.read_csv(top_file, low_memory=False)
+df_nbi = pd.read_csv(nbi_file, low_memory=False)
 
-# Set the current year
-#YEAR = '2019'
 
 # Get Cases ids from all the files
 set_cases_top = set(df_top_level['Case Id'])
-set_cases_nbi = set(df_nbi['Case Id']) 
+set_cases_nbi = set(df_nbi['Case Id'])
 set_cases_cases = set(df_cases['Case ID'])
 
 new_cases = set_cases_cases - set_cases_top
@@ -43,31 +41,31 @@ def check_case_in_cases(new_cases):
 condition_rating_dict = {
                              1: 1,
                             '1': 1,
- 
+
                              2: 2,
                              '2': 2,
- 
+
                              3: 3,
                              '3': 3,
- 
+
                              4: 4,
                              '4': 4,
- 
+
                              5: 5,
                              '5': 5,
- 
+
                              6: 6,
                              '6': 6,
- 
+
                              7: 7,
                              '7': 7,
- 
+
                              8: 8,
                              '8':8,
- 
+
                              '9': 9,
                              9: 9,
- 
+
                               0: 0,
                              '0': 0,
                              'N': None,
@@ -101,13 +99,13 @@ top_level_columns = [
                       'Superstructure', # Superstructure
                       'Substructure' # Substructure
                       ]
- 
+
 identity_columns = [
-                     'Case Name', 
-                     'Longitude', 
+                     'Case Name',
+                     'Longitude',
                      'Latitude',
-                     'Year Built', 
-                     'Material', 
+                     'Year Built',
+                     'Material',
                      'Construction Type'
                     ]
 
@@ -126,8 +124,8 @@ def create_list_of_dicts(columns, key):
         for key, value in zip(df_keys, df_column):
             temp_dict[key] = value
 
-        list_of_dictionary.append(temp_dict) 
-    return list_of_dictionary  
+        list_of_dictionary.append(temp_dict)
+    return list_of_dictionary
 
 list_of_dict = create_list_of_dicts(selected_columns, key)
 
@@ -150,14 +148,14 @@ def create_update_list(top_level_columns):
                      temp_list.append(nbi_col[top_id])
                 except:
                      temp_list.append(None)
-        list_of_updated_values.append(temp_list) 
+        list_of_updated_values.append(temp_list)
 
     return list_of_updated_values
 
 list_of_updated_values = create_update_list(top_level_columns)
 
 # Update df_top_level 
-df_top_level['Longitude'] = list_of_updated_values[1] 
+df_top_level['Longitude'] = list_of_updated_values[1]
 df_top_level['Latitude'] = list_of_updated_values[2]
 df_top_level['Year Built'] = list_of_updated_values[3]
 df_top_level['Material'] = list_of_updated_values[4]
@@ -187,14 +185,16 @@ for case_id, dc_id in zip(df_top_level['Case Id'], df_top_level['Id']):
     dict_case_id_name[case_id] = dc_id
 
 df_nbi['Id'] = df_nbi['Case Id'].map(dict_case_id_name)
-df_nbi.to_csv('NBI2018.csv')
+filename_nbi = 'NBI' + YEAR + '.csv'
+df_nbi.to_csv(filename_nbi)
 
 #----------------Correcting the header of the top level file------------------------#
-with open('top-level-intermediate.csv', 'r') as inFile, open('TopLevel1992-2018.csv', 'w', newline = '') as outFile:
+filename_top = 'TopLevel1992-' + YEAR + '.csv'
+with open('top-level-intermediate.csv', 'r') as inFile, open(filename_top, 'w', newline = '') as outFile:
     r = csv.reader(inFile)
     w = csv.writer(outFile)
     lines = inFile.readlines()
-    lines_reader = lines[0].split(',') 
+    lines_reader = lines[0].split(',')
     new_words = []
 
     #Following for loop removes '.Number' from the column names
@@ -209,11 +209,9 @@ with open('top-level-intermediate.csv', 'r') as inFile, open('TopLevel1992-2018.
                     temp_word = temp_word + char
         else:
             new_words.append(word.strip('\n'))
-    next(r, None)   
+    next(r, None)
     w.writerow(new_words)
     for row in lines[1:]:
         write_row = row.split(",")
         write_row[-1] = write_row[-1].strip()
         w.writerow(write_row)
-
-
