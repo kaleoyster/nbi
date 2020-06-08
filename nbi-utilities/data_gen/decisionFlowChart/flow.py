@@ -4,6 +4,7 @@ deicison flow chart by NDOT
 author: Akshay Kale
 """
 import csv
+from collections import namedtuple
 
 __author__ = 'Akshay Kale'
 __copyright__ = 'GPL'
@@ -48,7 +49,35 @@ def condition1_1(records):
     return structures
 
 
-def decision_flow_chart(csvReader):
+def culvert_check(structureType):
+    """
+    Description: Check if a bridge is a culvert
+    Args:
+        record (list): list to the bridge attributes
+    Returns:
+        structures (list): a list of structures that satisfy the condition
+        function: record passed to a depended function
+    """
+    if int(structureType) == 19:
+        return True
+    return False
+
+
+def decision_flow_chart(record):
+    """
+    Description: Takes records can performs condition checks
+    Args:
+        record (list): A list of bridge attributes
+    Returns:
+        structures (list): a list of structures that require maintenance
+        function: calls a corresponding function
+    """
+    # retCulvertCheck = culvert_check(record['isCulvert'])
+    isCulvert = culvert_check(record.STRUCTURE_TYPE_043B)
+    return isCulvert
+
+
+def decision_flow_chart_old(csvReader):
     """
     Description: takes in filename and performs conditional checks
     Args:
@@ -83,12 +112,19 @@ def read_csv(filename):
     with open(filename, 'r') as csvFile:
         csvReader = csv.reader(csvFile, delimiter=',')
         header = next(csvReader)
-    return header
+        Record = namedtuple('Record', header)
+        for row in csvReader:
+            print(row)
+            record = Record(*row)
+            print(decision_flow_chart(record))
+            break
 
 
 def main():
     # need the raw nbi file
-    csvFileName = '../../../../data/datacenterhub/NBI_text_file.csv'
+    # TODO
+    # Run the model on the lastest data
+    csvFileName = '/home/akshay/data/nbi/nbi.csv'
     print(read_csv(csvFileName))
 
 
