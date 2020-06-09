@@ -12,25 +12,6 @@ __copyright__ = 'GPL'
 __credit__ = []
 __email__ = 'akale@unomaha.edu'
 
-#TODO
-# Preprocess (Pipeline): 
-#   1. (List) Extract all the necessary attribute
-#   2. Using if and else, create a pipeline, that takes in:
-#               1. Args: (record, datastructure)
-#               2. Returns: report (JSON datastructure)
-#   3. Run decision flow chart -> Create condition Report
-
-# Datastructure ( Report ):
-#   1. {structure: {condition1: True,
-#                    condition2: False,
-#                    condition3: True,
-#                    condition4: False,
-#                    condition5: False
-#      }}
-
-# Create Decision Flow Chart:
-#   1. For every record -> pipeline (preprocess) -> Report
-#   2. preprocess
 
 def is_culvert(structureType):
     """
@@ -62,7 +43,7 @@ def calc_age(built_year):
     return year - built_year
 
 
-def sub_condition_check(subCondition):
+def sub_condition_check(record):
     """
     Description: Check substructure condition
     Args:
@@ -71,9 +52,129 @@ def sub_condition_check(subCondition):
         structures (list): a list of structures that satisfy the condition
         function: record passed to a depended function
     """
-    if int(subCondition) < 4:
-        return 'Replace'
-    return 'Continue'
+    try:
+        subCondition = int(record.SUBSTRUCTURE_COND_060)
+
+        if subCondition < 4:
+            return 'Replace'
+        elif subCondition > 3 :
+            return scour_critical_check(record)
+    except:
+        return scour_critical_check(record)
+
+
+def scour_critical_check(record):
+    """
+    Description: Check substructure condition
+    Args:
+        record (list): list to the bridge attributes
+    Returns:
+        structures (list): a list of structures that satisfy the condition
+        function: record passed to a depended function
+    """
+    try:
+        scourRating = int(record.SCOUR_CRITICAL_113)
+        age = calc_age(record.YEAR_BUILT_027)
+
+        if scourRating > 0 and scourRating <= 3:
+            return 'Replace'
+        elif scourRating == 8:
+            return 'Replace'
+        else:
+            return sub_condition_check2(record)
+    except:
+        return sub_condition_check2(record)
+
+
+def sub_condition_check2(record):
+    """
+    Description: Check substructure condition
+    Args:
+        record (list): list to the bridge attributes
+    Returns:
+        structures (list): a list of structures that satisfy the condition
+        function: record passed to a depended function
+    """
+    try:
+        subCondition = int(record.SUBSTRUCTURE_COND_060)
+        superCondition = int(record.SUPERSTRUCTURE_COND_059)
+        deckCondition = int(record.DECK_COND_058)
+
+        if subCondition == 4 and age > 75:
+            return 'Replace'
+        else:
+            return super_condition_check(record)
+    except:
+        return super_condition_check(record)
+
+
+def super_condition_check(record):
+    """
+    Description: Check substructure condition
+    Args:
+        record (list): list to the bridge attributes
+    Returns:
+        structures (list): a list of structures that satisfy the condition
+        function: record passed to a depended function
+    """
+    try:
+        superCondition = int(record.SUPERSTUCTURE_COND_059)
+        fracCrtical = int(record.FRACTURE_09A)
+        age =  calc_age(record.YEAR_BUILT_027)
+
+        if superCondition > 5:
+            return deck_conditon_check(record)
+        elif superCondition == 5:
+            return frac_critical_check(record)
+        elif superCondition > 5:
+            if age > 75:
+                return 'Replace'
+            else:
+                return design_load_check(record)
+
+
+def deck_condition_check(record):
+    """
+    Description: Check substructure condition
+    Args:
+        record (list): list to the bridge attributes
+    Returns:
+        structures (list): a list of structures that satisfy the condition
+        function: record passed to a depended function
+    """
+    try:
+        deckCondition = int(record.DECK_COND_058)
+
+        if deckCondition > 5:
+            return 'Redeck'
+        elif deckCondition < 5:
+            # NOTE: No membrane type for asphalt
+            if record.MEMBRANE_TYPE_108B = '3':
+                return 'Add deck Protection System, Preserve Sub & Super'
+        else:
+            return 'Deck UIP, Preserve Sub & Super'
+    except:
+        return 'None'
+
+
+def design_load_check(record):
+    """
+    Description: Check substructure condition
+    Args:
+        record (list): list to the bridge attributes
+    Returns:
+        structures (list): a list of structures that satisfy the condition
+        function: record passed to a depended function
+    """
+    try:
+        designLoad = int(record.DESIGN_LOAD_031)
+
+        if designLoad < 3:
+            return 'Rehab Pending Sub Capacity Review'
+        else:
+            return 'Rehab'
+    except:
+        return 'None'
 
 
 def decision_flow_chart(record):
@@ -86,42 +187,19 @@ def decision_flow_chart(record):
         function: calls a corresponding function
     """
     # all the attribute values required by decision flow chart
-    isCulvert = is_culvert(record.STRUCTURE_TYPE_043B)
-    subCondition = sub_condition_check(record.SUBSTRUCTURE_COND_060)
-    #scourCritical = scour_critical_check(record.SCOUR_CRITICAL_113)
     age = calc_age(record.YEAR_BUILT_027)
+    isCulvert = is_culvert(record.STRUCTURE_TYPE_043B)
+    subCondition = sub_condition_check(record.SUBSTRUCTURE_COND_060, age)
+    scourCritical = scour_critical_check(record.SCOUR_CRITICAL_113, subCondition)
 
     print(age)
-    #print(scourCritical)
-    #print(subCondition)
+    print(scourCritical)
+    print(subCondition)
     print(isCulvert)
 
-    #if isCulvert is False:
-    #    return sub_condition_check(subCondition)
-    #return isCulvert
-
-
-def decision_flow_chart_old(csvReader):
-    """
-    Description: takes in filename and performs conditional checks
-    Args:
-        filename (string): path to the nbi file
-    Returns:
-        structures (list): a list of structures that require maintenance
-    """
-    report = list()
-    for record in csvReader:
-        # Extract fields
-        # Execute function with filed
-        fieldStat1_1 = condition1_1(field)
-        field1 = record[0]
-        if condition1_1(fieldStat1_1) is True:
-            report.append(True)
-        elif condition1_2(field1) is True:
-            report.append(False)
-        else:
-            report.append(None)
-    return report
+    if isCulvert is False:
+        return sub_condition_check(record)
+    return isCulvert
 
 
 def read_csv(filename):
@@ -137,16 +215,12 @@ def read_csv(filename):
         header = next(csvReader)
         Record = namedtuple('Record', header)
         for row in csvReader:
-            print(row)
             record = Record(*row)
             print(decision_flow_chart(record))
             break
 
 
 def main():
-    # need the raw nbi file
-    # TODO
-    # Run the model on the lastest data
     csvFileName = '/home/akshay/data/nbi/nbi.csv'
     print(read_csv(csvFileName))
 
