@@ -177,6 +177,30 @@ def design_load_check(record):
         return 'None'
 
 
+def cbc_condition_check(record):
+    """
+    Description: Takes records can performs condition checks
+    Args:
+        record (list): A list of bridge attributes
+    Returns:
+        structures (list): a list of structures that require maintenance
+        function: calls a corresponding function
+    """
+    try:
+        cbcCondition = int(record.CULVERT_COND_062)
+        age = calc_age(record.YEAR_BUILT_027)
+
+        if cbcCondition < 4:
+            return 'Replace'
+        elif cbcCondition > 4:
+            return 'UIP'
+        else:
+            if age > 70:
+                return 'Replace'
+            return 'Repair'
+    except:
+        return 'None'
+
 def decision_flow_chart(record):
     """
     Description: Takes records can performs condition checks
@@ -186,20 +210,9 @@ def decision_flow_chart(record):
         structures (list): a list of structures that require maintenance
         function: calls a corresponding function
     """
-    # all the attribute values required by decision flow chart
-    age = calc_age(record.YEAR_BUILT_027)
-    isCulvert = is_culvert(record.STRUCTURE_TYPE_043B)
-    subCondition = sub_condition_check(record.SUBSTRUCTURE_COND_060, age)
-    scourCritical = scour_critical_check(record.SCOUR_CRITICAL_113, subCondition)
-
-    print(age)
-    print(scourCritical)
-    print(subCondition)
-    print(isCulvert)
-
     if isCulvert is False:
         return sub_condition_check(record)
-    return isCulvert
+    return cbc_condition_check(record)
 
 
 def read_csv(filename):
