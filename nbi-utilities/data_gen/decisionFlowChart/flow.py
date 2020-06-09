@@ -4,6 +4,7 @@ deicison flow chart by NDOT
 author: Akshay Kale
 """
 import csv
+import datetime
 from collections import namedtuple
 
 __author__ = 'Akshay Kale'
@@ -49,7 +50,7 @@ def condition1_1(records):
     return structures
 
 
-def culvert_check(structureType):
+def is_culvert(structureType):
     """
     Description: Check if a bridge is a culvert
     Args:
@@ -63,6 +64,34 @@ def culvert_check(structureType):
     return False
 
 
+def sub_condition_check(subCondition):
+    """
+    Description: Check substructure condition
+    Args:
+        record (list): list to the bridge attributes
+    Returns:
+        structures (list): a list of structures that satisfy the condition
+        function: record passed to a depended function
+    """
+    if int(subCondition) < 4:
+        return 'Replace'
+    return scour_critical_check(subCondition)
+
+def calc_age(built_year):
+    """
+    Description: Check substructure condition
+    Args:
+        record (list): list to the bridge attributes
+    Returns:
+        structures (list): a list of structures that satisfy the condition
+        function: record passed to a depended function
+    """
+    datetime_now = datetime.datetime.now()
+    year = datetime_now.year()
+
+    return year - built_year
+
+
 def decision_flow_chart(record):
     """
     Description: Takes records can performs condition checks
@@ -72,8 +101,14 @@ def decision_flow_chart(record):
         structures (list): a list of structures that require maintenance
         function: calls a corresponding function
     """
-    # retCulvertCheck = culvert_check(record['isCulvert'])
-    isCulvert = culvert_check(record.STRUCTURE_TYPE_043B)
+    isCulvert = is_culvert(record.STRUCTURE_TYPE_043B)
+    subCondition = sub_condition(record.SUBSTRUCTURE_COND_060)
+    scourCritical = scour_critical(record.SCOUR_CRITICAL_113)
+    age = bridge_age(record.YEAR_BUILT_027)
+
+
+    if isCulvert is False:
+        return sub_condition_check(subCondition)
     return isCulvert
 
 
