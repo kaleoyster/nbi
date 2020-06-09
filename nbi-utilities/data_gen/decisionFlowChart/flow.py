@@ -32,24 +32,6 @@ __email__ = 'akale@unomaha.edu'
 #   1. For every record -> pipeline (preprocess) -> Report
 #   2. preprocess
 
-
-def condition1_1(records):
-    """
-    Description: filter all the records where pile condition < 3
-    Args:
-        record (list): list to the bridge attributes
-    Returns:
-        structures (list): a list of structures that satisfy the condition
-    """
-    structures = list()
-    for record in records:
-        if record['column'] < 3:
-            structures.append(True)
-        else:
-            structures.append(False)
-    return structures
-
-
 def is_culvert(structureType):
     """
     Description: Check if a bridge is a culvert
@@ -64,6 +46,22 @@ def is_culvert(structureType):
     return False
 
 
+def calc_age(built_year):
+    """
+    Description: Check substructure condition
+    Args:
+        record (list): list to the bridge attributes
+    Returns:
+        structures (list): a list of structures that satisfy the condition
+        function: record passed to a depended function
+    """
+    datetime_now = datetime.datetime.now()
+    year = datetime_now.year
+    built_year = int(built_year)
+
+    return year - built_year
+
+
 def sub_condition_check(subCondition):
     """
     Description: Check substructure condition
@@ -75,21 +73,7 @@ def sub_condition_check(subCondition):
     """
     if int(subCondition) < 4:
         return 'Replace'
-    return scour_critical_check(subCondition)
-
-def calc_age(built_year):
-    """
-    Description: Check substructure condition
-    Args:
-        record (list): list to the bridge attributes
-    Returns:
-        structures (list): a list of structures that satisfy the condition
-        function: record passed to a depended function
-    """
-    datetime_now = datetime.datetime.now()
-    year = datetime_now.year()
-
-    return year - built_year
+    return 'Continue'
 
 
 def decision_flow_chart(record):
@@ -101,15 +85,20 @@ def decision_flow_chart(record):
         structures (list): a list of structures that require maintenance
         function: calls a corresponding function
     """
+    # all the attribute values required by decision flow chart
     isCulvert = is_culvert(record.STRUCTURE_TYPE_043B)
-    subCondition = sub_condition(record.SUBSTRUCTURE_COND_060)
-    scourCritical = scour_critical(record.SCOUR_CRITICAL_113)
-    age = bridge_age(record.YEAR_BUILT_027)
+    subCondition = sub_condition_check(record.SUBSTRUCTURE_COND_060)
+    #scourCritical = scour_critical_check(record.SCOUR_CRITICAL_113)
+    age = calc_age(record.YEAR_BUILT_027)
 
+    print(age)
+    #print(scourCritical)
+    #print(subCondition)
+    print(isCulvert)
 
-    if isCulvert is False:
-        return sub_condition_check(subCondition)
-    return isCulvert
+    #if isCulvert is False:
+    #    return sub_condition_check(subCondition)
+    #return isCulvert
 
 
 def decision_flow_chart_old(csvReader):
@@ -125,7 +114,6 @@ def decision_flow_chart_old(csvReader):
         # Extract fields
         # Execute function with filed
         fieldStat1_1 = condition1_1(field)
-
         field1 = record[0]
         if condition1_1(fieldStat1_1) is True:
             report.append(True)
