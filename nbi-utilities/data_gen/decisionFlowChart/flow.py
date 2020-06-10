@@ -224,18 +224,24 @@ def read_csv(filename):
     Returns:
         structures (list): a list of structures that require maintenance
     """
+    interventions = list()
+
     with open(filename, 'r') as csvFile:
         csvReader = csv.reader(csvFile, delimiter=',')
         header = next(csvReader)
         Record = namedtuple('Record', header)
         for row in csvReader:
             record = Record(*row)
-            print(decision_flow_chart(record))
+            interventions.append(decision_flow_chart(record))
+
+    return interventions
 
 
 def main():
     csvFileName = '/home/akshay/data/nbi/nbi.csv'
-    print(read_csv(csvFileName))
+    interventions = read_csv(csvFileName)
+    print(interventions)
+    print(len(interventions))
 
 
 if __name__ == '__main__':
