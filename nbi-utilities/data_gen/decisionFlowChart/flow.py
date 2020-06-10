@@ -131,7 +131,8 @@ def super_condition_check(record):
                 return 'Replace'
             else:
                 return design_load_check(record)
-
+    except:
+        return 'None'
 
 def deck_condition_check(record):
     """
@@ -149,7 +150,7 @@ def deck_condition_check(record):
             return 'Redeck'
         elif deckCondition < 5:
             # NOTE: No membrane type for asphalt
-            if record.MEMBRANE_TYPE_108B = '3':
+            if record.MEMBRANE_TYPE_108B == '3':
                 return 'Add deck Protection System, Preserve Sub & Super'
         else:
             return 'Deck UIP, Preserve Sub & Super'
@@ -210,6 +211,7 @@ def decision_flow_chart(record):
         structures (list): a list of structures that require maintenance
         function: calls a corresponding function
     """
+    isCulvert = is_culvert(record.STRUCTURE_TYPE_043B) 
     if isCulvert is False:
         return sub_condition_check(record)
     return cbc_condition_check(record)
