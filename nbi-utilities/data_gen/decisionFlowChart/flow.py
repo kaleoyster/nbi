@@ -57,7 +57,7 @@ def sub_condition_check(record):
 
         if subCondition < 4:
             return 'Replace'
-        elif subCondition > 3 :
+        elif subCondition > 3:
             return scour_critical_check(record)
     except:
         return scour_critical_check(record)
@@ -74,7 +74,6 @@ def scour_critical_check(record):
     """
     try:
         scourRating = int(record.SCOUR_CRITICAL_113)
-        age = calc_age(record.YEAR_BUILT_027)
 
         if scourRating > 0 and scourRating <= 3:
             return 'Replace'
@@ -97,8 +96,7 @@ def sub_condition_check2(record):
     """
     try:
         subCondition = int(record.SUBSTRUCTURE_COND_060)
-        superCondition = int(record.SUPERSTRUCTURE_COND_059)
-        deckCondition = int(record.DECK_COND_058)
+        age = calc_age(record.YEAR_BUILT_027)
 
         if subCondition == 4 and age > 75:
             return 'Replace'
@@ -119,8 +117,7 @@ def super_condition_check(record):
     """
     try:
         superCondition = int(record.SUPERSTUCTURE_COND_059)
-        fracCrtical = int(record.FRACTURE_09A)
-        age =  calc_age(record.YEAR_BUILT_027)
+        age = calc_age(record.YEAR_BUILT_027)
 
         if superCondition > 5:
             return deck_conditon_check(record)
@@ -133,6 +130,7 @@ def super_condition_check(record):
                 return design_load_check(record)
     except:
         return 'None'
+
 
 def deck_condition_check(record):
     """
@@ -211,10 +209,11 @@ def decision_flow_chart(record):
         structures (list): a list of structures that require maintenance
         function: calls a corresponding function
     """
-    isCulvert = is_culvert(record.STRUCTURE_TYPE_043B) 
+    isCulvert = is_culvert(record.STRUCTURE_TYPE_043B)
     if isCulvert is False:
         return sub_condition_check(record)
-    return cbc_condition_check(record)
+    else:
+        return cbc_condition_check(record)
 
 
 def read_csv(filename):
@@ -232,7 +231,6 @@ def read_csv(filename):
         for row in csvReader:
             record = Record(*row)
             print(decision_flow_chart(record))
-            break
 
 
 def main():
