@@ -110,7 +110,7 @@ def sub_condition_check2(record):
 
 def super_condition_check(record):
     """
-    Description: Check substructure condition
+    Description: Check substructure condition of a bridge
     Args:
         record (list): list to the bridge attributes
     Returns:
@@ -131,7 +131,28 @@ def super_condition_check(record):
             else:
                 return design_load_check(record)
     except:
-        return 'None - deck condition check'
+        return 'None - Super condition check'
+
+
+def fract_critical_check(record):
+    """
+    Description: Check fracture critical of a bridge
+    Args:
+        record (list): list of the  bridge attributes
+    Returns:
+        'Replace' (str)
+        'None' (str)
+    """
+    try:
+        fracCritical = int(record.FRACTURE_LAST_DATE_093A)
+
+        if fracCritical != 0:
+            return 'Replace'
+        else:
+            return deck_condition_check(record)
+
+    except:
+        return 'None - Fracture Critical Check'
 
 
 def deck_condition_check(record):
