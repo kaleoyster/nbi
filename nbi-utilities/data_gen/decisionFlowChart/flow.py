@@ -257,16 +257,19 @@ def decision_flow_chart(filename):
         for row in csvReader:
             record = Record(*row)
             structNum = record.STRUCTURE_NUMBER_008
-            structNum =  structNum.strip()
+            structNum = structNum.strip()
             structInterventions[structNum] = starting_point(record)
     return structInterventions
 
 
 def main():
     csvFileName = '/home/akshay/data/nbi/nbi.csv'
-    interventions = decision_flow_chart(csvFileName)
-    print(interventions)
-    print(len(interventions))
+    structIntervention = decision_flow_chart(csvFileName)
+
+    with open('/home/akshay/data/nbi/intervention.csv', 'w') as outputFile:
+        for key in structIntervention.keys():
+            outputFile.write("%s, %s\n"%(key, structIntervention[key]))
+
 
 
 if __name__ == '__main__':
