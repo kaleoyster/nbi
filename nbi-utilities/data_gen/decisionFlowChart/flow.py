@@ -21,8 +21,7 @@ def is_culvert(structureType):
     Args:
         record (list): list to the bridge attributes
     Returns:
-        structures (list): a list of structures that satisfy the condition
-        function: record passed to a depended function
+        True / False (Bool)
     """
     if int(structureType) == 19:
         return True
@@ -42,7 +41,6 @@ def calc_age(built_year):
     built_year = int(built_year)
     age = year - built_year
     return age
-
 
 
 def sub_condition_check(record):
@@ -124,7 +122,7 @@ def super_condition_check(record):
         if superCondition > 5:
             return deck_condition_check(record)
         elif superCondition == 5:
-            return frac_critical_check(record)
+            return fract_critical_check(record)
         elif superCondition > 5:
             if age > 75:
                 return 'Replace - Superstructure condition > 5 and age > 75'
@@ -226,6 +224,7 @@ def cbc_condition_check(record):
     except:
         return 'None - Return from cbc_condition_check'
 
+
 def starting_point(record):
     """
     Description: Takes records can performs condition checks
@@ -268,10 +267,8 @@ def main():
 
     with open('/home/akshay/data/nbi/intervention.csv', 'w') as outputFile:
         for key in structIntervention.keys():
-            outputFile.write("%s, %s\n"%(key, structIntervention[key]))
-
+            outputFile.write("%s, %s\n" % (key, structIntervention[key]))
 
 
 if __name__ == '__main__':
-
     main()
