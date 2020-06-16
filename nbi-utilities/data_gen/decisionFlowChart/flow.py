@@ -262,10 +262,10 @@ def decision_flow_chart(filename):
 
 
 def main():
-    csvFileName = '/home/akshay/data/nbi/nbi.csv'
+    csvFileName = '/Users/AkshayKale/Documents/github/data/nbi/nbi.csv'
     structIntervention = decision_flow_chart(csvFileName)
 
-    with open('/home/akshay/data/nbi/intervention.csv', 'w') as outputFile:
+    with open('/Users/AkshayKale/Documents/github/data/nbi/intervention.csv', 'w') as outputFile:
         for key in structIntervention.keys():
             outputFile.write("%s, %s\n" % (key, structIntervention[key]))
 
