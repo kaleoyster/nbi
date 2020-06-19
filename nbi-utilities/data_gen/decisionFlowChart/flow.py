@@ -214,7 +214,7 @@ def cbc_condition_check(record):
         age = calc_age(record.YEAR_BUILT_027)
 
         if cbcCondition < 4:
-            return 'Replace'
+            return 'Replace - cbcCondition less than 4'
         elif cbcCondition > 4:
             return 'UIP'
         else:
@@ -266,8 +266,11 @@ def main():
     structIntervention = decision_flow_chart(csvFileName)
 
     with open('/Users/AkshayKale/Documents/github/data/nbi/intervention.csv', 'w') as outputFile:
+        csvWriter = csv.writer(outputFile, delimiter=",")
+        header = ['structureNumber', 'intervention']
+        csvWriter.writerow(header)
         for key in structIntervention.keys():
-            outputFile.write("%s, %s\n" % (key, structIntervention[key]))
+            csvWriter.writerow((key, structIntervention[key]))
 
 
 if __name__ == '__main__':
