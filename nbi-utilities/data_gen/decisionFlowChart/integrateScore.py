@@ -40,17 +40,29 @@ def to_csv(listOfNewRecords):
 
 def fetchBSDScore(listOfBSDRecords):
     bridgeBDSDict = defaultdict()
-    structNums = listOfBSDRecords['StructureNumber']
-    bsdScores = listOfBSDRecorcs['BaselineDifferenceScore']
-    for structNum, bsdScore in zip(structNums, bsdScores):
+    for record in listOfBSDRecords:
+        structNum = record.StructureNumber[:-2]
+        bsdScore = record.BaselineDifferenceScore
         bridgeBDSDict[structNum] = bsdScore
     return bridgeBDSDict
 
 
 def updateRecord(listOfNDOTRecords, bridgeBDSDict):
-    #structureNumbers = listOfNDOTRecords[]
+    structureNumbers = list()
+    listOfBDS = list()
+    listOfNewRecords = list()
+
+    for record in listOfNDOTRecords:
+        structureNumbers.append(record.structureNumber)
+
     for structNum in structureNumbers:
-        listOfNDOTRecords.append(bridgeBDSDict[structNum])
+        bridgeBDS = bridgeBDSDict.get(structNum)
+        listOfBDS.append(bridgeBDS)
+
+    for record, bds in zip(listOfNDOTRecords, listOfBDS):
+        record = list(record)
+        record.append(bds)
+        listOfNewRecords.append(record)
     return listOfNewRecords
 
 
@@ -59,14 +71,12 @@ def main():
     os.chdir(path)
     csvNDOTFile = 'intervention.csv'
     csvBSDFile = '06-20-19-thesis-dataset_allstates_allstates.csv'
-
     listOfNDOTRecords = read_csv(path, csvNDOTFile)
     listOfBSDRecords = read_csv(path, csvBSDFile)
-    print(listOfBSDRecords)
 
-    #bridgeBDSDict = fetchBSDScore(listOfBSDRecords)
-    #print(bridgeBDSDict)
-    #newRecords = updateRecord(listOfNDOTRecords, bridgeBDSDict)
+    bridgeBDSDict = fetchBSDScore(listOfBSDRecords)
+    newRecords = updateRecord(listOfNDOTRecords, bridgeBDSDict)
+    print(newRecords)
     #to_csv(newRecords)
     # integrate newRecord with the Yes or No
 if __name__=='__main__':
