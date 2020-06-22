@@ -66,6 +66,35 @@ def calc_bds_cat(newRecords):
     return listOfCat
 
 
+def calc_int(newRecords, listOfIntRecords):
+    listOfInt = list()
+    strucNums = list()
+    interventions = list()
+    #TODO need to select only from certain tunelength
+    #listOfIntRecords = [rec for rec in listOfIntRecords if rec.Tunelength == '10']
+
+    for rec in listOfIntRecords:
+        structNum = rec.StructureNumber
+        yes = rec.Yes
+        no = rec.No
+        tlen = rec.Tunelength
+        intven = ''
+
+        if yes > no:
+            intven = 'yes'
+        else:
+            intven = 'no'
+
+        strucNums.append(structNum)
+        interventions.append(intven)
+    structNumDict = dict(zip(strucNums, interventions))
+
+    for nrec in newRecords:
+        nrec.append(structNumDict.get(nrec[0]))
+        listOfInt.append(nrec)
+    return listOfInt
+
+
 def fetch_BSD_score(listOfBSDRecords):
     bridgeBDSDict = defaultdict()
     for record in listOfBSDRecords:
@@ -102,6 +131,9 @@ def main():
     csvBSDFile = '06-20-19-thesis-dataset_allstates_allstates.csv'
     csvNewFile = 'intervention_bds.csv'
 
+    pathProb = '../trees/metrics/dt/'
+    csvIntFile = 'tree-prob-deck-nou.csv'
+
     listOfNDOTRecords = read_csv(path, csvNDOTFile)
     listOfBSDRecords = read_csv(path, csvBSDFile)
 
@@ -109,7 +141,15 @@ def main():
     newRecords = update_record(listOfNDOTRecords, bridgeBDSDict)
     newRecords = calc_bds_cat(newRecords)
 
-    fieldnames = ['structureNumber', 'intervention', 'score', 'category']
+    # Change dir to pathProb to the output of random forest
+    os.chdir(pathProb)
+
+    listOfIntRecords = read_csv(pathProb, csvIntFile)
+    newRecords = calc_int(newRecords, listOfIntRecords)
+
+    # Change dir to path
+    os.chdir(path)
+    fieldnames = ['structureNumber', 'intervention', 'score', 'category', 'rfIntervention']
     csvWrite = to_csv(newRecords, csvNewFile, fieldnames)
 
 
