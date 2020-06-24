@@ -1,5 +1,5 @@
 """
-title: This file contains functions that integrate
+description: This file contains functions that integrate
 bridge scores to NDOT identified maintenance bridges
 author: Akshay Kale
 """
@@ -70,6 +70,9 @@ def calc_int(newRecords, listOfIntRecords):
     listOfInt = list()
     strucNums = list()
     interventions = list()
+
+    threshold = 0.5
+
     #TODO need to select only from certain tunelength
     #listOfIntRecords = [rec for rec in listOfIntRecords if rec.Tunelength == '10']
 
@@ -79,6 +82,7 @@ def calc_int(newRecords, listOfIntRecords):
         no = rec.No
         tlen = rec.Tunelength
         intven = ''
+        threshold = 0.30
 
         if yes > no:
             intven = 'yes'
