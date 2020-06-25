@@ -30,6 +30,7 @@ def read_main_dataset(csvFile):
             listOfRecords.append([structNum, deckInt, superInt, subInt])
     return listOfRecords
 
+
 def read_rf_results(csvRfFile):
     listOfRfIntervention = list()
     with open(csvRfFile, 'r') as csvfile:
@@ -39,9 +40,27 @@ def read_rf_results(csvRfFile):
         for row in csvReader:
             rec = record(*row)
             structNum = rec.structureNumber
-            category = rec.category
-            listOfRfIntervention.append([structNum, category])
+            intervention = rec.intervention
+            listOfRfIntervention.append([structNum, intervention])
     return listOfRfIntervention
+
+
+def create_dict(listOfRecords):
+    structDeck = defaultdict()
+    structSub = defaultdict()
+    structSup = defaultdict()
+
+    for record in listOfRecords:
+        struct = record[0]
+        deck = record[1]
+        sub = record[2]
+        sup = record[3]
+
+        structDeck[struct] = deck
+        structSub[struct] = sub
+        structSup[struct] = sup
+
+    return structDeck, structSub, structSup
 
 
 def main():
@@ -55,7 +74,9 @@ def main():
     listOfRecords = read_main_dataset(csvFile)
     os.chdir(pathIntervention)
     listOfRfIntervention = read_rf_results(csvRfFile)
+    structDeck, structSub, structSup = create_dict(listOfRecords)
     print(listOfRfIntervention)
+    #print(listOfRecords)
 
 
 
