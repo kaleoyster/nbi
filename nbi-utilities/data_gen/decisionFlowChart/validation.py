@@ -18,6 +18,8 @@ __copyright__ = 'GPL'
     # Fir the random forest: 
         # For all the bridges in the nebraska:
             # 
+# Classification reporting
+# 
 def read_main_dataset(csvFile):
     listOfRecords = list()
     with open(csvFile, 'r') as csvfile:
@@ -56,7 +58,6 @@ def create_dict(listOfRecords):
     structDeck = defaultdict()
     structSub = defaultdict()
     structSup = defaultdict()
-
     for record in listOfRecords:
         struct = record[0]
         deck = record[1]
@@ -68,21 +69,13 @@ def create_dict(listOfRecords):
     return structDeck, structSub, structSup
 
 
-def both_correct_positive(record):
+
+
+def rf_true_negative(record):
     intervention = record[1]
     rfResult = record[2]
     groundTruth = record[3]
-
-    if intervention == 'Yes' and rfResult == 'Yes' and groundTruth == 'Yes':
-        return True
-    else:
-        return False
-
-
-def rf_correct_positive(record):
-    intervention = record[1]
-    rfResult = record[2]
-    groundTruth = record[3]
+    rfResult == 'Yes'
 
     if rfResult == 'No' and groundTruth == 'No':
         return True
@@ -90,7 +83,19 @@ def rf_correct_positive(record):
         return False
 
 
-def rf_incorrect_positive(record):
+def rf_false_negative(record):
+    intervention = record[1]
+    rfResult = record[2]
+    groundTruth = record[3]
+    rfResult == 'Yes'
+
+    if rfResult == 'No' and groundTruth == 'Yes':
+        return True
+    else:
+        return False
+
+
+def rf_false_positive(record):
     intervention = record[1]
     rfResult = record[2]
     groundTruth = record[3]
@@ -100,8 +105,17 @@ def rf_incorrect_positive(record):
     else:
         return False
 
+def rf_true_positive(record):
+    intervention = record[1]
+    rfResult = record[2]
+    groundTruth = record[3]
+    if rfResult == 'Yes' and groundTruth == 'Yes':
+        return True
+    else:
+        return False
 
-def flow_correct_positive(record):
+
+def flow_true_positive(record):
     intervention = record[1]
     rfResult = record[2]
     groundTruth = record[3]
@@ -110,8 +124,16 @@ def flow_correct_positive(record):
     else:
         return False
 
+def flow_false_positive(record):
+    intervention = record[1]
+    rfResult = record[2]
+    groundTruth = record[3]
+    if intervention == 'Yes' and groundTruth == 'No':
+        return True
+    else:
+        return False
 
-def flow_incorrect_positive(record):
+def flow_false_negative(record):
     intervention = record[1]
     rfResult = record[2]
     groundTruth = record[3]
@@ -120,8 +142,17 @@ def flow_incorrect_positive(record):
     else:
         return False
 
+def flow_true_negative(record):
+    intervention = record[1]
+    rfResult = record[2]
+    groundTruth = record[3]
+    if intervention == 'No' and groundTruth == 'No':
+        return True
+    else:
+        return False
 
-def both_incorrect_negative(record):
+
+def both_false_negative(record):
     intervention = record[1]
     rfResult = record[2]
     groundTruth = record[3]
@@ -132,12 +163,52 @@ def both_incorrect_negative(record):
         return False
 
 
-def both_correct_negative(record):
+def both_true_negatives(record):
     intervention = record[1]
     rfResult = record[2]
     groundTruth = record[3]
 
     if intervention == 'No' and rfResult == 'No' and groundTruth == 'No':
+        return True
+    else:
+        return False
+
+def both_true_positives(record):
+    intervention = record[1]
+    rfResult = record[2]
+    groundTruth = record[3]
+
+    if intervention == 'Yes' and rfResult == 'Yes' and groundTruth == 'Yes':
+        return True
+    else:
+        return False
+
+def both_false_positives(record):
+    intervention = record[1]
+    rfResult = record[2]
+    groundTruth = record[3]
+
+    if intervention == 'Yes' and rfResult == 'Yes' and groundTruth == 'No':
+        return True
+    else:
+        return False
+
+
+def both_rf_true_positive(record):
+    intervention = record[1]
+    rfResult = record[2]
+    groundTruth = record[3]
+    if intervention == 'No' and rfResult == 'Yes' and groundTruth == 'Yes':
+        return True
+    else:
+        return False
+
+
+def both_flow_true_positive(record):
+    intervention = record[1]
+    rfResult = record[2]
+    groundTruth = record[3]
+    if intervention == 'Yes' and rfResult == 'No' and groundTruth == 'Yes':
         return True
     else:
         return False
@@ -155,12 +226,27 @@ def count_ground_truth(lists):
 
 
 def integrate(listOfRfIntervention, structDeck):
-    bothPositiveList = list()
-    rfCorrectList = list()
-    rfIncorrectList = list()
-    flowCorrectList = list()
-    flowIncorrectList = list()
-    bothNegativeList = list()
+    rfTruePositive = list()
+    rfTrueNegative = list()
+    rfFalsePositive = list()
+    rfFalseNegative = list()
+
+    flowTruePositive = list()
+    flowTrueNegative = list()
+    flowFalsePositive = list()
+    flowFalseNegative = list()
+
+    bothTruePositive = list()
+    bothTrueNegative = list()
+    bothFalseNegative = list()
+    bothFalsePositive = list()
+
+    bothRfTruePositive = list()
+    bothFlowTruePositive = list()
+
+    counter = 0
+    yesList = list()
+    noList = list()
     for record in listOfRfIntervention:
         structNum = record[0]
         record.append(structDeck.get(structNum))
@@ -169,6 +255,7 @@ def integrate(listOfRfIntervention, structDeck):
             record[1] = 'No'
         else:
             record[1] = 'Yes'
+
         # Recoding random forest results
         if record[2] == '':
             record[2] = None
@@ -177,29 +264,82 @@ def integrate(listOfRfIntervention, structDeck):
         else:
             record[2] = 'No'
 
+
         # Record both positive
-        if both_correct_positive(record):
-            bothPositiveList.append(record)
+        if record[2] != None:
+            counter = counter + 1
+            if record[3] == 'Yes':
+                yesList.append(record)
 
-        if rf_correct_positive(record):
-            rfCorrectList.append(record)
+            if record[3] == 'No':
+                noList.append(record)
 
-        if flow_correct_positive(record):
-            flowCorrectList.append(record)
+            if both_true_positives(record):
+                bothTruePositive.append(record)
 
-        if both_incorrect_negative(record):
-            bothNegativeList.append(record)
+            if both_true_negatives(record):
+                bothTrueNegative.append(record)
 
-        if rf_incorrect_positive(record):
-            rfIncorrectList.append(record)
+            if both_false_negative(record):
+                bothFalseNegative.append(record)
 
-        if flow_incorrect_positive(record):
-            flowIncorrectList.append(record)
+            if both_false_positives(record):
+                bothFalsePositive.append(record)
 
-        if both_correct_negative(record):
-            bothNegativeList.append(record)
+            if rf_true_positive(record):
+                rfTruePositive.append(record)
 
-    return bothPositiveList, rfCorrectList, rfIncorrectList, flowCorrectList, flowIncorrectList, bothNegativeList
+            if rf_true_negative(record):
+                rfTrueNegative.append(record)
+
+            if rf_false_positive(record):
+                rfFalsePositive.append(record)
+
+            if rf_false_negative(record):
+                rfFalseNegative.append(record)
+
+            if flow_true_positive(record):
+                flowTruePositive.append(record)
+
+            if flow_true_negative(record):
+                flowTrueNegative.append(record)
+
+            if flow_false_positive(record):
+                flowFalsePositive.append(record)
+
+            if flow_false_negative(record):
+                flowFalseNegative.append(record)
+
+            if both_rf_true_positive(record):
+                bothRfTruePositive.append(record)
+
+            if both_flow_true_positive(record):
+                bothFlowTruePositive.append(record)
+        else:
+            continue
+
+        returnSt = [ bothFalseNegative,
+                     bothFalsePositive,
+                     bothTrueNegative,
+                     bothTruePositive,
+                     rfTrueNegative,
+                     rfTruePositive,
+                     rfFalseNegative,
+                     rfFalsePositive,
+                     flowTrueNegative,
+                     flowTruePositive,
+                     flowFalseNegative,
+                     flowFalsePositive,
+                     counter,
+                     yesList,
+                     noList,
+                     bothFlowTruePositive,
+                     bothRfTruePositive
+                  ]
+
+
+    return returnSt
+    #return bothPositiveList, rfCorrectList, rfIncorrectList, flowCorrectList, flowIncorrectList, bothNegativeList, counter. yesList, noList
 
 
 
@@ -219,20 +359,50 @@ def main():
 
     ## RF intervention
     #Structure Number, Flow Chart, Random Forest, label
-    pos, rf, rfi, fl, fli, neg = integrate(listOfGtIntervention, structDeck)
-    yes, no = count_ground_truth(listOfGtIntervention)
+    bFN, bFP, bTN, bTP, rfTN, rfTP, rfFN, rfFP, flTN, flTP, flFN, flFP, count, yes, no, bfl, brf = integrate(listOfGtIntervention, structDeck)
 
-    # Print results
-    print('Number of records with Yes', len(yes))
-    print('Number of records with No', len(no))
-    print('Number of records with correct Yes', len(pos))
-    print('Number of records with correct No', len(neg))
-    print('Number of records with correct Flowchart',len(fl))
-    print('Number of records with incorrect Flowchart',len(fli))
-    print('Number of records with correct Rf', len(rf))
-    print('Number of records with incorrect Rf', len(rfi))
+
+    print("\n")
+    print("--"*16+' Ground Truth '+"--"*16)
+    print("\n")
+    print('Number of records with ground truth Yes (Positive):', len(yes), ', Percent: ', (len(yes)/count)*100)
+    print('Number of records with ground truth No (Negative):', len(no), ', Percent: ', (len(no)/count)*100)
+
+    print("\n")
+    print("--"*16+' Random Forest '+"--"*16)
+    print("\n")
+
+    # Randomforest
+    print('Random Forest True Positive:', len(rfTP), ', Percent: ', (len(rfTP)/count)*100)
+    print('Random Forest True Negative:', len(rfTN), ', Percent: ', (len(rfTN)/count)*100)
+    print('Random Forest False Positive:', len(rfFP), ', Percent: ', (len(rfFP)/count)*100)
+    print('Random Forest False Negative:', len(rfFN), ', Percent: ', (len(rfFN)/count)*100)
+    print('Random Forest Accuracy:', (len(rfTP) + len(rfTN)) / count)
+
+    print("\n")
+    print("--"*16+' Flow Chart '+"--"*16)
+    print("\n")
+
+    # Flow chart
+    print('Flow Chart True Positive:', len(flTP), ', Percent: ', (len(flTP)/count)*100)
+    print('Flow Chart True Negative:', len(flTN), ', Percent: ', (len(flTN)/count)*100)
+    print('Flow Chart False Positive:', len(flFP), ', Percent: ', (len(flFP)/count)*100)
+    print('Flow Chart False Negative:', len(flFN), ', Percent: ', (len(flFN)/count)*100)
+    print('Flow Chart Accuracy:', (len(flTP) + len(flTN)) / count)
+
+    print("\n")
+    print("--"*16+' Random Forest and Flow Chart  '+"--"*16)
+    print("\n")
+
+    # Flow chart
+    print('Both True Positive:', len(bTP), ', Percent: ', (len(bTP)/count)*100)
+    print('Both True Negative:', len(bTN), ', Percent: ', (len(bTN)/count)*100)
+    print('Both False Positive:', len(bFP), ', Percent: ', (len(bFP)/count)*100)
+    print('Both False Negative:', len(bFN), ', Percent: ', (len(bFN)/count)*100)
+    print('True Rf - False Flow:', len(brf), ', Percent: ', (len(brf)/count)*100)
+    print('True Flow - False Rf:', len(bfl), ', Percent: ', (len(bfl)/count)*100)
+    print("\n")
 
 
 if __name__ == '__main__':
     main()
-
