@@ -339,9 +339,6 @@ def integrate(listOfRfIntervention, structDeck):
 
 
     return returnSt
-    #return bothPositiveList, rfCorrectList, rfIncorrectList, flowCorrectList, flowIncorrectList, bothNegativeList, counter. yesList, noList
-
-
 
 def main():
     path = '../../../../data/trees/decision-tree-dataset/'
@@ -402,6 +399,8 @@ def main():
     print('True Rf - False Flow:', len(brf), ', Percent: ', (len(brf)/count)*100)
     print('True Flow - False Rf:', len(bfl), ', Percent: ', (len(bfl)/count)*100)
     print("\n")
+    print(brf)
+    print(bfl)
 
 
 if __name__ == '__main__':
