@@ -71,24 +71,20 @@ def calc_int(newRecords, listOfIntRecords):
     strucNums = list()
     interventions = list()
 
-    threshold = 0.5
-
+    threshold = 0.18
     #TODO need to select only from certain tunelength
     #listOfIntRecords = [rec for rec in listOfIntRecords if rec.Tunelength == '10']
-
     for rec in listOfIntRecords:
         structNum = rec.StructureNumber
         yes = rec.Yes
         no = rec.No
         tlen = rec.Tunelength
         intven = ''
-        threshold = 0.30
 
-        if yes > no:
+        if float(yes) >= threshold:
             intven = 'yes'
         else:
             intven = 'no'
-
         strucNums.append(structNum)
         interventions.append(intven)
     structNumDict = dict(zip(strucNums, interventions))
