@@ -18,8 +18,6 @@ __copyright__ = 'GPL'
     # Fir the random forest: 
         # For all the bridges in the nebraska:
             # 
-# Classification reporting
-# 
 def read_main_dataset(csvFile):
     listOfRecords = list()
     with open(csvFile, 'r') as csvfile:
@@ -67,9 +65,6 @@ def create_dict(listOfRecords):
         structSub[struct] = sub
         structSup[struct] = sup
     return structDeck, structSub, structSup
-
-
-
 
 def rf_true_negative(record):
     intervention = record[1]
@@ -340,6 +335,14 @@ def integrate(listOfRfIntervention, structDeck):
 
     return returnSt
 
+
+def to_csv(listOfRecords, filename):
+    with open(filename, 'w') as csvfile:
+        csvWriter = csv.writer(csvfile)
+        header = ['structureNumber']
+        for row in listOfRecords:
+            csvWriter.writerow([row[0]])
+
 def main():
     path = '../../../../data/trees/decision-tree-dataset/'
     csvFile = 'decision_tree.csv'
@@ -399,8 +402,10 @@ def main():
     print('True Rf - False Flow:', len(brf), ', Percent: ', (len(brf)/count)*100)
     print('True Flow - False Rf:', len(bfl), ', Percent: ', (len(bfl)/count)*100)
     print("\n")
-    print(brf)
-    print(bfl)
+
+    # export brf and bfl
+    to_csv(brf, 'bridgesRf.csv')
+    to_csv(bfl, 'bridgesFl.csv')
 
 
 if __name__ == '__main__':
