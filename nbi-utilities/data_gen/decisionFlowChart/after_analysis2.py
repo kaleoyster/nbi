@@ -45,9 +45,7 @@ def record_summary(listOfRecords):
     adt = 0
     material = defaultdict(int)
 
-    # Try
     for record in listOfRecords:
-        print(record)
         try:
             year = record.year
             county = record.countyCode
@@ -57,7 +55,30 @@ def record_summary(listOfRecords):
             structType = record.structureType
         except:
             pass
-    return material, age
+    return listOfRecords
+
+
+def to_csv(output, filename):
+
+    output = [item._asdict() for item in output]
+    fieldnames = ['year',
+                  'stateCode',
+                  'structureNumber',
+                  'countyCode',
+                  'yearBuilt',
+                  'averageDailyTraffic',
+                  'deck',
+                  'yearReconstructed',
+                  'avgDailyTruckTraffic',
+                  'material',
+                  'structureType'
+                 ]
+
+    with open(filename, 'w') as csvFile:
+        csvWriter = csv.DictWriter(csvFile, delimiter=',', fieldnames=fieldnames)
+        csvWriter.writeheader()
+        for row in output:
+            csvWriter.writerow(row)
 
 
 def main():
@@ -89,9 +110,11 @@ def main():
         flowBridgeRecords.append(nbiDict.get(structNum))
 
     # Average random forest age, adt, adtt, year of resconstruction
-    print(record_summary(rfBridgeRecords))
-    print(record_summary(flowBridgeRecords))
-    #print(rfBridgeRecords)
+    outputRf = record_summary(rfBridgeRecords)
+    to_csv(outputRf, 'TrueRfFalseFl.csv')
+
+    outputFlow = record_summary(flowBridgeRecords)
+    to_csv(outputFlow, 'TrueFlFalseRf.csv')
 
 if __name__== "__main__":
     main()
