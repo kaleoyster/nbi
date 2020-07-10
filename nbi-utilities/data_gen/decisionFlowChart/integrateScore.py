@@ -71,9 +71,7 @@ def calc_int(newRecords, listOfIntRecords):
     strucNums = list()
     interventions = list()
 
-    threshold = 0.18
-    #TODO need to select only from certain tunelength
-    #listOfIntRecords = [rec for rec in listOfIntRecords if rec.Tunelength == '10']
+    threshold = 0.15
     for rec in listOfIntRecords:
         structNum = rec.StructureNumber
         yes = rec.Yes

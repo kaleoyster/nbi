@@ -45,13 +45,16 @@ def record_summary(listOfRecords):
     adt = 0
     material = defaultdict(int)
 
+    # Try
     for record in listOfRecords:
+        print(record)
         try:
-            year = record.YEAR_BUILT_027
-            deck = record.DECK_COND_058
-            adt = record.ADT_029
-            structType = record.STRUCTURE_TYPE_043B
-            structKind = record.STRUCTURE_KIND_043A
+            year = record.year
+            county = record.countyCode
+            yearReconstructed = record.yearReconstructed
+            deck = record.deck
+            adt = record.averageDailyTraffic
+            structType = record.structureType
         except:
             pass
     return material, age
@@ -62,7 +65,7 @@ def main():
     os.chdir(path)
     rfBridges = 'bridgesRf.csv'
     flBridges = 'bridgesFl.csv'
-    nbiFile = 'nbi.csv'
+    nbiFile = 'nebraska1992-2019.csv'
 
     rfList = read_structure_numbers(rfBridges)
     flList = read_structure_numbers(flBridges)
@@ -70,7 +73,7 @@ def main():
 
     structNumbers =  list()
     for nbiRecord in nbiList:
-        structNumber = nbiRecord.STRUCTURE_NUMBER_008
+        structNumber = nbiRecord.structureNumber
         structNumbers.append(structNumber)
 
     nbiDict = defaultdict()
@@ -79,7 +82,6 @@ def main():
 
     rfBridgeRecords = list()
     flowBridgeRecords = list()
-
     for structNum in rfList:
         rfBridgeRecords.append(nbiDict.get(structNum))
 
@@ -88,7 +90,8 @@ def main():
 
     # Average random forest age, adt, adtt, year of resconstruction
     print(record_summary(rfBridgeRecords))
-    print(rfBridgeRecords)
+    print(record_summary(flowBridgeRecords))
+    #print(rfBridgeRecords)
 
 if __name__== "__main__":
     main()
