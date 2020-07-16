@@ -17,7 +17,6 @@ __copyright__ = 'GPL'
 #  Decision Trees:
     # Fir the random forest: 
         # For all the bridges in the nebraska:
-            # 
 def read_main_dataset(csvFile):
     listOfRecords = list()
     with open(csvFile, 'r') as csvfile:
@@ -178,6 +177,7 @@ def both_true_positives(record):
     else:
         return False
 
+
 def both_false_positives(record):
     intervention = record[1]
     rfResult = record[2]
@@ -245,6 +245,7 @@ def integrate(listOfRfIntervention, structDeck):
     for record in listOfRfIntervention:
         structNum = record[0]
         record.append(structDeck.get(structNum))
+
         # Recoding flow chart intervention
         if record[1][:4] == 'None':
             record[1] = 'No'
@@ -343,6 +344,16 @@ def to_csv(listOfRecords, filename):
         for row in listOfRecords:
             csvWriter.writerow([row[0]])
 
+
+def to_csv_all_bridges(listOfRecords, filename):
+    with open(filename, 'w') as csvfile:
+        csvWriter = csv.writer(csvfile)
+        header = ['structureNumber', 'flowChartResult', 'randomForest', 'groundTruth']
+        csvWriter.writerow(header)
+        for row in listOfRecords:
+            csvWriter.writerow(row)
+
+
 def main():
     path = '../../../../data/trees/decision-tree-dataset/'
     csvFile = 'decision_tree.csv'
@@ -406,6 +417,7 @@ def main():
     # export brf and bfl
     to_csv(brf, 'bridgesRf.csv')
     to_csv(bfl, 'bridgesFl.csv')
+    to_csv_all_bridges(listOfGtIntervention, 'allBridges.csv')
 
 
 if __name__ == '__main__':
