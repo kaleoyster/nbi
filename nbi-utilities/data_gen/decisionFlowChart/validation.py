@@ -99,6 +99,7 @@ def rf_false_positive(record):
     else:
         return False
 
+
 def rf_true_positive(record):
     intervention = record[1]
     rfResult = record[2]
@@ -198,6 +199,15 @@ def both_rf_true_positive(record):
     else:
         return False
 
+def both_rf_true_negative(record):
+    intervention = record[1]
+    rfResult = record[2]
+    groundTruth = record[3]
+    if intervention == 'Yes' and rfResult == 'No' and groundTruth == 'No':
+        return True
+    else:
+        return False
+
 
 def both_flow_true_positive(record):
     intervention = record[1]
@@ -207,6 +217,17 @@ def both_flow_true_positive(record):
         return True
     else:
         return False
+
+
+def both_flow_true_negative(record):
+    intervention = record[1]
+    rfResult = record[2]
+    groundTruth = record[3]
+    if intervention == 'No' and rfResult == 'Yes' and groundTruth == 'No':
+        return True
+    else:
+        return False
+
 
 
 def count_ground_truth(lists):
@@ -237,7 +258,10 @@ def integrate(listOfRfIntervention, structDeck):
     bothFalsePositive = list()
 
     bothRfTruePositive = list()
+    bothRfTrueNegative = list()
+
     bothFlowTruePositive = list()
+    bothFlowTrueNegative = list()
 
     counter = 0
     yesList = list()
@@ -309,8 +333,14 @@ def integrate(listOfRfIntervention, structDeck):
             if both_rf_true_positive(record):
                 bothRfTruePositive.append(record)
 
+            if both_rf_true_negative(record):
+                bothRfTrueNegative.append(record)
+
             if both_flow_true_positive(record):
                 bothFlowTruePositive.append(record)
+
+            if both_flow_true_negative(record):
+                bothFlowTrueNegative.append(record)
         else:
             continue
 
@@ -330,7 +360,9 @@ def integrate(listOfRfIntervention, structDeck):
                      yesList,
                      noList,
                      bothFlowTruePositive,
-                     bothRfTruePositive
+                     bothFlowTrueNegative,
+                     bothRfTruePositive,
+                     bothRfTrueNegative
                   ]
 
 
@@ -370,7 +402,7 @@ def main():
 
     ## RF intervention
     #Structure Number, Flow Chart, Random Forest, label
-    bFN, bFP, bTN, bTP, rfTN, rfTP, rfFN, rfFP, flTN, flTP, flFN, flFP, count, yes, no, bfl, brf = integrate(listOfGtIntervention, structDeck)
+    bFN, bFP, bTN, bTP, rfTN, rfTP, rfFN, rfFP, flTN, flTP, flFN, flFP, count, yes, no, bfl, bfln, brf, brfn = integrate(listOfGtIntervention, structDeck)
 
 
     print("\n")
@@ -395,10 +427,10 @@ def main():
     print("\n")
 
     # Flow chart
-    print('Flow Chart True Positive:', len(flTP), ', Percent: ', (len(flTP)/count)*100)
-    print('Flow Chart True Negative:', len(flTN), ', Percent: ', (len(flTN)/count)*100)
-    print('Flow Chart False Positive:', len(flFP), ', Percent: ', (len(flFP)/count)*100)
-    print('Flow Chart False Negative:', len(flFN), ', Percent: ', (len(flFN)/count)*100)
+    print('Flow Chart True Positive:', len(flTP), ', Percent: ', (len(flTP)/len(yes))*100)
+    print('Flow Chart True Negative:', len(flTN), ', Percent: ', (len(flTN)/len(no))*100)
+    print('Flow Chart False Positive:', len(flFP), ', Percent: ', (len(flFP)/len(no))*100)
+    print('Flow Chart False Negative:', len(flFN), ', Percent: ', (len(flFN)/len(yes))*100)
     print('Flow Chart Accuracy:', (len(flTP) + len(flTN)) / count)
 
     print("\n")
@@ -406,17 +438,19 @@ def main():
     print("\n")
 
     # Flow chart
-    print('Both True Positive:', len(bTP), ', Percent: ', (len(bTP)/count)*100)
-    print('Both True Negative:', len(bTN), ', Percent: ', (len(bTN)/count)*100)
-    print('Both False Positive:', len(bFP), ', Percent: ', (len(bFP)/count)*100)
-    print('Both False Negative:', len(bFN), ', Percent: ', (len(bFN)/count)*100)
-    print('True Rf - False Flow:', len(brf), ', Percent: ', (len(brf)/count)*100)
-    print('True Flow - False Rf:', len(bfl), ', Percent: ', (len(bfl)/count)*100)
+    print('Both True Positive:', len(bTP), ', Percent: ', (len(bTP)/len(yes))*100)
+    print('Both True Negative:', len(bTN), ', Percent: ', (len(bTN)/len(no))*100)
+    print('Both False Positive:', len(bFP), ', Percent: ', (len(bFP)/len(no))*100)
+    print('Both False Negative:', len(bFN), ', Percent: ', (len(bFN)/len(yes))*100)
+    print('True Rf - False Flow:', len(brf), ', Percent: ', (len(brf)/len(yes))*100)
+    print('True Flow - False Rf:', len(bfl), ', Percent: ', (len(bfl)/len(yes))*100)
     print("\n")
 
     # export brf and bfl
     to_csv(brf, 'bridgesRf.csv')
-    to_csv(bfl, 'bridgesFl.csv')
+    to_csv(brfn, 'bridgesRfNegative.csv')
+    to_csv(brf, 'bridgesFl.csv')
+    to_csv(bfln, 'bridgesFlNegative.csv')
     to_csv_all_bridges(listOfGtIntervention, 'allBridges.csv')
 
 
