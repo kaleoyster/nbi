@@ -427,10 +427,10 @@ def main():
     print("\n")
 
     # Flow chart
-    print('Flow Chart True Positive:', len(flTP), ', Percent: ', (len(flTP)/len(yes))*100)
-    print('Flow Chart True Negative:', len(flTN), ', Percent: ', (len(flTN)/len(no))*100)
-    print('Flow Chart False Positive:', len(flFP), ', Percent: ', (len(flFP)/len(no))*100)
-    print('Flow Chart False Negative:', len(flFN), ', Percent: ', (len(flFN)/len(yes))*100)
+    print('Flow Chart True Positive:', len(flTP), ', Percent: ', (len(flTP)/len(count))*100)
+    print('Flow Chart True Negative:', len(flTN), ', Percent: ', (len(flTN)/len(count))*100)
+    print('Flow Chart False Positive:', len(flFP), ', Percent: ', (len(flFP)/len(count))*100)
+    print('Flow Chart False Negative:', len(flFN), ', Percent: ', (len(flFN)/len(count))*100)
     print('Flow Chart Accuracy:', (len(flTP) + len(flTN)) / count)
 
     print("\n")
@@ -438,20 +438,36 @@ def main():
     print("\n")
 
     # Flow chart
-    print('Both True Positive:', len(bTP), ', Percent: ', (len(bTP)/len(yes))*100)
-    print('Both True Negative:', len(bTN), ', Percent: ', (len(bTN)/len(no))*100)
-    print('Both False Positive:', len(bFP), ', Percent: ', (len(bFP)/len(no))*100)
-    print('Both False Negative:', len(bFN), ', Percent: ', (len(bFN)/len(yes))*100)
-    print('True Rf - False Flow:', len(brf), ', Percent: ', (len(brf)/len(yes))*100)
-    print('True Flow - False Rf:', len(bfl), ', Percent: ', (len(bfl)/len(yes))*100)
-    print("\n")
+    print('Both True Positive:', len(bTP), ', Percent: ', (len(bTP)/count)*100)
+    print('Both True Negative:', len(bTN), ', Percent: ', (len(bTN)/count)*100)
+    print('Both False Positive:', len(bFP), ', Percent: ', (len(bFP)/count)*100)
+    print('Both False Negative:', len(bFN), ', Percent: ', (len(bFN)/count)*100)
+    print('True Positive Rf - False Negative Flow:', len(brf), ', Percent: ', (len(brf)/count)*100)
+    print('True Negative Rf - False Positive Flow:', len(brfn), ', Percent: ', (len(brfn)/count)*100)
 
-    # export brf and bfl
-    to_csv(brf, 'bridgesRf.csv')
-    to_csv(brfn, 'bridgesRfNegative.csv')
-    to_csv(brf, 'bridgesFl.csv')
-    to_csv(bfln, 'bridgesFlNegative.csv')
+    print('True Positive Flow - False Negative Rf:', len(bfl), ', Percent: ', (len(bfl)/count)*100)
+    print('True Negative Flow - False Positive Rf:', len(bfln), ', Percent: ', (len(bfln)/count)*100)
+    print("\n")
+    print(len(bTP)+len(bTN)+len(bFP)+len(bFN)+len(brf)+len(brfn)+len(bfl)+len(bfln))
+    print(count)
+
+    #export both true positive
+    to_csv_all_bridges(bTP, 'bTP.csv')
+    to_csv_all_bridges(bTN, 'bTN.csv')
+    to_csv_all_bridges(bFP, 'bFP.csv')
+    to_csv_all_bridges(bFN, 'bFN.csv')
+
+    # flowchart
+    to_csv_all_bridges(bfl, 'bridgesFl.csv')
+    to_csv_all_bridges(bfln, 'bridgesFlNegative.csv')
+
+    # randomforest
+    to_csv_all_bridges(brf, 'bridgesRf.csv')
+    to_csv_all_bridges(brfn, 'bridgesRfNegative.csv')
+
+    # all bridges
     to_csv_all_bridges(listOfGtIntervention, 'allBridges.csv')
+
 
 
 if __name__ == '__main__':
