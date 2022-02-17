@@ -1,6 +1,12 @@
 """
 title: This file contains functions that emulate the conditions of
 deicison flow chart by NDOT
+
+Input file:
+    CSV File:
+
+Output file:
+    CSV File:
 author: Akshay Kale
 """
 import csv

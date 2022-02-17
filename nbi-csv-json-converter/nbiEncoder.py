@@ -12,7 +12,7 @@ from crossValidationFunctions import *
 '''
    FUNCTION NAME: def nbi_encoder()
    The purpose of this function to return a JSON formattd strings from a CSV file.
-   
+
    INPUT PARAMETER: input parameters for this function are 1. data is a list of rows containing NBI data.
                                                            2. year integer is an integer.
                                                            3. Longitude is an intger.
@@ -22,8 +22,7 @@ from crossValidationFunctions import *
 '''
 
 def nbiEncoder(data,year,Longitude,Latitude):
-   x = json.dumps({ 
-  
+   x = json.dumps({
    "year" : convertNumeric(year),                                                                                              #item No:0  YEAR      
    "stateCode":convertToString(data[0]),                                                                                       #item No:1   3  /  N  State Code
    "structureNumber":convertToString(data[1]),                                                                                 #item No:8  15  / AN  Structure Number
@@ -33,23 +32,23 @@ def nbiEncoder(data,year,Longitude,Latitude):
                         "designatedLevelOfService":convertNumeric(data[4]),                                                    #item No:5C  1  /  N  Designated Level of Service
                         "routeNumber":convertToString(data[5]),                                                                #item No:5D  AN  / 5  Route Number
                         "directionalSuffix":convertNumeric(data[6])                                                            #item No:5E  1  /  N  Directional Suffi
-                     }, 
+                     },
    "highwayAgencyDistrict":convertToString(data[7]),                                                                           #item No:2   2  / AN  Highway Agency District
    "countyCode":convertNumeric(data[8]),                                                                                       #item No:3   3  /  N  Count (Parish) Code
    "placeCode":convertNumeric(data[9]),                                                                                        #item No:4   4  /  N  Place Code
    "featuresIntersected": {                                                                                                    #item No:6  25  / AN  Features Intersected
                              "featuresIntersected":convertToString(data[10]),                                                  #item No:6A 25  / AN  Features Intersected (NO LONGER CODE .. Has to be BLANK)
                              "criticalFacilityIndicator":convertToString(data[11])                                             #item No:6B  1  / AN  Critical Facility Indicator
-                            },                                                                                                                                        
+                            },
    "facilityCarriedByStructure":convertToString(data[12]),                                                                     #item No:7  AN Facility Carried By Structure
    "location":convertToString(data[13]),                                                                                       #item No:9  AN Location
    "inventoryRTeMinVertClearance":convertNumeric(data[14]),                                                                     #item No:10 N Inventory RTe, Min Vert Clearance
-                                                                                   
+
    "kilometerpoint":convertNumeric(data[15]),                                                                                   #item No:11 N Kilometerpoint
    "baseHighwayPoint":convertNumeric(data[16]),                                                                                 #item No:12 N Base Highway Point
    "inventoryRouteSubrouteNumber": {                                                                                            #item No:13  AN Inventory Route, Subroute Number
                                          "LRSInventoryRoute":convertToString(data[17]),                                         #item No:13A AN LRS Inventory Route
-                                        },                                              
+                                        },
    "latitude":convertNumeric(data[19]),                                                                                        #item No:16 N Latitude
    "longitude":convertNumeric(data[20]),                                                                                       #item No:17 N Longitude
    "bypassDetourLength":convertNumeric(data[21]),                                                                              #item No:19 N Bypass/Detour Length (should be string)
@@ -61,9 +60,8 @@ def nbiEncoder(data,year,Longitude,Latitude):
    "lanesOnUnderStructure": {                                                                                                   #item No:28 N Lanes On/Under Structure
                                   "lanesOnStructure":convertNumeric(data[27]),                                                 #item No:28A N Lanes On Structure (Doubt )
                                   "lanesUnderStructure":convertNumeric(data[28])                                               #item No:28B N Lanes Under Structure (Doubt )
-                                },  
+                                },
    "averageDailyTraffic":convertNumeric(data[29]),                                                                              #item No:29  N Average Daily Traffic
-                                                
    "yearOfAverageDailyTraffic":convertNumeric(data[30]),                                                                        #item No:30  N Year Of Average Daily Traffic
    "designLoad":convertNumeric(data[31]),                                                                                      #item No:31  N Design Load
    "approachRoadwayWidth":convertNumeric(data[32]),                                                                            #item No:32  N Approach Roadway Width
@@ -85,8 +83,8 @@ def nbiEncoder(data,year,Longitude,Latitude):
    "typeOfService":{                                                                                                            #item No:42  N Type of Service
                        "typeOfServiceOnBridge":convertNumeric(data[45]),                                                       #item No:42A N Type of Service On Bridge"
                        "typeOfServiceUnderBridge":convertNumeric(data[46])                                                     #item No:42B N Type of Service Under Bridge
-                     }, 
- 
+                     },
+
    "structureTypeMain":{                                                                                                       #item No:43  N Structure Type, Main
                           "kindOfMaterialDesign":convertNumeric(data[47]),                                                     #item No:43A N Kind of Material/Design   
                           "typeOfDesignConstruction":convertNumeric(data[48])                                                  #item No:43B N Type of Design/Construction
@@ -95,8 +93,7 @@ def nbiEncoder(data,year,Longitude,Latitude):
    "structureTypeApproachSpans":{
                                      "kindOMaterialDesign":convertNumeric(data[49]),                                           #item No:44A N Kind of Material/Design
                                      "typeOfDesignContruction":convertNumeric(data[50]),                                       #item No:44B N Type of Design/Contruction
-                                     },                                           
-                    
+                                     },
    "numberOfSpansInMainUnit":convertNumeric(data[51]),                                                                          #item No:45  N Number of Spans in Main unit
    "numberOfApproachSpans":convertNumeric(data[52]),                                                                            #item No:46  N Number of Approach Spans
    "inventoryRteTotalHorzClearance":convertNumeric(data[53]),                                                                   #item No:47  N Inventory Rte Total Horz Clearance
@@ -106,19 +103,19 @@ def nbiEncoder(data,year,Longitude,Latitude):
                             "leftCurbSidewalkWidth":convertNumeric(data[56]),                                                   #item No:50A N Left Curb/Sidewalk Width
                             "rightCurbSidewalkWidth":convertNumeric(data[57])                                                   #item No:50B N Right Curb/Sidewalk Width
                            },
- 
+
    "bridgeRoadwayWithCurbToCurb":convertNumeric(data[58]),                                                                      #item No:51  N Bridge Roadway with Curb-To-Curb
    "deckWidthOutToOut":convertNumeric(data[59]),                                                                                #item No:52  N Deck Width, Out-To-Out
    "minVertClearOverBridgeRoadway":convertNumeric(data[60]),                                                                    #item No:53  N Min Vert Clear Over Bridge Roadway 
    "minimumVerticalUnderclearance": {                                                                                          #item No:54  AN Minimum Vertical Underclearance
                                         "referenceFeature":convertToString(data[61]),                                           #item No:54A AN Reference Feature
                                         "minimumVerticalUnderclearance":convertNumeric(data[62])                               #item No:54B N Minimum Vertical Underclearance
-                                       },     
+                                       },
    "minLateralUnderclearOnRight":{                                                                                              #item No:55 AN Min Lateral underclear On Right
                                        "referenceFeature":convertToString(data[63]),                                            #item No:55A AN Reference Feature
                                        "minimumLateralUnderclearance":convertNumeric(data[64]),                                 #item No:55B N Minimum Lateral Underclearance
                                      },
-    
+
    "minLateralUnderclearOnLeft":convertNumeric(data[65]),                                                                       #item No:56 N Min Lateral Underclear On Left
    "deck":convertToString(data[66]),                                                                                            #item No:58 AN Deck
    "superstructure":convertToString(data[67]),                                                                                  #item No:59 AN Superstructure
@@ -138,7 +135,7 @@ def nbiEncoder(data,year,Longitude,Latitude):
    "typeOfWork": {                                                                                                              #item No:75 AN Type of Work
                       "typeOfWorkProposed":convertNumeric(data[81]),                                                            #item No:75A N Type of Work Proposed
                       "workDoneBy":convertToString(data[82])                                                                    #item No:75B AN Work Done By
-                   },  
+                   },
    "lengthOfStructureImprovement":convertNumeric(data[83]),                                                                     #item No:76  N Length Of Structure Improvement
    "inspectionDate":convertNumeric(data[84]),                                                                                   #item No:90  N Inspection Date
    "designatedInspectionFrequency":convertNumeric(data[85]),                                                                    #item No:91  N Designated Inspection Frequency
@@ -151,7 +148,7 @@ def nbiEncoder(data,year,Longitude,Latitude):
                                           "fractureCriticalDetailsDate":convertToString(data[89]),                              #item No:93A AN Fracture Critical Details Date
                                           "underwaterInspectionDate":convertToString(data[90]),                                 #item No:93B AN Underwater Inspection Date
                                           "otherSpecialInspectionDate":convertToString(data[91])                                #item No:93C AN Other Special Inspection Date
-                                        }, 
+                                        },
 
    "bridgeImprovementCost":convertNumeric(data[92]),                                                                            #item No:94  N Bridge Improvement Cost
    "roadwayImprovementCost":convertNumeric(data[93]),                                                                           #item No:95  N Roadway Improvement Cost
@@ -160,7 +157,7 @@ def nbiEncoder(data,year,Longitude,Latitude):
    "borderBridge": {                                                                                                            #item No:98   Border Bridge
                        "neighboringStateCode":convertToString(data[96]),                                                        #item No:98A AN Neighboring State Code
                        "percentReponsibility":convertNumeric(data[97])                                                          #item No:98B N Percent Reponsibility
-                    }, 
+                    },
    "borderBridgeStructureNumber":convertToString(data[98]),                                                                   #item No:99  N Border Bridge Structure Number
    "STRAHNETHighwayDesignation":convertNumeric(data[99]),                                                                     #item No:100  N STRAHNETHighwayDesignation  
    "parallelStructureDesignation":convertToString(data[100]),                                                                 #item No:101  AN Parallel Structure Designation
@@ -187,21 +184,19 @@ def nbiEncoder(data,year,Longitude,Latitude):
    "dateLastUpdate":convertToString(data[119]),
    "typeLastUpdate":convertToString(data[120]),
    "deductCode":convertToString(data[121]),
-   
    "statusWith10YearRule":convertToString(data[130]),                                                                         #item No:118  Status with 10 Year Rule
    "sufficiencyRatingAsteriskField":convertToString(data[131]),                                                               #item No:119  Sufficiency Rating Asterisk field
    "sufficiencyRating":convertNumeric(data[132]),                                                                             #item No:120  Sufficiency Rating
-    #"status without 10 year rule":convertToString(data[133]),                                                                #item No:121  Status Without 10 Year Rule
-   
-           
+       #"status without 10 year rule":convertToString(data[133]),                                                             #item No:121  Status Without 10 Year Rule 
+
    "loc":{
            "type": "Point",
            "coordinates":[
                           Longitude,
                           Latitude
-                          ] 
-    
-            }  
+                          ]
+
+           }
              })
    return x
 

@@ -12,40 +12,40 @@ import os
 from urllib.request import urlopen
 
 # years global variable
-
 years = [
-    1992,
-    1993,
-    1994,
-    1995,
-    1996,
-    1997,
-    1998,
-    1999,
-    2000,
-    2001,
-    2002,
-    2003,
-    2004,
-    2005,
-    2006,
-    2007,
-    2008,
-    2009,
-    2010,
-    2011,
-    2012,
-    2013,
-    2014,
-    2015,
-    2016,
-    2017,
-    2018,
-    2019]
+         1992,
+         1993,
+         1994,
+         1995,
+         1996,
+         1997,
+         1998,
+         1999,
+         2000,
+         2001,
+         2002,
+         2003,
+         2004,
+         2005,
+         2006,
+         2007,
+         2008,
+         2009,
+         2010,
+         2011,
+         2012,
+         2013,
+         2014,
+         2015,
+         2016,
+         2017,
+         2018,
+         2019,
+         2020
+        ]
 
 
 #states global variable
-
 states = ["AK",
           "AL",
           "AR",
@@ -98,6 +98,8 @@ states = ["AK",
           "WI",
           "WV",
           "WY"]
+
+#states = ['NE']
 
 #Dictionary - for rename function
 fileNameDict = {'25fluna':'MA',
@@ -154,9 +156,15 @@ fileNameDict = {'25fluna':'MA',
                 '49fluna':'UT'
                }
 
-#renames all downloaded files by using the above dictionary
 def rename(fileNameDict):
-    for root,dirs,filenames in os.walk('NBIDATA'):
+    """
+    Description:
+        Renames all downloaded files by using the above dictionary
+
+    Args:
+        fileNameDict
+    """
+    for root, dirs, filenames in os.walk('NBIDATA'):
         for f in filenames:
             try:
                oldFileName, year = f[:7],f[10:14]
@@ -167,33 +175,61 @@ def rename(fileNameDict):
                   os.rename(root+os.sep+f,root+os.sep+fileNameDict[oldFileName]+year+'.txt')
             except:
                pass
-#creates URL for csv files from year 2010 to 2016
-def createURL(year,state):
+
+def createURL(year, state):
+    """
+    Description:
+        Creates URL for csv files from year 2010 to currently available dataset
+
+    Args:
+        year: A list of years
+        state: A list of states
+    """
     yr = year
     yr = str(yr)
     ste = state
-    filename = ste+yr[2:]+".txt"
-    fname = ste+yr+".txt"
+    filename = ste+ yr[2:] + ".txt"
+    fname = ste+ yr + ".txt"
     name , extention = os.path.splitext(fname)
     csvName = name + '.txt'
     link ="https://www.fhwa.dot.gov/bridge/nbi/"+yr+"/delimited/"+filename
     return(link, csvName)
 
-#creates URL for zip file downloads from year 1992 to 2009
 def createZipUrl(year):
-    year = str(year)
-    return 'https://www.fhwa.dot.gov/bridge/nbi/'+year+'del.zip'
+    """
+    Description:
+        Creates URL for zip file downloads from year 1992 to 2009
 
-#uses zip url to download and extract csv files
+    Args:
+        year [String]: year of data that needs to be fetched.
+
+    Note:
+        With the new update. Perhaps this function may
+        become dead code.
+    """
+    year = str(year)
+    return 'https://www.fhwa.dot.gov/bridge/nbi/'+ year + 'del.zip'
+
 def downloadZipfile(zipUrl):
+    """
+    Description:
+        Uses zip url to download and extract csv files
+    """
     r = requests.get(zipUrl,stream = True)
     z = zipfile.ZipFile(io.BytesIO(r.content))
     z.extractall('NBIDATA')
 
-#driver function
 def main():
+    """
+    Driver function
+    Note:
+        With the new update to the FHWA NBI data source
+        the data can be downloaded without using CreateZipUrl.
+        Which suggest that even the data before 2010 can be used
+        through same (url) naming convention.
+    """
     for year in years:
-        if (year<2010):
+        if (year < 2010):
            zipUrl = createZipUrl(year)
            print('Downloading Zip file for ', year)
            downloadZipfile(zipUrl)
@@ -202,7 +238,7 @@ def main():
            for state in states:
                y = year
                s = state
-               url , filename = createURL(y,s)
+               url, filename = createURL(y,s)
                print("getting ...", filename)
                f = open(os.path.join('NBIDATA',filename),'w')
                with urlopen(url) as response:
@@ -211,12 +247,13 @@ def main():
                           line = line.decode('utf-8')
                        except UnicodeDecodeError:
                            print("Unicode error in", filename, file=log)
-                           print(line,file = log)
+                           print(line, file = log)
                            continue
                        f.write(line)
                f.close()
            log.close()
     rename(fileNameDict)
+
 #main function
 if __name__ == "__main__":
     main()

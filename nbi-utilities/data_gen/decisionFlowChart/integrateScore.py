@@ -1,6 +1,7 @@
 """
 description: This file contains functions that integrate
 bridge scores to NDOT identified maintenance bridges
+
 author: Akshay Kale
 """
 
@@ -14,6 +15,16 @@ __author__ = 'Akshay Kale'
 __copyright__='GPL'
 
 def read_csv(path, csvfile):
+    """
+    description:
+        Something
+
+    args:
+        path (string):
+        csvfile (string):
+
+    returns: listOfRecords (namedtuple): listOfRecords
+    """
     listOfRecords = list()
     with open(csvfile, 'r') as csvFile:
         csvReader = csv.reader(csvFile, delimiter=',')
@@ -30,6 +41,11 @@ def read_csv(path, csvfile):
 
 
 def to_csv(listOfNewRecords, csvfile, fieldnames):
+    """
+    description:
+    args:
+    returns:
+    """
     with open(csvfile, 'w') as csvFile:
         csvWriter = csv.writer(csvFile, delimiter=',')
         csvWriter.writerow(fieldnames)
@@ -39,6 +55,11 @@ def to_csv(listOfNewRecords, csvfile, fieldnames):
 
 
 def calc_bds_cat(newRecords):
+    """
+    description: calculate baseline difference category
+    args:
+    returns:
+    """
     bsdScores = [rec[-1] for rec in newRecords]
     listOfCat = list()
     tempScores = list()
@@ -67,6 +88,12 @@ def calc_bds_cat(newRecords):
 
 
 def calc_int(newRecords, listOfIntRecords):
+    """
+    description:
+        classify according to the threshold
+    args:
+    return:
+    """
     listOfInt = list()
     strucNums = list()
     interventions = list()
@@ -94,6 +121,11 @@ def calc_int(newRecords, listOfIntRecords):
 
 
 def fetch_BSD_score(listOfBSDRecords):
+    """
+    description:
+    args:
+    return:
+    """
     bridgeBDSDict = defaultdict()
     for record in listOfBSDRecords:
         structNum = record.StructureNumber[:-2]
@@ -103,6 +135,11 @@ def fetch_BSD_score(listOfBSDRecords):
 
 
 def update_record(listOfNDOTRecords, bridgeBDSDict):
+    """
+    description:
+    args:
+    return:
+    """
     structureNumbers = list()
     listOfBDS = list()
     listOfNewRecords = list()

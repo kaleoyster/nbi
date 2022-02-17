@@ -15,13 +15,16 @@ from nbiEncoder import *
 from validationFunctions import *
 from crossValidationFunctions import *
 
-####### MongoDB    ##########
+### MongoDB
 fillMongoDB = True
 
-# Note: Default value for fillMongoDB is false
-#importing directly to MongoDB is not yet not properly implemented
-#the issue is being handled and will be updated as soon as possible
-###### SELECT YEARS #########
+"""
+Note:
+    Default value for fillMongoDB is false,
+    Importing directly to MongoDB is not yet not properly implemented.
+    The issue is being handled and will be updated as soon as possible.
+"""
+### SELECT YEARS
 
 # Global variable
 years = [1992,
@@ -51,10 +54,11 @@ years = [1992,
          2016,
          2017,
          2018,
-         2019
+         2019,
+         2020
        ]
 
-###### SELECT STATES #######
+### SELECT STATES 
 """
 states = ["AK",
           "AZ",
@@ -109,14 +113,18 @@ states = ["AK",
           "WV",
           "WY"]
 """
+
 # Global Variable
 states  = ["NE"]
 
 # Global LIST
 files = [] #global variable for Files
 
-#Connection to MongoDB
 def get_db():
+    """
+    Description:
+        Connection to MongoDB
+    """
     from pymongo import MongoClient
     file = open("dbConnect.txt", 'r')
     dbConnectionString = str(file.read()).strip()
@@ -124,9 +132,11 @@ def get_db():
     db = client.bridge
     return db
 
-
-#return a list of files which will helpful for renaming files
-def createFileList(states,years):
+def createFileList(states, years):
+    """
+    Description:
+      return a list of files which will helpful for renaming files
+    """
     files = []
     for state in states:
         for year in years:
@@ -135,12 +145,16 @@ def createFileList(states,years):
             files.append(f)
     return files
 
+# Function Call 1: creatFileList
+files = createFileList(states, years)
 
-files = createFileList(states,years)
-
-#convertion of geo co-ordinates
 def convertLongLat(longitude,latitude):
-   try:
+    """
+    Descriptions:
+        Convertion of geo co-ordinates
+    Returns:
+    """
+    try:
         lat = latitude
         latDegree = int(lat[:2])
         latMin = int(lat[2:4])
@@ -177,7 +191,7 @@ def processFilesJSON(files): # GLOBAL
        os.makedirs(crossValidationDirectory)
     for f in files: # GLOBAL
         state , year = f[:2] , int(f[2:6])
-        with open(os.path.join('NBIDATA',f),'r', encoding='utf-8', errors = 'ignore') as csvfile:
+        with open(os.path.join('NBIDATA',f), 'r', encoding='utf-8', errors = 'ignore') as csvfile:
             reader = csv.reader(csvfile,delimiter = ',')
             headerRow = next(reader,None)
             validationFileName = f[:6] + 'validationLog.txt'
@@ -222,8 +236,12 @@ def processFilesJSON(files): # GLOBAL
             fieldSizeDict = {x: fieldSizeCount.count(x) for x in fieldSizeCount}
             print("===================================",file = summary)
             print('Year: %s, State: %s' %(year, state),file = summary)
-            print("Valid Coordinates:", RowCount - cvc, file = summary) #valid coordinates includes coordinates which have longitude latitude with in proper range.
-            print("Invalid Coordinates:", cvc, file = summary) #Invalid coordinates includes coordinates which have value'0' or ' '
+
+            #valid coordinates includes coordinates which have longitude latitude with in proper range.
+            print("Valid Coordinates:", RowCount - cvc, file = summary)
+
+            #Invalid coordinates includes coordinates which have value'0' or ' '
+            print("Invalid Coordinates:", cvc, file = summary)
             print("Total Records:", RowCount, file = summary)
             print('Index Error Count: ', IndexErrorCount)
             print('Year: %s, State: %s' %(year, state))
@@ -290,8 +308,10 @@ def processFilesMongo(files):
             fieldSizeDict = {x: fieldSizeCount.count(x) for x in fieldSizeCount}
             print("===================================", file = summary)
             print('Year: %s, State: %s' %(year, state), file = summary)
-            print("Valid Coordinates:", RowCount - cvc, file = summary) #valid coordinates includes coordinates which have longitude latitude with in proper range.
-            print("Invalid Coordinates:", cvc, file = summary) #Invalid coordinates includes coordinates which have value'0' or ' '
+            print("Valid Coordinates:", RowCount - cvc, file = summary)
+            #valid coordinates includes coordinates which have longitude latitude with in proper range.
+            print("Invalid Coordinates:", cvc, file = summary)
+            #Invalid coordinates includes coordinates which have value'0' or ' '
             print("Total Records:", RowCount, file = summary)
             print('Index Error Count: ', IndexErrorCount)
             print('Year: %s, State: %s' %(year, state))
@@ -300,16 +320,12 @@ def processFilesMongo(files):
     missingGeo.close()
     summary.close()
 
-
-
-
 #driver function
 def main():
     if (fillMongoDB == True):
         processFilesMongo(files)
     else:
         processFilesJSON(files)
-
 
 #main function
 if __name__ == "__main__":

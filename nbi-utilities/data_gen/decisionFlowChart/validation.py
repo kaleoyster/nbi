@@ -427,10 +427,10 @@ def main():
     print("\n")
 
     # Flow chart
-    print('Flow Chart True Positive:', len(flTP), ', Percent: ', (len(flTP)/len(count))*100)
-    print('Flow Chart True Negative:', len(flTN), ', Percent: ', (len(flTN)/len(count))*100)
-    print('Flow Chart False Positive:', len(flFP), ', Percent: ', (len(flFP)/len(count))*100)
-    print('Flow Chart False Negative:', len(flFN), ', Percent: ', (len(flFN)/len(count))*100)
+    print('Flow Chart True Positive:', len(flTP), ', Percent: ', (len(flTP)/count)*100)
+    print('Flow Chart True Negative:', len(flTN), ', Percent: ', (len(flTN)/count)*100)
+    print('Flow Chart False Positive:', len(flFP), ', Percent: ', (len(flFP)/count)*100)
+    print('Flow Chart False Negative:', len(flFN), ', Percent: ', (len(flFN)/count)*100)
     print('Flow Chart Accuracy:', (len(flTP) + len(flTN)) / count)
 
     print("\n")
@@ -449,7 +449,7 @@ def main():
     print('True Negative Flow - False Positive Rf:', len(bfln), ', Percent: ', (len(bfln)/count)*100)
     print("\n")
     print(len(bTP)+len(bTN)+len(bFP)+len(bFN)+len(brf)+len(brfn)+len(bfl)+len(bfln))
-    print(count)
+    #print(count)
 
     #export both true positive
     to_csv_all_bridges(bTP, 'bTP.csv')
