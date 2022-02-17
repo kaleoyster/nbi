@@ -98,11 +98,13 @@ class DataChef:
         return df_new
 
     def is_same_elements(self, elements):
-        """ Returns True if all the element are same """
+        """ Returns True if all the element are same
+        """
         return all(elem == elements[0] for elem in elements)
 
     def calculate_age(self, list_of_year_built, list_of_survey, kind='survey'):
-        """ Returns age of the of the bridge """
+        """ Returns age of the of the bridge
+        """
         year_built = np.array(list_of_year_built)
         year_survey = np.array(list_of_survey)
 
@@ -115,7 +117,7 @@ class DataChef:
 
     def categorize_bridges_by_adt(ADT):
         # PERFECT
-        """ returns A list of class of the bridge as define by Author in so and so """
+        """ returns a list of class of the bridge as define by Author in so and so """
         class_of_bridges_adt = []
         for adt in ADT:
             if adt < 100:
@@ -130,10 +132,9 @@ class DataChef:
                 class_of_bridges_adt.append('IDK')
         return class_of_bridges_adt
 
-
     def categorize_bridges_by_adtt(ADTT):
         # PERFECT
-        """ returns A list of class of the bridge as define by Author in so and so """
+        """ returns a list of class of the bridge as define by Author in so and so """
         class_of_bridges_adtt = []
         for adtt in ADTT:
             if adtt < 100:
