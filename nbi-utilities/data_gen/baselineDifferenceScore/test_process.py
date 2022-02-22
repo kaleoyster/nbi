@@ -1,7 +1,7 @@
 """Contains test function of the data function"""
-import unittest 
+import unittest
 import numpy as np
-import data
+import process
 
 __author__ = 'Akshay Kale'
 __copyright__ = 'GPL'
@@ -9,9 +9,8 @@ __credit__ = []
 __email__ = 'akale@unomaha.edu'
 
 class TestData(unittest.TestCase):
-
      def test_get_values(self):
-         dc = data.DataChef()
+         dc = process.DataChef()
 
          # INPUT
          dictionary  = {
@@ -31,7 +30,7 @@ class TestData(unittest.TestCase):
          self.assertEqual(dc.get_values(keys, dictionary), output)
 
      def test_create_dictionary(self):
-         dc = data.DataChef()
+         dc = process.DataChef()
 
          # INPUT
          keys = [
@@ -57,7 +56,7 @@ class TestData(unittest.TestCase):
          self.assertEqual(dc.create_dictionary(keys, values), output)
 
      def test_is_same_elements(self):
-         dc = data.DataChef()
+         dc = process.DataChef()
 
          #INPUT
          elements_1 = [2, 2, 2, 2]
@@ -70,7 +69,7 @@ class TestData(unittest.TestCase):
 
 
      def test_calculate_age(self):
-         dc = data.DataChef()
+         dc = process.DataChef()
 
          #INPUT
          year_built = [2000, 2000, 2000, 2002]

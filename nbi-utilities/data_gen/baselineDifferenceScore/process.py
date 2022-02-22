@@ -1,4 +1,6 @@
-"""Contain functions to manipulate and derive new data"""
+"""
+Contain functions to manipulate and derive new data
+"""
 import pandas as pd
 import numpy as np
 import datetime
@@ -11,7 +13,9 @@ __credit__ = []
 __email__ = 'akale@unomaha.edu'
 
 class DataChef:
-    """ Contains function that operate on list, dictionary, dataframe, and series """
+    """
+    Contains function that operate on list, dictionary, dataframe, and series
+    """
     def __init__(self):
         pass
 
@@ -26,22 +30,23 @@ class DataChef:
         Args: keys (list)
               value (list)
 
-        Returns: a dicitonary (dict) """
+        Returns: a dicitonary (dict)
+        """
         return dict(zip(keys, values))
 
     def create_maps(self, df, columns, key, type_of_maps='list'):
         # PERFECT
         """
-        Returns dictionary of key : lastest value of the column
+        Returns dictionary of key: lastest value of the column
         for example:
-                    structure number (key): lastest value of the deck (value)
+        structure number (key): lastest value of the deck (value)
+
         Args:
             key (string):
             survey_records (pandas dataframe):
 
         Returns:
-            list_of_dict (list):  a list of dictionaries
-
+            list_of_dict (list): a list of dictionaries
         """
         def create_dictionary(list_of_keys, list_of_values):
             # PERFECT 
@@ -50,11 +55,13 @@ class DataChef:
 
             if type_of_maps == 'list':
                 dictionary = defaultdict(list)
-                for key_temp, value_temp in zip(df_keys, df_values):
+                for key_temp, value_temp in zip(df_keys,
+                                                df_values):
                     dictionary[key_temp].append(value_temp)
             else:
                 dictionary = defaultdict()
-                for key_temp, value_temp in zip(df_keys, df_values):
+                for key_temp, value_temp in zip(df_keys,
+                                                df_values):
                     dictionary[key_temp] = value_temp
 
             return dictionary
@@ -62,7 +69,9 @@ class DataChef:
             list_of_dictionaries = []
             for col in columns:
                 dataframe_temp = dataframe[[key, col]]
-                temp_dict  = create_dictionary(dataframe[key], dataframe[col])
+                temp_dict  = create_dictionary(dataframe[key],
+                                               dataframe[col])
+
                 list_of_dictionaries.append(temp_dict)
 
             return list_of_dictionaries
@@ -71,16 +80,24 @@ class DataChef:
     def create_groupby_df(self, key, df, list_of_maps):
         # PERFECT
         """
-        Returns Groupby dataframe with values of the columns arranged according to their time series.
+        Description:
+            Returns groupby dataframe with values of the columns
+        arranged according to their time series.
 
         Args:
             key (string): Key is the groupby criteria
-            df (dataframe): the existing dataframe of lose individual records
-            list_of_map (list): list of dictionary of columns in the df.
-                            Each column is mapped to the key such tha'key' as the key,
-                            and value as the 'value' of the column
+
+            df (dataframe): the existing dataframe of lose
+                            individual records
+
+            list_of_map (list):
+                            list of dictionary of columns in the df.
+                            Each column is mapped to the key such that
+                            'key' as the key, and value as the 'value'
+                            of the column.
         Returns:
-            df_new (dataframe): a dataframe of columns grouped by key 'structure number'
+            df_new (dataframe): a dataframe of columns grouped
+                            by key 'structure number'
         """
         #Select columns
         columns = list(df.columns)
@@ -98,12 +115,17 @@ class DataChef:
         return df_new
 
     def is_same_elements(self, elements):
-        """ Returns True if all the element are same
+        """
+        Description:
+            Returns True if all the element are same.
         """
         return all(elem == elements[0] for elem in elements)
 
-    def calculate_age(self, list_of_year_built, list_of_survey, kind='survey'):
-        """ Returns age of the of the bridge
+    def calculate_age(self, list_of_year_built,
+                      list_of_survey, kind='survey'):
+        """
+        Description:
+            Returns age of the of the bridge
         """
         year_built = np.array(list_of_year_built)
         year_survey = np.array(list_of_survey)
@@ -117,7 +139,10 @@ class DataChef:
 
     def categorize_bridges_by_adt(ADT):
         # PERFECT
-        """ returns a list of class of the bridge as define by Author in so and so """
+        """
+        Description:
+            Returns categorize the bridges by ADT
+        """
         class_of_bridges_adt = []
         for adt in ADT:
             if adt < 100:
@@ -134,7 +159,10 @@ class DataChef:
 
     def categorize_bridges_by_adtt(ADTT):
         # PERFECT
-        """ returns a list of class of the bridge as define by Author in so and so """
+        """
+        Description:
+            Returns categorize the bridges by ADTT
+        """
         class_of_bridges_adtt = []
         for adtt in ADTT:
             if adtt < 100:
