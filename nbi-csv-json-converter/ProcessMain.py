@@ -27,7 +27,8 @@ Note:
 ### SELECT YEARS
 
 # Global variable
-years = [1992,
+years = [
+         1992,
          1993,
          1994,
          1995,
@@ -170,11 +171,14 @@ def convertLongLat(longitude,latitude):
         longSec = (longSec/360000)
         longDecimal = -(longDegree + longMin + longSec)
         return longDecimal, latDecimal
-   except:
+    except:
         return 0.00, 0.00
 
-
 def countValidCoordinates(Longitude, Latitude, cvc, structureNumber, year,missingGeo):
+    """
+    Description:
+      Returns the count of valid coordinates
+    """
     if (Longitude == -0.0 and Latitude == 0.0):
         cvc = cvc + 1
         print('year: %d, Structure Number: %s' % (year, structureNumber),file=missingGeo)
