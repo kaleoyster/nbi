@@ -406,13 +406,54 @@ def convert_to_int(listOfStrings):
     """
     listOfInteger = list()
     for listOfItems in listOfStrings:
-        for item in listOfItems:
-            try:
-                item = int(item)
-                listOfInteger.append(item)
-            except:
-                listOfInteger.append(np.nan)
+        for items in listOfItems:
+            for item in items:
+                try:
+                    item = int(item)
+                    listOfInteger.append(item)
+                except:
+                    listOfInteger.append(np.nan)
     return listOfInteger
+
+def compute_bds_utility(listOfAges, listOfConditionRatings):
+    """
+    Description:
+        Return the a list of averages arranged by the age
+    """
+    ageConditionRatings = defaultdict(list)
+    baseline = defaultdict()
+    baselineDifferenceScores = list()
+
+    # Computation of baseline
+    for ages, conditionRatings in zip(listOfAges,
+                                      listOfConditionRatings):
+        for age, rating in zip(ages, conditionRatings):
+            ageConditionRatings[age].append(rating)
+
+    maxAge = np.max(list(ageConditionRatings.keys()))
+    for index in range(maxAge):
+        values = ageConditionRatings.get(index)
+        if values != None:
+            try:
+                baseline[index] = np.nanmean(values)
+            except:
+                baseline[index] = np.nan
+
+    # Computation of baseline difference score
+    for ages, conditionRatings in zip(listOfAges,
+                                      listOfConditionRatings):
+        differences = list()
+        for age, conditionRating in zip(ages,
+                                        conditionRatings):
+            try:
+                difference = conditionRating - baseline.get(age)
+                differences.append(difference)
+            except:
+                differences.append(np.nan)
+        score = np.nanmean(differences)
+        baselineDifferenceScores.append(score)
+
+    return baseline, baselineDifferenceScores
 
 def compute_bds_score(groupedRecords, component='deck'):
     """
@@ -428,28 +469,41 @@ def compute_bds_score(groupedRecords, component='deck'):
     componentName = component + 'BDSScore'
     updatedGroupedRecords = defaultdict()
 
-    print("Printing the number of the condition ratings", len(groupedRecords))
-    # Key:  structure number of the bridges
-    # groupedRecords: json format bridges records (timeseries) 
+    listOfAges = list()
+    listOfConditionRatings = list()
+
     for key, groupedRecord in zip(groupedRecords.keys(), groupedRecords.values()):
         conditionRatings = groupedRecord[component]
-        ages = compute_age(groupedRecord['yearBuilt'], groupedRecord['year'])
+        ages = compute_age(groupedRecord['yearBuilt'],
+                           groupedRecord['year'])
 
-        # Compute baseline
-        # Convert condition rating 
+        # Convert string to integer
+        conditionRatingsInt = convert_to_int(conditionRatings)
+        listOfAges.append(ages)
+        listOfConditionRatings.append(conditionRatingsInt)
 
-        conditionRatingsR = convert_to_int(conditionRatings)
-        print(ages, conditionRatings)
-        print(ages, conditionRatingsR)
-        print("-----"*8)
-        #print(ages, conditionRatings)
-        #splitConditionRatings, splitAges = split_condition_ratings(conditionRatings,
-        #                                                           ages)
-        #averageScore = compute_det_score_utility(splitConditionRatings,
-        #                                         splitAges)
-        #groupedRecord[componentName] = averageScore
-        #updatedGroupedRecords[key] = groupedRecord
-        # print("Printing the average score: ", updatedGroupedRecords)
+    baseline, bds = compute_bds_utility(listOfAges, listOfConditionRatings)
+
+    # Compute Baseline Difference Score
+    for key, groupedRecord in zip(groupedRecords.keys(),
+                                  groupedRecords.values()):
+
+        differences = list()
+        conditionRatings = groupedRecord[component]
+        conditionRatingsInt = convert_to_int(conditionRatings)
+        ages = compute_age(groupedRecord['yearBuilt'],
+                           groupedRecord['year'])
+        for age, conditionRating in zip(ages,
+                                        conditionRatingsInt):
+            try:
+                difference = conditionRating - baseline.get(age)
+                differences.append(difference)
+            except:
+                differences.append(np.nan)
+        score = np.nanmean(differences)
+        groupedRecord[componentName] = score
+        updatedGroupedRecords[key] = groupedRecord
+        #print("Printing the average score: ", updatedGroupedRecords)
     return updatedGroupedRecords
 
 def clean_individual_records(records):

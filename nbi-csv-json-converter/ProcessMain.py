@@ -119,7 +119,7 @@ states = ["AK",
 states  = ["NE"]
 
 # Global LIST
-files = [] #global variable for Files
+files = [] #global variable for files
 
 def get_db():
     """
