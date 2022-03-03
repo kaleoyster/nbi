@@ -67,9 +67,31 @@ def main():
     # group records
     groupedRecords = group_records(individualRecords, fields)
 
-    # compute baseline differnce score:
-    groupedRecords = compute_bds_score(groupedRecords, component='deck')
-    print(groupedRecords)
+    # Compute baseline differnce score:
+    groupedRecords, baselineDeck = compute_bds_score(groupedRecords, component='deck')
+
+    groupedRecords, baselineSubstructure = compute_bds_score(groupedRecords, component='substructure')
+
+    groupedRecords, baselineSuperstucture = compute_bds_score(groupedRecords, component='superstructure')
+
+    deckBDSMap = create_map(groupedRecords, column='deckBDSScore')
+
+    individualRecords = integrate_ext_dataset_list(deckBDSMap,
+                                                   individualRecords,
+                                                   'deckBDSScore')
+
+    individualRecords = integrate_ext_dataset_list(deckBDSMap,
+                                                   individualRecords,
+                                                   'substructureBDSScore')
+
+    individualRecords = integrate_ext_dataset_list(deckBDSMap,
+                                                   individualRecords,
+                                                   'superstructureBDSScore')
+
+    # Save to the file
+    csvfile = 'nebraska.csv'
+    tocsv_list(individualRecords, csvfile)
+    print(baselineSubstructure)
 
 if __name__=='__main__':
      main()

@@ -9,7 +9,9 @@ __copyright__ = 'GPL'
 __email__ = 'akale@unomaha.edu'
 
 import json
+import csv
 import numpy as np
+import pandas as pd
 from pymongo import MongoClient
 from tqdm import tqdm
 from datetime import date
@@ -108,6 +110,43 @@ def group_records(records, fields):
         grouped_json[groupKey] = updatedEncoding
     return grouped_json
 
+def create_map(groupedRecords, column='deckBDSScore'):
+    """
+    Description:
+    Args:
+    Returns:
+    """
+    columnMap = defaultdict()
+    for structureNum, values in zip(groupedRecords.keys(),
+                                    groupedRecords.values()):
+        columnMap[structureNum] = values[column]
+    return columnMap
+
+def grouped_to_csv(records, name):
+    """
+    Description:
+        This function listify the existing grouped records
+        TODO:
+            Does not work!
+    Args:
+        records
+        name
+    Returns:
+    """
+    listOfRecords = list()
+    keys = records.keys()
+    values = records.values()
+    dictionary = defaultdict(list)
+    for key, value in zip(keys, values):
+        for column, val in zip(value.keys(),
+                                 value.values()):
+            if column != '_id':
+                print(column, val)
+                for valInt in list(val):
+                    dictionary[column].append(val)
+    df = pd.Dataframe(data=dictionary)
+    df.to_csv(name, index=False)
+
 def integrate_ext_dataset(extDict, groupedRecords, fieldname):
     """
     Description: integrate new columns to the existing group records
@@ -153,14 +192,21 @@ def integrate_ext_dataset_list(extDict, groupedRecords, fieldname):
     #    groupedRecords[structureNumber] = encoding
     return newGroupedRecords
 
-def divide_record_utility(fields, record, startIndex, endIndex):
+def divide_record_utility(fields,
+                          record,
+                          startIndex,
+                          endIndex):
     """
-    Description: A utility function to divide the timeline of the records
+    Description:
+        A utility function to
+        divide the timeline of the records
+
     Args:
         fields:
         record:
         startIndex:
         endIndex:
+
     Return:
         records
     """
@@ -216,7 +262,9 @@ def compute_intervention_utility(conditionRatings, interventionMap):
     """
     Description:
         A utility function for computing possible intervention
-    by taking into consideration changes in condition rating. The function implemented is based on Bridge Intervention Matrix by Tariq et al.
+    by taking into consideration changes in condition rating.
+        The function implemented is based on
+        Bridge Intervention Matrix by Tariq et al.
 
     Note:
          Check for the representation of condition ratings.
@@ -334,8 +382,9 @@ def compute_age(yearBuilts, years):
 
 def compute_det_score_utility(splitConditionRatings, splitAges):
     """
-    Description: A utility function for computing possible
-    monotonous deteriorating condition ratings.
+    Description:
+        A utility function for computing possible
+        monotonous deteriorating condition ratings.
 
     Args:
         splitConditionRatings (list)
@@ -504,7 +553,7 @@ def compute_bds_score(groupedRecords, component='deck'):
         groupedRecord[componentName] = score
         updatedGroupedRecords[key] = groupedRecord
         #print("Printing the average score: ", updatedGroupedRecords)
-    return updatedGroupedRecords
+    return updatedGroupedRecords, baseline
 
 def clean_individual_records(records):
     """
@@ -526,9 +575,12 @@ def clean_individual_records(records):
         cleanedRecords.append(values)
     return cleanedRecords, header
 
-def remove_records(individualRecords, yearFirst, yearSecond):
+def remove_records(individualRecords,
+                   yearFirst,
+                   yearSecond):
     """
-    Description: Remove dictionary in the records that fall between
+    Description:
+        Remove dictionary in the records that fall between
         yearFirst and yearSecond
 
     Args:
@@ -600,9 +652,9 @@ def create_deterioration_dict(groupedRecords,
     Returns:
     """
     dictionary = defaultdict()
-    for key, value in zip(groupedRecords.keys(), groupedRecords.values()):
+    for key, value in zip(groupedRecords.keys(),
+                          groupedRecords.values()):
         years = value['year']
-        #print("\n Printing : ", column)
         if years[0] == initYear:
             # Replace the year with from variable
             structureNumber = key
@@ -638,7 +690,8 @@ def tocsv(groupedRecords, csvfile, header=None):
               'avgDailyTruckTraffic',
               'numberOfInterventions',
               'numberFutureOfInterventions',
-              'deteriorationScore'
+              'deteriorationScore',
+              'deckBDSScore'
              ]
 
     with open(csvfile,'w') as csvFile:
