@@ -72,7 +72,7 @@ def main():
 
     groupedRecords, baselineSubstructure = compute_bds_score(groupedRecords, component='substructure')
 
-    groupedRecords, baselineSuperstucture = compute_bds_score(groupedRecords, component='superstructure')
+    groupedRecords, baselineSuperstructure = compute_bds_score(groupedRecords, component='superstructure')
 
     deckBDSMap = create_map(groupedRecords, column='deckBDSScore')
 
@@ -91,7 +91,7 @@ def main():
     # Save to the file
     csvfile = 'nebraska.csv'
     tocsv_list(individualRecords, csvfile)
-    print(baselineSubstructure)
+    create_df(baselineDeck, baselineSubstructure, baselineSuperstructure)
 
 if __name__=='__main__':
      main()

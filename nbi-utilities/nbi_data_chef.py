@@ -704,6 +704,19 @@ def tocsv(groupedRecords, csvfile, header=None):
             csvWriter.writerow(temp)
 
 
+def create_df(bDeck, bSubstructure, bSuperstructure):
+    """
+    Description:
+        Given the dictionaries
+    """
+    df = pd.DataFrame()
+    age = bDeck.keys()
+    df['age'] = age
+    df['deck'] = df['age'].map(bDeck)
+    df['substructure'] = df['age'].map(bSubstructure)
+    df['superstructure'] = df['age'].map(bSuperstructure)
+    df.to_csv("baselines.csv", index=False)
+
 def tocsv_list(groupedRecords, csvfile, header=None):
     """
     Description: Given header create a csv file out
