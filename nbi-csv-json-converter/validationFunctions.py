@@ -10,44 +10,44 @@ def stateCodeValidate(data,validation,structNumber,fieldErrorCountArray):
        validValues = ['25',
                       '04',
                       '08',
-                      '38', 
-                      '09', 
-                      '19', 
-                      '26', 
+                      '38',
+                      '09',
+                      '19',
+                      '26',
                       '48',
-                      '35', 
-                      '17', 
-                      '51', 
+                      '35',
+                      '17',
+                      '51',
                       '23',
                       '16',
                       '36',
                       '56',
                       '29',
                       '39',
-                      '28', 
+                      '28',
                       '11',
-                      '21', 
+                      '21',
                       '18',
                       '06',
-                      '47', 
+                      '47',
                       '12',
                       '24',
-                      '34', 
+                      '34',
                       '46',
                       '13',
                       '55',
                       '30',
                       '54',
-                      '15', 
-                      '32', 
+                      '15',
+                      '32',
                       '37',
-                      '10', 
-                      '33', 
-                      '44', 
-                      '50', 
-                      '42', 
-                      '05', 
-                      '20', 
+                      '10',
+                      '33',
+                      '44',
+                      '50',
+                      '42',
+                      '05',
+                      '20',
                       '45',
                       '22',
                       '40', 
@@ -1709,7 +1709,7 @@ def bridgeLengthNBIS(data,validation,structNumber,fieldErrorCountArray):
         error = 0
         return data, error
     else:
-        fieldErrorCountArray[113] = fieldErrorCountArray[113] + 1  
+        fieldErrorCountArray[113] = fieldErrorCountArray[113] + 1
         print('NBIS Bridge Length ('+ data +') Invalid in Structure Number: ' + structNumber ,file = validation)
         error = 0
         data = 'NA'
@@ -1734,6 +1734,6 @@ def convertLongLat(longitude,latitude):
         longSec = int(long[5:9])
         longSec = (longSec/360000)
         longDecimal = -(longDegree + longMin + longSec)
-        return longDecimal, latDecimal      
+        return longDecimal, latDecimal
    except:
         return 0.00, 0.00

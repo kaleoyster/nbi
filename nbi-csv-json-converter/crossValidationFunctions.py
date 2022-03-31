@@ -28,7 +28,7 @@ def item16CrossValidationCheck1(item16, item100, crossValidation, structNumber):
          else:
             print('Invalid in structure Number('+structNumber+') -> ITEM 16 - A VALID ITEM 100 IS ENTERED -- SO ITEM 16 MUST BE > 0.('+str(item16)+') ',file = crossValidation)
        else:
-          print('Item 100 is not entered',file = crossValidation)  
+          print('Item 100 is not entered',file = crossValidation)
     else:
        print('ITEM 16 not entered ',file = crossValidation)
 
@@ -470,7 +470,7 @@ def item102CrossValidationCheck1(item28A, item102, crossValidation, structNumber
          else:
             print('Invalid in structure Number('+structNumber+') -> ITEM 102 - ITEM 28A EQUALS 1 SO ITEM 102 MUST EQUAL 1 OR 3. ',file = crossValidation)
        else:
-          pass 
+          pass
     else:
        print('ITEM 102 not entered ',file = crossValidation)
 
@@ -485,7 +485,7 @@ def item102CrossValidationCheck2(item28B, item102, crossValidation, structNumber
          else:
             print('Invalid in structure Number('+structNumber+') -> ITEM 102 - ITEM 28A EQUALS 1 SO ITEM 102 MUST EQUAL 1 OR 3. ',file = crossValidation)
        else:
-          pass 
+          pass
     else:
        print('ITEM 102 not entered ',file = crossValidation)
 
@@ -500,7 +500,7 @@ def item103CrossValidationCheck1(item41, item103, crossValidation, structNumber)
          else:
             print('Invalid in structure Number('+structNumber+') ->ITEM 103 - ITEM 41 = D OR E -- SO ITEM 103 MUST BE T..',file = crossValidation)
        else:
-         pass 
+         pass
     else:
        print('ITEM 41 not entered ',file = crossValidation)
 
@@ -543,7 +543,3 @@ def item111CrossValidationCheck1(item38, item111, crossValidation, structNumber)
              print('Invalid in structure Number('+structNumber+') -> ITEM 111 - ITEM 38 = 1 -- SO ITEM 111 MUST BE ENTERED..', file = crossValidation)
     else:
        print('ITEM 38 ('+str(item38)+')  MUST BE ENTERED.',file = crossValidation)
-
-
-
-

@@ -427,24 +427,3 @@ def crossCheckValidation(temp,crossValidation):
 
     #ITEM 111 - ITEM 38 = 1 -- SO ITEM 111 MUST BE ENTERED.
     item111CrossValidationCheck1(temp[41],temp[112], crossValidation, structNumber)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
