@@ -16,7 +16,6 @@ __copyright__ = 'GPL'
 __credit__ = []
 __email__ = 'akale@unomaha.edu'
 
-
 def readXml(zipFile):
     """
     Description: Function reads xml file from the zipfile,
@@ -62,9 +61,15 @@ def parseXml(directory, structCatDict):
         elementList (list): A List of named tuples
     """
     elementList = list()
-    Record = namedtuple('Record', ['year', 'state', 'structure',
-                                   'totalQty', 'elementNo',
-                                   'cs1', 'cs2', 'cs3', 'cs4',
+    Record = namedtuple('Record', ['year',
+                                   'state',
+                                   'structure',
+                                   'totalQty',
+                                   'elementNo',
+                                   'cs1',
+                                   'cs2',
+                                   'cs3',
+                                   'cs4',
                                    'perfCat'])
 
     for xmlfile in tqdm(os.listdir(directory), desc='Parsing XML files'):
