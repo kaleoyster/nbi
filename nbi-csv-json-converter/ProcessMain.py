@@ -116,7 +116,7 @@ states = ["AK",
 """
 
 # Global Variable
-states  = ["NE"]
+states  = ["MO"]
 
 # Global LIST
 files = [] #global variable for files
