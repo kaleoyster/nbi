@@ -98,7 +98,7 @@ def group_records(records, fields):
     Args:
     Returns:
     """
-    # instantiate  empty encoding
+    # instantiate empty encoding
     keys = fields.keys()
     grouped_json = defaultdict()
     for record in records:
@@ -123,10 +123,11 @@ def create_map(groupedRecords, column='deckBDSScore'):
     return columnMap
 
 def grouped_to_csv(records, name):
+    # TODO
     """
     Description:
         This function listify the existing grouped records
-        TODO:
+    TODO:
             Does not work!
     Args:
         records
@@ -147,9 +148,12 @@ def grouped_to_csv(records, name):
     df = pd.Dataframe(data=dictionary)
     df.to_csv(name, index=False)
 
-def integrate_ext_dataset(extDict, groupedRecords, fieldname):
+def integrate_ext_dataset(extDict,
+                          groupedRecords,
+                          fieldname):
     """
     Description: integrate new columns to the existing group records
+
     Args:
         extDict (dictionary)
         groupedRecords (dictionary)
@@ -162,12 +166,14 @@ def integrate_ext_dataset(extDict, groupedRecords, fieldname):
         encoding = groupedRecords.get(structureNumber)
         if encoding != None:
             # Uncomment the below line to maintain a list of record
-            #encoding[fieldname].append(extDict.get(structureNumber))
+            # encoding[fieldname].append(extDict.get(structureNumber))
             encoding[fieldname] = extDict.get(structureNumber)
         groupedRecords[structureNumber] = encoding
     return groupedRecords
 
-def integrate_ext_dataset_list(extDict, groupedRecords, fieldname):
+def integrate_ext_dataset_list(extDict,
+                               groupedRecords,
+                               fieldname):
     """
     Description: integrate new columns to the existing group records
     Args:
@@ -187,7 +193,7 @@ def integrate_ext_dataset_list(extDict, groupedRecords, fieldname):
     #    encoding = groupedRecords.get(structureNumber)
     #    if encoding != None:
     #        # uncomment the below line to maintain a list of record
-    #        #encoding[fieldname].append(extDict.get(structureNumber))
+    #        # encoding[fieldname].append(extDict.get(structureNumber))
     #        encoding[fieldname] = extDict.get(structureNumber)
     #    groupedRecords[structureNumber] = encoding
     return newGroupedRecords
@@ -227,7 +233,10 @@ def divide_record_utility(fields,
     record['deck 2'] = record['deck'][endIndex-1:]
     return record
 
-def divide_grouped_records(groupedRecords, fields, fr, to):
+def divide_grouped_records(groupedRecords,
+                           fields,
+                           fr,
+                           to):
     """
     Description:
         The function divides the timeline of the
@@ -599,7 +608,7 @@ def remove_records(individualRecords,
 
 
 def clean_grouped_records(groupedrecords):
-    # todo:
+    # TODO:
         # not all the fields are covered in the redudant fields
             # try with temp field
             # keep a track of groupedrecords fields
@@ -647,7 +656,6 @@ def create_deterioration_dict(groupedRecords,
     Description: Creates a dictionary of structure number and deterioration
     This function is incomplete, because it contains a lot
     dependency and hard coding
-
     Args:
     Returns:
     """
@@ -665,7 +673,8 @@ def create_deterioration_dict(groupedRecords,
 
 def tocsv(groupedRecords, csvfile, header=None):
     """
-    Description: Given header create a csv file out
+    Description:
+        Given header create a csv file out
     of groupedRecords
     """
     header = ['structureNumber',

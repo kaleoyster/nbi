@@ -20,7 +20,6 @@ from crossValidationFunctions import *
 
    OUTPUT: The function returns a JSON formatred string using the schema described in json.dumps() function.
 '''
-
 def nbiEncoder(data,year,Longitude,Latitude):
    x = json.dumps({
    "year" : convertNumeric(year),                                                                                              #item No:0  YEAR      

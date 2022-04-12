@@ -16,8 +16,8 @@ from tqdm import tqdm
 from datetime import date
 from collections import defaultdict
 from collections import Counter
-
 from nbi_data_chef import *
+
 #from precipitation import *
 #from snowfall_freezethaw import *
 
@@ -46,10 +46,12 @@ def main():
                 "scourCriticalBridges":1,
                 "material":"$structureTypeMain.kindOfMaterialDesign",
                 "wearingSurface":"$structureTypeMain.kindOfDesignConstruction",
+                "longitude":"$loc.coordinates[0]",
+                "latitude":"$loc.coordinates[1]"
             }
 
     # select states:
-    states = ['31'] # Wisconsin
+    states = ['31'] # Nebraska
 
     # years:
     years = [year for year in range(1992, 2020)]
@@ -68,27 +70,33 @@ def main():
     groupedRecords = group_records(individualRecords, fields)
 
     # Compute baseline differnce score:
-    groupedRecords, baselineDeck = compute_bds_score(groupedRecords, component='deck')
+    groupedRecords, baselineDeck = compute_bds_score(groupedRecords,
+                                                     component='deck')
 
-    groupedRecords, baselineSubstructure = compute_bds_score(groupedRecords, component='substructure')
+    groupedRecords, baselineSubstructure = compute_bds_score(groupedRecords,
+                                                             component='substructure')
 
-    groupedRecords, baselineSuperstructure = compute_bds_score(groupedRecords, component='superstructure')
-
+    groupedRecords, baselineSuperstructure = compute_bds_score(groupedRecords,
+                                                               component='superstructure')
+    # Creating BDS map
     deckBDSMap = create_map(groupedRecords, column='deckBDSScore')
+    substructurreBDSMap = create_map(groupedRecords, column='substructureBDSScore')
+    superstructureBDSMap = create_map(groupedRecords, column='superstructureBDSScore')
 
     individualRecords = integrate_ext_dataset_list(deckBDSMap,
                                                    individualRecords,
                                                    'deckBDSScore')
 
-    individualRecords = integrate_ext_dataset_list(deckBDSMap,
+    individualRecords = integrate_ext_dataset_list(substructureBDSMap,
                                                    individualRecords,
                                                    'substructureBDSScore')
 
-    individualRecords = integrate_ext_dataset_list(deckBDSMap,
+    individualRecords = integrate_ext_dataset_list(superstructureBDSMap,
                                                    individualRecords,
                                                    'superstructureBDSScore')
 
     # Save to the file
+    print(individualRecords)
     csvfile = 'nebraska.csv'
     tocsv_list(individualRecords, csvfile)
     create_df(baselineDeck, baselineSubstructure, baselineSuperstructure)
