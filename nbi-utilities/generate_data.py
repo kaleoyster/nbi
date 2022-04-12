@@ -46,15 +46,15 @@ def main():
                 "scourCriticalBridges":1,
                 "material":"$structureTypeMain.kindOfMaterialDesign",
                 "wearingSurface":"$structureTypeMain.kindOfDesignConstruction",
-                "longitude":"$loc.coordinates[0]",
-                "latitude":"$loc.coordinates[1]"
+                "coordinates":"$loc.coordinates"
             }
 
     # select states:
     states = ['31'] # Nebraska
 
     # years:
-    years = [year for year in range(1992, 2020)]
+    # years = [year for year in range(1992, 2020)]
+    years = [year for year in range(1992, 1994)]
 
     # process precipitation data
     #structBdsMap, structPrecipMap = process_precipitation()
@@ -64,6 +64,8 @@ def main():
 
     # query
     individualRecords = query(fields, states, years, collection)
+    individualRecords = fix_coordinates(individualRecords)
+
     #individualRecords = sample_records()
 
     # group records
@@ -80,7 +82,7 @@ def main():
                                                                component='superstructure')
     # Creating BDS map
     deckBDSMap = create_map(groupedRecords, column='deckBDSScore')
-    substructurreBDSMap = create_map(groupedRecords, column='substructureBDSScore')
+    substructureBDSMap = create_map(groupedRecords, column='substructureBDSScore')
     superstructureBDSMap = create_map(groupedRecords, column='superstructureBDSScore')
 
     individualRecords = integrate_ext_dataset_list(deckBDSMap,

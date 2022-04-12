@@ -27,6 +27,23 @@ def get_db():
     db = client.bridge
     return db
 
+def fix_coordinates(records):
+    """
+    description:  return the flatten coordinates
+    longitude and latitude
+    """
+    newRecords = []
+    for record in records:
+        tempDictionary = {}
+        for key, value in zip(record.keys(), record.values()):
+            tempDictionary[key] = value
+            if key == "coordinates":
+                longitude, latitude = value
+                tempDictionary['longitude'] = longitude
+                tempDictionary['latitude'] = latitude
+        newRecords.append(tempDictionary)
+    return newRecords
+
 def query(fields, states, years, collection):
     """
     description: query mongodb and collects result
