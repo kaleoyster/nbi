@@ -31,6 +31,8 @@ def fix_coordinates(records):
     """
     description:  return the flatten coordinates
     longitude and latitude
+    args: records (list of dictionaries)
+    return: newRecords (list of new records)
     """
     newRecords = []
     for record in records:
@@ -159,7 +161,6 @@ def grouped_to_csv(records, name):
         for column, val in zip(value.keys(),
                                  value.values()):
             if column != '_id':
-                print(column, val)
                 for valInt in list(val):
                     dictionary[column].append(val)
     df = pd.Dataframe(data=dictionary)
@@ -182,7 +183,7 @@ def integrate_ext_dataset(extDict,
     for structureNumber in groupedRecords.keys():
         encoding = groupedRecords.get(structureNumber)
         if encoding != None:
-            # Uncomment the below line to maintain a list of record
+            # Uncomment the below line to maintain a list of records
             # encoding[fieldname].append(extDict.get(structureNumber))
             encoding[fieldname] = extDict.get(structureNumber)
         groupedRecords[structureNumber] = encoding
@@ -284,6 +285,106 @@ def divide_grouped_records(groupedRecords,
         updatedRecords[key] = updatedFields
     return updatedRecords
 
+def segmentize_index_utility(conditionRatings):
+    """
+    Description:
+        returns segments of condition ratings
+    Returns:
+        return indexes to segment further data
+    """
+    listOfSegments = list()
+    indexes = list()
+    for index in range(0, len(conditionRatings) - 1):
+        if conditionRatings[index] < conditionRatings[index + 1]:
+            listOfSegments.append(conditionRatings[index])
+            indexes.append(index)
+        else:
+            listOfSegments = list()
+            listOfSegments.append(conditionRatings[index])
+    return indexes
+
+def segmentize_column(data, indexes):
+    """
+    Description:
+        return the segmented data by the column
+    Return:
+        segmentedData (list)
+    """
+    segmentedData = list()
+    startP = 0
+    for indx in indexes:
+        tempList = list()
+        endP = indx + 1
+        segment = data[startP:endP]
+        remainder = data[endP:]
+        startP = endP
+        segmentedData.append(segment)
+    segmentedData.append(remainder)
+    return segmentedData
+
+def segmentize(groupedRecords, component="deck"):
+    """
+    Description:
+        Return the records by segmenting them into several parts
+        marked by the improvement in the conditin ratings
+    Args:
+        groupedRecords
+    Returns:
+        return new Record
+    """
+    updatedGroupedRecords = defaultdict()
+    for structureNum, record in zip(groupedRecords.keys(),
+                                    groupedRecords.values()):
+        newRecord = defaultdict()
+        conditionRatings = record[component]
+        indexes = list()
+        indexes = segmentize_index_utility(conditionRatings)
+        for key, col in zip(record.keys(),
+                            record.values()):
+            if len(col) > 0:
+                segmentedData = segmentize_column(col, indexes)
+            else:
+                segmentedData = col
+            newRecord[key] = segmentedData
+        updatedGroupedRecords[structureNum] = newRecord
+    return updatedGroupedRecords
+
+def reorganize_segmented_data(grouped_records):
+    """
+    Description:
+        Returns a dictionary, that contains seperate
+    records for each identified segments.
+
+    Args:
+        grouped_records
+
+    returns:
+        updated_grouped_records
+    """
+    updated_grouped_records = defaultdict()
+    for record in grouped_records.items():
+        structure_no, val_dict = record
+        total_segments = len(val_dict['structureNumber'])
+        new_structure_numbers = []
+        for segment in range(0, total_segments):
+            new_structure_no = structure_no \
+                            + '_' \
+                            + str(segment + 1)
+            updated_grouped_records[new_structure_no] = defaultdict()
+            new_structure_numbers.append(new_structure_no)
+
+        for col, values in val_dict.items():
+            val_length = len(values)
+            key_length = len(new_structure_numbers)
+            if val_length == key_length:
+                for index in range(val_length):
+                    value = values[index]
+                    struct_no = new_structure_numbers[index]
+                    temp_dict = updated_grouped_records[struct_no]
+                    temp_dict[col] = value
+                    updated_grouped_records[struct_no] = temp_dict
+    return updated_grouped_records
+
 def compute_intervention_utility(conditionRatings, interventionMap):
     """
     Description:
@@ -296,6 +397,7 @@ def compute_intervention_utility(conditionRatings, interventionMap):
          Check for the representation of condition ratings.
          Often the condition ratings are defined as a string,
          Then, these condition rating have to be transformed into interger
+
     Args:
         conditionRatings (list)
         interventionMap (dictionary)
@@ -314,7 +416,9 @@ def compute_intervention_utility(conditionRatings, interventionMap):
     count = len([count for count in interventions if count !=None ])
     return interventions, count
 
-def compute_intervention(groupedRecords, interventionMap, component='deck'):
+def compute_intervention(groupedRecords,
+                         interventionMap,
+                         component='deck'):
     """
     Description:
     Args:
@@ -332,7 +436,9 @@ def compute_intervention(groupedRecords, interventionMap, component='deck'):
        updatedGroupedRecords[key] = groupedRecord
     return updatedGroupedRecords
 
-def compute_intervention_deck(groupedRecords, interventionMap, component='deck 2'):
+def compute_intervention_deck(groupedRecords,
+                              interventionMap,
+                              component='deck 2'):
     """
     What is the difference between the compute intervention deck
     and compute intervention?
@@ -340,13 +446,11 @@ def compute_intervention_deck(groupedRecords, interventionMap, component='deck 2
     updatedGroupedRecords = defaultdict()
     for key, groupedRecord in zip(groupedRecords.keys(), groupedRecords.values()):
        conditionRatings = groupedRecord[component]
-       interventions, number = compute_intervention_utility(conditionRatings,
-                                                            interventionMap)
+       interventions, number = compute_intervention_utility(conditionRatings, interventionMap)
        groupedRecord['futureInterventions'] = interventions
        groupedRecord['numberFutureOfInterventions'] = number
        updatedGroupedRecords[key] = groupedRecord
     return updatedGroupedRecords
-
 
 def split_condition_ratings(conditionRatings, ages):
     """
@@ -409,9 +513,8 @@ def compute_age(yearBuilts, years):
 def compute_det_score_utility(splitConditionRatings, splitAges):
     """
     Description:
-        A utility function for computing possible
+        A utility function for computing a score possible
         monotonous deteriorating condition ratings.
-
     Args:
         splitConditionRatings (list)
         splitAges (dictionary)
@@ -454,9 +557,10 @@ def compute_deterioration_slope(groupedRecords, component='deck'):
 
     Args:
         groupedRecords(dictionary)
+        component (string)
 
     Returns:
-        coponents (string)
+        updatedGroupedRecords (list)
     """
     componentName = component + 'DeteriorationScore'
     updatedGroupedRecords = defaultdict()
@@ -470,7 +574,6 @@ def compute_deterioration_slope(groupedRecords, component='deck'):
         averageScore = compute_det_score_utility(splitConditionRatings, splitAges)
         groupedRecord[componentName] = averageScore
         updatedGroupedRecords[key] = groupedRecord
-        # print("Printing the average score: ", updatedGroupedRecords)
     return updatedGroupedRecords
 
 def convert_to_int(listOfStrings):
@@ -533,7 +636,10 @@ def compute_bds_utility(listOfAges, listOfConditionRatings):
 def compute_bds_score(groupedRecords, component='deck'):
     """
     Description:
-        For each of the records split the condition ratings into monotonously decreasing segements, by age, and ompute baseline difference score.
+        For each of the records split
+        the condition ratings into monotonously
+        decreasing segements, by age,
+        and ompute baseline difference score.
 
     Args:
         groupedRecords(dictionary)
@@ -547,7 +653,8 @@ def compute_bds_score(groupedRecords, component='deck'):
     listOfAges = list()
     listOfConditionRatings = list()
 
-    for key, groupedRecord in zip(groupedRecords.keys(), groupedRecords.values()):
+    for key, groupedRecord in zip(groupedRecords.keys(),
+                                  groupedRecords.values()):
         conditionRatings = groupedRecord[component]
         ages = compute_age(groupedRecord['yearBuilt'],
                            groupedRecord['year'])
@@ -626,7 +733,7 @@ def remove_records(individualRecords,
 
 def clean_grouped_records(groupedrecords):
     # TODO:
-        # not all the fields are covered in the redudant fields
+        # Not all the fields are covered in the redudant fields
             # try with temp field
             # keep a track of groupedrecords fields
     redundantfields = ['structurenumber',
@@ -791,3 +898,4 @@ def sample_records():
                  {'year': 1996, 'structureNumber': 'C000100305', 'countyCode': 1, 'owner': 2, 'yearBuilt': 1962, 'averageDailyTraffic': 170, 'designLoad': 2, 'structureLength': 27.4, 'deck': '7', 'superstructure': '7', 'substructure': '7', 'highwaySystemOfInventoryRoute': -1, 'avgDailyTruckTraffic': 10, 'material': 1, 'wearingSurface': 1, 'structureType': 1}
                 ]
     return temp
+

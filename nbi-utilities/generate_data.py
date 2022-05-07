@@ -9,19 +9,14 @@ __author__ = 'Akshay Kale'
 __copyright__ = 'GPL'
 __email__ = 'akale@unomaha.edu'
 
-import json
-import numpy as np
-from pymongo import MongoClient
-from tqdm import tqdm
-from datetime import date
-from collections import defaultdict
-from collections import Counter
 from nbi_data_chef import *
-
 #from precipitation import *
 #from snowfall_freezethaw import *
 
 def main():
+    """
+    Config file
+    """
     nbiDB = get_db()
     collection = nbiDB['nbi']
 
@@ -44,32 +39,40 @@ def main():
                 "structureLength":1,
                 "numberOfSpansInMainUnit":1,
                 "scourCriticalBridges":1,
+                "structureType":"$structureTypeMain.typeOfDesignConstruction",
                 "material":"$structureTypeMain.kindOfMaterialDesign",
                 "wearingSurface":"$structureTypeMain.kindOfDesignConstruction",
                 "coordinates":"$loc.coordinates"
             }
 
-    # select states:
+    # Select states:
     states = ['31'] # Nebraska
 
     # years:
-    # years = [year for year in range(1992, 2020)]
-    years = [year for year in range(1992, 1994)]
+    years = [year for year in range(1992, 2020)]
 
     # process precipitation data
     #structBdsMap, structPrecipMap = process_precipitation()
 
-    # process snowfall and freezethaw data
+    # Process snowfall and freezethaw data
     #structSnowMap, structFreezeMap = process_snowfall()
 
-    # query
-    individualRecords = query(fields, states, years, collection)
-    individualRecords = fix_coordinates(individualRecords)
+    # Query
+    #individualRecords = query(fields, states, years, collection)
 
-    #individualRecords = sample_records()
+    individual_records = sample_records()
 
-    # group records
-    groupedRecords = group_records(individualRecords, fields)
+    # Fixing coordinate by reformating the
+    individual_records = fix_coordinates(individual_records)
+
+    # Group records
+    groupedRecords = group_records(individual_records, fields)
+    groupedRecords = segmentize(groupedRecords)
+    groupedRecords = reorganize_segmented_data(groupedRecords)
+    #print(groupedRecords)
+
+    # Segment the records
+    #groupedRecords = segement(groudRecords, component='deck')
 
     # Compute baseline differnce score:
     groupedRecords, baselineDeck = compute_bds_score(groupedRecords,
@@ -80,28 +83,48 @@ def main():
 
     groupedRecords, baselineSuperstructure = compute_bds_score(groupedRecords,
                                                                component='superstructure')
-    # Creating BDS map
+    ## Creating BDS map
     deckBDSMap = create_map(groupedRecords, column='deckBDSScore')
     substructureBDSMap = create_map(groupedRecords, column='substructureBDSScore')
     superstructureBDSMap = create_map(groupedRecords, column='superstructureBDSScore')
 
-    individualRecords = integrate_ext_dataset_list(deckBDSMap,
-                                                   individualRecords,
-                                                   'deckBDSScore')
+    ## Compute slope
+    groupedRecords = compute_deterioration_slope(groupedRecords, component='deck')
+    groupedRecords = compute_deterioration_slope(groupedRecords, component='substructure')
+    groupedRecords = compute_deterioration_slope(groupedRecords, component='superstructure')
+    ## Creating slope map
+    deckSlopeMap = create_map(groupedRecords, column='deckDeteriorationScore')
+    substructSlopeMap = create_map(groupedRecords, column='substructureDeteriorationScore')
+    superstructureSlopeMap = create_map(groupedRecords, column='superstructureDeteriorationScore')
+    print(groupedRecords)
+    #individualRecords = integrate_ext_dataset_list(deckBDSMap,
+    #                                              individualRecords,
+    #                                               'deckBDSScore')
 
-    individualRecords = integrate_ext_dataset_list(substructureBDSMap,
-                                                   individualRecords,
-                                                   'substructureBDSScore')
+    #individualRecords = integrate_ext_dataset_list(substructureBDSMap,
+    #                                               individualRecords,
+    #                                               'substructureBDSScore')
 
-    individualRecords = integrate_ext_dataset_list(superstructureBDSMap,
-                                                   individualRecords,
-                                                   'superstructureBDSScore')
+    #individualRecords = integrate_ext_dataset_list(superstructureBDSMap,
+    #                                               individualRecords,
+    #                                               'superstructureBDSScore')
 
-    # Save to the file
-    print(individualRecords)
-    csvfile = 'nebraska.csv'
-    tocsv_list(individualRecords, csvfile)
-    create_df(baselineDeck, baselineSubstructure, baselineSuperstructure)
+    #individualRecords = integrate_ext_dataset_list(deckBDSMap,
+    #                                               individualRecords,
+    #                                               'deckDeteriorationScore')
+
+    #individualRecords = integrate_ext_dataset_list(substructureBDSMap,
+    #                                               individualRecords,
+    #                                               'substructureDeteriorationScore')
+
+    #individualRecords = integrate_ext_dataset_list(superstructureBDSMap,
+    #                                               individualRecords,
+    #                                               'superstructureDeteriorationScore')
+
+    ## Save to the file
+    #csvfile = 'testing-segmentation.csv'
+    #tocsv_list(individualRecords, csvfile)
+    #create_df(baselineDeck, baselineSubstructure, baselineSuperstructure)
 
 if __name__=='__main__':
      main()
