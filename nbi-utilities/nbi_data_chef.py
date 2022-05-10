@@ -251,6 +251,25 @@ def divide_record_utility(fields,
     record['deck 2'] = record['deck'][endIndex-1:]
     return record
 
+def create_individual_records(grouped_records):
+    """
+    Description:
+        create a list of individual
+        records from a dictionary
+    args: grouped_records(dict)
+    return: individual_records (list)
+    """
+    individual_records = []
+    for key, value in grouped_records.items():
+        structure_numbers = [key]*len(value['structureNumber'])
+        temp_df = pd.DataFrame(value)
+        temp_df['structureNumberSegement'] = structure_numbers
+        individual_records.append(temp_df)
+    individual_records = pd.concat(individual_records)
+    individual_records = [individual_records.columns.values.tolist()] \
+                      + individual_records.values.tolist()
+    return individual_records
+
 def divide_grouped_records(groupedRecords,
                            fields,
                            fr,

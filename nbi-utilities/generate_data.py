@@ -9,6 +9,7 @@ __author__ = 'Akshay Kale'
 __copyright__ = 'GPL'
 __email__ = 'akale@unomaha.edu'
 
+import csv
 from nbi_data_chef import *
 #from precipitation import *
 #from snowfall_freezethaw import *
@@ -58,9 +59,8 @@ def main():
     #structSnowMap, structFreezeMap = process_snowfall()
 
     # Query
-    #individualRecords = query(fields, states, years, collection)
-
-    individual_records = sample_records()
+    individual_records = query(fields, states, years, collection)
+    #individual_records = sample_records()
 
     # Fixing coordinate by reformating the
     individual_records = fix_coordinates(individual_records)
@@ -69,7 +69,7 @@ def main():
     groupedRecords = group_records(individual_records, fields)
     groupedRecords = segmentize(groupedRecords)
     groupedRecords = reorganize_segmented_data(groupedRecords)
-    #print(groupedRecords)
+    individual_records = create_individual_records(groupedRecords)
 
     # Segment the records
     #groupedRecords = segement(groudRecords, component='deck')
@@ -83,47 +83,54 @@ def main():
 
     groupedRecords, baselineSuperstructure = compute_bds_score(groupedRecords,
                                                                component='superstructure')
-    ## Creating BDS map
+    ### Creating BDS map
     deckBDSMap = create_map(groupedRecords, column='deckBDSScore')
     substructureBDSMap = create_map(groupedRecords, column='substructureBDSScore')
     superstructureBDSMap = create_map(groupedRecords, column='superstructureBDSScore')
 
-    ## Compute slope
+    ### Compute slope
     groupedRecords = compute_deterioration_slope(groupedRecords, component='deck')
     groupedRecords = compute_deterioration_slope(groupedRecords, component='substructure')
     groupedRecords = compute_deterioration_slope(groupedRecords, component='superstructure')
-    ## Creating slope map
+    ### Creating slope map
     deckSlopeMap = create_map(groupedRecords, column='deckDeteriorationScore')
     substructSlopeMap = create_map(groupedRecords, column='substructureDeteriorationScore')
     superstructureSlopeMap = create_map(groupedRecords, column='superstructureDeteriorationScore')
-    print(groupedRecords)
-    #individualRecords = integrate_ext_dataset_list(deckBDSMap,
-    #                                              individualRecords,
+
+    with open('deck-slope-ne.csv', 'w') as f:
+        for key in deckSlopeMap.keys():
+            f.write("%s, %s\n" % (key, deckSlopeMap[key]))
+
+    # TODO: Integration is the problem
+    # Create an individual Record 
+    #indivudal_records = integrate_ext_dataset_list(deckBDSMap,
+    #                                              individual_records,
     #                                               'deckBDSScore')
 
-    #individualRecords = integrate_ext_dataset_list(substructureBDSMap,
-    #                                               individualRecords,
+    #individual_records = integrate_ext_dataset_list(substructureBDSMap,
+    #                                               individual_records,
     #                                               'substructureBDSScore')
 
-    #individualRecords = integrate_ext_dataset_list(superstructureBDSMap,
-    #                                               individualRecords,
+    #individual_records = integrate_ext_dataset_list(superstructureBDSMap,
+    #                                               individual_records,
     #                                               'superstructureBDSScore')
 
-    #individualRecords = integrate_ext_dataset_list(deckBDSMap,
-    #                                               individualRecords,
+    #individual_records = integrate_ext_dataset_list(deckBDSMap,
+    #                                               individual_records,
     #                                               'deckDeteriorationScore')
 
-    #individualRecords = integrate_ext_dataset_list(substructureBDSMap,
-    #                                               individualRecords,
+    #individual_records = integrate_ext_dataset_list(substructureBDSMap,
+    #                                               individual_records,
     #                                               'substructureDeteriorationScore')
 
-    #individualRecords = integrate_ext_dataset_list(superstructureBDSMap,
-    #                                               individualRecords,
+    #individual_records = integrate_ext_dataset_list(superstructureBDSMap,
+    #                                               individual_records,
     #                                               'superstructureDeteriorationScore')
 
-    ## Save to the file
+    #print(individual_records)
+    ### Save to the file
     #csvfile = 'testing-segmentation.csv'
-    #tocsv_list(individualRecords, csvfile)
+    #tocsv_list(individual_records, csvfile)
     #create_df(baselineDeck, baselineSubstructure, baselineSuperstructure)
 
 if __name__=='__main__':
