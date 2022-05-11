@@ -261,8 +261,16 @@ def create_individual_records(grouped_records):
     """
     individual_records = []
     for key, value in grouped_records.items():
-        structure_numbers = [key]*len(value['structureNumber'])
-        temp_df = pd.DataFrame(value)
+        total_len = len(value['structureNumber'])
+        structure_numbers = [key]*total_len
+        # Error checking here
+        temp_val = defaultdict()
+        for v_key, v_val in value.items():
+            if len(v_val) != total_len:
+                temp_val[v_key] = ['None']*total_len
+            else:
+                temp_val[v_key] = v_val
+        temp_df = pd.DataFrame(temp_val)
         temp_df['structureNumberSegement'] = structure_numbers
         individual_records.append(temp_df)
     individual_records = pd.concat(individual_records)
@@ -307,13 +315,15 @@ def divide_grouped_records(groupedRecords,
 def segmentize_index_utility(conditionRatings):
     """
     Description:
-        returns segments of condition ratings
+        returns segments of condition ratings,
+        by identifying the increase in subsequent
+        condition ratings
     Returns:
         return indexes to segment further data
     """
     listOfSegments = list()
     indexes = list()
-    for index in range(0, len(conditionRatings) - 1):
+    for index in range(0, len(conditionRatings)-1):
         if conditionRatings[index] < conditionRatings[index + 1]:
             listOfSegments.append(conditionRatings[index])
             indexes.append(index)
@@ -331,14 +341,17 @@ def segmentize_column(data, indexes):
     """
     segmentedData = list()
     startP = 0
-    for indx in indexes:
-        tempList = list()
-        endP = indx + 1
-        segment = data[startP:endP]
-        remainder = data[endP:]
-        startP = endP
-        segmentedData.append(segment)
-    segmentedData.append(remainder)
+    if len(indexes) != 0:
+        for indx in indexes:
+            tempList = list()
+            endP = indx + 1
+            segment = data[startP:endP]
+            remainder = data[endP:]
+            startP = endP
+            segmentedData.append(segment)
+        segmentedData.append(remainder)
+    else:
+        segmentedData.append(data)
     return segmentedData
 
 def segmentize(groupedRecords, component="deck"):
@@ -355,12 +368,15 @@ def segmentize(groupedRecords, component="deck"):
     for structureNum, record in zip(groupedRecords.keys(),
                                     groupedRecords.values()):
         newRecord = defaultdict()
+        # TODO: May be we don't have condition ratings
+        # create a condition that calculates the following step
+        # only for the condition ratings
         conditionRatings = record[component]
         indexes = list()
         indexes = segmentize_index_utility(conditionRatings)
         for key, col in zip(record.keys(),
                             record.values()):
-            if len(col) > 0:
+            if len(col) > 0 or len(indexes) != 0:
                 segmentedData = segmentize_column(col, indexes)
             else:
                 segmentedData = col
@@ -917,4 +933,8 @@ def sample_records():
                  {'year': 1996, 'structureNumber': 'C000100305', 'countyCode': 1, 'owner': 2, 'yearBuilt': 1962, 'averageDailyTraffic': 170, 'designLoad': 2, 'structureLength': 27.4, 'deck': '7', 'superstructure': '7', 'substructure': '7', 'highwaySystemOfInventoryRoute': -1, 'avgDailyTruckTraffic': 10, 'material': 1, 'wearingSurface': 1, 'structureType': 1}
                 ]
     return temp
+
+def main():
+    conditionRatings = ['6','6','6','6']
+    segmentize_index_utility(conditionRatings)
 

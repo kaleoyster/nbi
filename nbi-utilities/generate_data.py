@@ -50,7 +50,7 @@ def main():
     states = ['31'] # Nebraska
 
     # years:
-    years = [year for year in range(1992, 2020)]
+    years = [year for year in range(1992, 1994)]
 
     # process precipitation data
     #structBdsMap, structPrecipMap = process_precipitation()
