@@ -59,8 +59,8 @@ def main():
     #structSnowMap, structFreezeMap = process_snowfall()
 
     # Query
-    #individual_records = query(fields, states, years, collection)
-    individual_records = sample_records()
+    individual_records = query(fields, states, years, collection)
+    #individual_records = sample_records()
 
     # Fixing coordinate by reformating the
     individual_records = fix_coordinates(individual_records)
@@ -92,12 +92,14 @@ def main():
     groupedRecords = compute_deterioration_slope(groupedRecords, component='deck')
     groupedRecords = compute_deterioration_slope(groupedRecords, component='substructure')
     groupedRecords = compute_deterioration_slope(groupedRecords, component='superstructure')
+
     ### Creating slope map
     deckSlopeMap = create_map(groupedRecords, column='deckDeteriorationScore')
     substructSlopeMap = create_map(groupedRecords, column='substructureDeteriorationScore')
     superstructureSlopeMap = create_map(groupedRecords, column='superstructureDeteriorationScore')
 
     with open('deck-slope-ne.csv', 'w') as f:
+        f.write("StructureNumber, Slope")
         for key in deckSlopeMap.keys():
             f.write("%s, %s\n" % (key, deckSlopeMap[key]))
 

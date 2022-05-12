@@ -8,6 +8,7 @@ __author__ = 'Akshay Kale'
 __copyright__ = 'GPL'
 __email__ = 'akale@unomaha.edu'
 
+import sys
 import json
 import csv
 import numpy as np
@@ -548,8 +549,9 @@ def compute_age(yearBuilts, years):
 def compute_det_score_utility(splitConditionRatings, splitAges):
     """
     Description:
-        A utility function for computing a score possible
-        monotonous deteriorating condition ratings.
+        A utility function that computes a deterioration score
+        for possible monotonous deteriorating condition ratings.
+
     Args:
         splitConditionRatings (list)
         splitAges (dictionary)
@@ -562,33 +564,29 @@ def compute_det_score_utility(splitConditionRatings, splitAges):
         if len(conditionRatings) > 1:
             firstConditionRating = conditionRatings[0]
             lastConditionRating = conditionRatings[-1]
-
             firstAge = ages[0]
             lastAge = ages[-1]
-
             try:
                 slope = (lastConditionRating - firstConditionRating) \
                      /  (lastAge - firstAge)
             except:
                 # To avoid division by zero
                 slope = 0
-            #print("\n first age and conditionRating: ", firstAge, firstConditionRating)
-            #print("\n last age and conditionRating: ", lastAge, lastConditionRating)
-            #print("\n printing slope :", slope)
             scores.append(slope)
 
     if len(scores) > 0:
         averageScore = np.mean(scores)
     else:
        averageScore = 0
-
     return averageScore
 
 def compute_deterioration_slope(groupedRecords, component='deck'):
     """
-    Description: For each of the records split the condition ratings
-        into monotonously decreasing segements, by age
-        Compute average deterioration slope or score for each segement
+    Description: For each of the records split
+    the condition ratings into monotonously
+    decreasing segements, by age.
+    Compute average deterioration slope or,
+    score for each segement
 
     Args:
         groupedRecords(dictionary)
@@ -600,15 +598,25 @@ def compute_deterioration_slope(groupedRecords, component='deck'):
     componentName = component + 'DeteriorationScore'
     updatedGroupedRecords = defaultdict()
 
-    # Key:  structure number of the bridges
-    # groupedRecords: json format bridges records (timeseries) 
+    logFile = 'slope-log.csv'
+    sys.stdout = open(logFile, 'w')
+    print("conditionRatings,'ages', slope")
     for key, groupedRecord in zip(groupedRecords.keys(), groupedRecords.values()):
         conditionRatings = groupedRecord[component]
         ages = compute_age(groupedRecord['yearBuilt'], groupedRecord['year'])
         splitConditionRatings, splitAges = split_condition_ratings(conditionRatings, ages)
         averageScore = compute_det_score_utility(splitConditionRatings, splitAges)
+
+        # Create a log 
+        string_cr = ''
+        string_age = ''
+        for cr, age in zip(splitConditionRatings[0], splitAges[0]):
+            string_cr = string_cr + str(cr)
+            string_age = string_age + str(age) + '-'
+        print(string_cr,',',string_age,',', averageScore)
         groupedRecord[componentName] = averageScore
         updatedGroupedRecords[key] = groupedRecord
+    sys.stdout.close()
     return updatedGroupedRecords
 
 def convert_to_int(listOfStrings):
