@@ -50,7 +50,7 @@ def main():
     states = ['31'] # Nebraska
 
     # years:
-    years = [year for year in range(1992, 1994)]
+    years = [year for year in range(1992, 2020)]
 
     # process precipitation data
     #structBdsMap, structPrecipMap = process_precipitation()
@@ -59,8 +59,8 @@ def main():
     #structSnowMap, structFreezeMap = process_snowfall()
 
     # Query
-    individual_records = query(fields, states, years, collection)
-    #individual_records = sample_records()
+    #individual_records = query(fields, states, years, collection)
+    individual_records = sample_records()
 
     # Fixing coordinate by reformating the
     individual_records = fix_coordinates(individual_records)
