@@ -324,7 +324,7 @@ def segmentize_index_utility(conditionRatings):
     """
     listOfSegments = list()
     indexes = list()
-    for index in range(0, len(conditionRatings)-1):
+    for index in range(0, len(conditionRatings) - 1):
         if conditionRatings[index] < conditionRatings[index + 1]:
             listOfSegments.append(conditionRatings[index])
             indexes.append(index)
@@ -377,7 +377,7 @@ def segmentize(groupedRecords, component="deck"):
         indexes = segmentize_index_utility(conditionRatings)
         for key, col in zip(record.keys(),
                             record.values()):
-            if len(col) > 0 or len(indexes) != 0:
+            if len(col) > 0:
                 segmentedData = segmentize_column(col, indexes)
             else:
                 segmentedData = col
@@ -840,7 +840,6 @@ def create_deterioration_dict(groupedRecords,
             dictionary[structureNumber] = deteriorationScore
     return dictionary
 
-
 def tocsv(groupedRecords, csvfile, header=None):
     """
     Description:
@@ -946,6 +945,8 @@ def sample_records():
     return temp
 
 def main():
-    conditionRatings = ['6','6','6','6']
-    segmentize_index_utility(conditionRatings)
+    conditionRatings = ['8','8','8','8','8','8','8', '8', '9', '5', '5', '5', '5', '5', '5']
+    apple = segmentize_index_utility(conditionRatings)
+    print(apple)
 
+main()

@@ -60,8 +60,8 @@ def main():
     #structSnowMap, structFreezeMap = process_snowfall()
 
     # Query
-    #individual_records = query(fields, states, years, collection)
-    individual_records = sample_records()
+    individual_records = query(fields, states, years, collection)
+    #individual_records = sample_records()
 
     # Fixing coordinate by reformating the
     individual_records = fix_coordinates(individual_records)
@@ -72,11 +72,11 @@ def main():
 
     #print("After segementing")
     pp = pprint.PrettyPrinter(indent=3)
-    pp.pprint(groupedRecords)
+    ##pp.pprint(groupedRecords)
 
-    #print("After reorganizing")
+    print("After reorganizing")
     groupedRecords = reorganize_segmented_data(groupedRecords)
-    #pp.pprint(groupedRecords)
+    pp.pprint(groupedRecords)
     individual_records = create_individual_records(groupedRecords)
 
     # Segment the records
@@ -98,13 +98,13 @@ def main():
 
     ### Compute slope
     groupedRecords = compute_deterioration_slope(groupedRecords, component='deck')
-    groupedRecords = compute_deterioration_slope(groupedRecords, component='substructure')
-    groupedRecords = compute_deterioration_slope(groupedRecords, component='superstructure')
+    #groupedRecords = compute_deterioration_slope(groupedRecords, component='substructure')
+    #groupedRecords = compute_deterioration_slope(groupedRecords, component='superstructure')
 
     ### Creating slope map
     deckSlopeMap = create_map(groupedRecords, column='deckDeteriorationScore')
-    substructSlopeMap = create_map(groupedRecords, column='substructureDeteriorationScore')
-    superstructureSlopeMap = create_map(groupedRecords, column='superstructureDeteriorationScore')
+    #substructSlopeMap = create_map(groupedRecords, column='substructureDeteriorationScore')
+    #superstructureSlopeMap = create_map(groupedRecords, column='superstructureDeteriorationScore')
 
     with open('deck-slope-ne.csv', 'w') as f:
         f.write("StructureNumber, Slope")
