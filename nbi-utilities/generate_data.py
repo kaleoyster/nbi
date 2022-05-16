@@ -69,14 +69,14 @@ def main():
     # Group records
     groupedRecords = group_records(individual_records, fields)
     groupedRecords = segmentize(groupedRecords)
-    
+
     #print("After segementing")
     pp = pprint.PrettyPrinter(indent=3)
-    #pp.pprint(groupedRecords)
-
-    print("After reorganizing")
-    groupedRecords = reorganize_segmented_data(groupedRecords)
     pp.pprint(groupedRecords)
+
+    #print("After reorganizing")
+    groupedRecords = reorganize_segmented_data(groupedRecords)
+    #pp.pprint(groupedRecords)
     individual_records = create_individual_records(groupedRecords)
 
     # Segment the records

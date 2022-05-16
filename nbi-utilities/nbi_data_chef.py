@@ -533,7 +533,6 @@ def split_condition_ratings(conditionRatings, ages):
 def compute_age(yearBuilts, years):
     """
     Description: compute ages from the list of yearBuilt
-
     Args:
         years (list)
 
@@ -600,20 +599,25 @@ def compute_deterioration_slope(groupedRecords, component='deck'):
 
     logFile = 'slope-log.csv'
     sys.stdout = open(logFile, 'w')
-    print("conditionRatings,'ages', slope")
+    print("structure Number, conditionRatings, age, year built, year reported, slope")
     for key, groupedRecord in zip(groupedRecords.keys(), groupedRecords.values()):
         conditionRatings = groupedRecord[component]
         ages = compute_age(groupedRecord['yearBuilt'], groupedRecord['year'])
+        splitConditionRatings, year_built = split_condition_ratings(conditionRatings, groupedRecord['yearBuilt'])
+        splitConditionRatings, year_pub  = split_condition_ratings(conditionRatings, groupedRecord['year'])
         splitConditionRatings, splitAges = split_condition_ratings(conditionRatings, ages)
         averageScore = compute_det_score_utility(splitConditionRatings, splitAges)
 
-        # Create a log 
         string_cr = ''
         string_age = ''
-        for cr, age in zip(splitConditionRatings[0], splitAges[0]):
+        string_year = ''
+        string_yearp = ''
+        for cr, age, year, yearp in zip(splitConditionRatings[0], splitAges[0], year_built[0], year_pub[0]):
             string_cr = string_cr + str(cr)
             string_age = string_age + str(age) + '-'
-        print(string_cr,',',string_age,',', averageScore)
+            string_year = string_year + str(year) + '-'
+            string_yearp = string_yearp + str(yearp) + '-'
+        print(key, ',', string_cr,',',string_age,',',string_year, ',',string_yearp,',',averageScore)
         groupedRecord[componentName] = averageScore
         updatedGroupedRecords[key] = groupedRecord
     sys.stdout.close()
@@ -728,7 +732,6 @@ def compute_bds_score(groupedRecords, component='deck'):
         score = np.nanmean(differences)
         groupedRecord[componentName] = score
         updatedGroupedRecords[key] = groupedRecord
-        #print("Printing the average score: ", updatedGroupedRecords)
     return updatedGroupedRecords, baseline
 
 def clean_individual_records(records):
