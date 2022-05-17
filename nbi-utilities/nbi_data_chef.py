@@ -275,8 +275,7 @@ def create_individual_records(grouped_records):
         temp_df['structureNumberSegement'] = structure_numbers
         individual_records.append(temp_df)
     individual_records = pd.concat(individual_records)
-    individual_records = [individual_records.columns.values.tolist()] \
-                      + individual_records.values.tolist()
+    individual_records = individual_records.to_dict('records')
     return individual_records
 
 def divide_grouped_records(groupedRecords,
@@ -949,4 +948,4 @@ def main():
     apple = segmentize_index_utility(conditionRatings)
     print(apple)
 
-main()
+#main()

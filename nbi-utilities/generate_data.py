@@ -60,11 +60,14 @@ def main():
     #structSnowMap, structFreezeMap = process_snowfall()
 
     # Query
-    individual_records = query(fields, states, years, collection)
-    #individual_records = sample_records()
+    #individual_records = query(fields, states, years, collection)
+    individual_records = sample_records()
 
+    print("Records after fixing individual records")
     # Fixing coordinate by reformating the
     individual_records = fix_coordinates(individual_records)
+    print("Records indiviual records")
+    print(individual_records)
 
     # Group records
     groupedRecords = group_records(individual_records, fields)
@@ -74,13 +77,12 @@ def main():
     pp = pprint.PrettyPrinter(indent=3)
     ##pp.pprint(groupedRecords)
 
-    print("After reorganizing")
+    #print("After reorganizing")
     groupedRecords = reorganize_segmented_data(groupedRecords)
-    pp.pprint(groupedRecords)
+    #pp.pprint(groupedRecords)
     individual_records = create_individual_records(groupedRecords)
-
-    # Segment the records
-    #groupedRecords = segement(groudRecords, component='deck')
+    print(individual_records)
+    print("Records after fixing individual records End")
 
     # Compute baseline differnce score:
     groupedRecords, baselineDeck = compute_bds_score(groupedRecords,
@@ -113,35 +115,34 @@ def main():
 
     # TODO: Integration is the problem
     # Create an individual Record 
-    #indivudal_records = integrate_ext_dataset_list(deckBDSMap,
-    #                                              individual_records,
-    #                                               'deckBDSScore')
+    indivudal_records = integrate_ext_dataset_list(deckBDSMap,
+                                                  individual_records,
+                                                   'deckBDSScore')
 
-    #individual_records = integrate_ext_dataset_list(substructureBDSMap,
-    #                                               individual_records,
-    #                                               'substructureBDSScore')
+    individual_records = integrate_ext_dataset_list(substructureBDSMap,
+                                                   individual_records,
+                                                   'substructureBDSScore')
 
-    #individual_records = integrate_ext_dataset_list(superstructureBDSMap,
-    #                                               individual_records,
-    #                                               'superstructureBDSScore')
+    individual_records = integrate_ext_dataset_list(superstructureBDSMap,
+                                                   individual_records,
+                                                   'superstructureBDSScore')
 
-    #individual_records = integrate_ext_dataset_list(deckBDSMap,
-    #                                               individual_records,
-    #                                               'deckDeteriorationScore')
+    individual_records = integrate_ext_dataset_list(deckBDSMap,
+                                                   individual_records,
+                                                   'deckDeteriorationScore')
 
-    #individual_records = integrate_ext_dataset_list(substructureBDSMap,
-    #                                               individual_records,
-    #                                               'substructureDeteriorationScore')
+    individual_records = integrate_ext_dataset_list(substructureBDSMap,
+                                                   individual_records,
+                                                   'substructureDeteriorationScore')
 
-    #individual_records = integrate_ext_dataset_list(superstructureBDSMap,
-    #                                               individual_records,
-    #                                               'superstructureDeteriorationScore')
+    individual_records = integrate_ext_dataset_list(superstructureBDSMap,
+                                                   individual_records,
+                                                   'superstructureDeteriorationScore')
 
-    #print(individual_records)
     ### Save to the file
-    #csvfile = 'testing-segmentation.csv'
-    #tocsv_list(individual_records, csvfile)
-    #create_df(baselineDeck, baselineSubstructure, baselineSuperstructure)
+    csvfile = 'testing-segmentation.csv'
+    tocsv_list(individual_records, csvfile)
+    create_df(baselineDeck, baselineSubstructure, baselineSuperstructure)
 
 if __name__=='__main__':
      main()
