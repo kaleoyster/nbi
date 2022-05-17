@@ -41,6 +41,7 @@ def main():
                 "structureLength":1,
                 "numberOfSpansInMainUnit":1,
                 "scourCriticalBridges":1,
+                "yearReconstructed":1,
                 "structureType":"$structureTypeMain.typeOfDesignConstruction",
                 "material":"$structureTypeMain.kindOfMaterialDesign",
                 "wearingSurface":"$structureTypeMain.kindOfDesignConstruction",
@@ -60,14 +61,12 @@ def main():
     #structSnowMap, structFreezeMap = process_snowfall()
 
     # Query
-    #individual_records = query(fields, states, years, collection)
-    individual_records = sample_records()
+    individual_records = query(fields, states, years, collection)
+    #individual_records = sample_records()
 
-    print("Records after fixing individual records")
-    # Fixing coordinate by reformating the
+    # Fixing geo-coordinate by reformating the default values
     individual_records = fix_coordinates(individual_records)
-    print("Records indiviual records")
-    print(individual_records)
+    individual_records = compute_deck_age(individual_records)
 
     # Group records
     groupedRecords = group_records(individual_records, fields)
@@ -82,7 +81,6 @@ def main():
     #pp.pprint(groupedRecords)
     individual_records = create_individual_records(groupedRecords)
     print(individual_records)
-    print("Records after fixing individual records End")
 
     # Compute baseline differnce score:
     groupedRecords, baselineDeck = compute_bds_score(groupedRecords,
@@ -127,17 +125,17 @@ def main():
                                                    individual_records,
                                                    'superstructureBDSScore')
 
-    individual_records = integrate_ext_dataset_list(deckBDSMap,
+    individual_records = integrate_ext_dataset_list(deckSlopeMap,
                                                    individual_records,
                                                    'deckDeteriorationScore')
 
-    individual_records = integrate_ext_dataset_list(substructureBDSMap,
-                                                   individual_records,
-                                                   'substructureDeteriorationScore')
+    #individual_records = integrate_ext_dataset_list(substructureSlopeMap,
+    #                                               individual_records,
+    #                                               'substructureDeteriorationScore')
 
-    individual_records = integrate_ext_dataset_list(superstructureBDSMap,
-                                                   individual_records,
-                                                   'superstructureDeteriorationScore')
+    #individual_records = integrate_ext_dataset_list(superstructureSlopeMap,
+    #                                               individual_records,
+    #                                               'superstructureDeteriorationScore')
 
     ### Save to the file
     csvfile = 'testing-segmentation.csv'

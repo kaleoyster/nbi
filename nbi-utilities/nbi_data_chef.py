@@ -47,6 +47,27 @@ def fix_coordinates(records):
         newRecords.append(tempDictionary)
     return newRecords
 
+def compute_deck_age(records):
+    """
+    description:  return the computed deck age
+    args: records (list of dictionaries)
+    return: newRecords (list of new records)
+    """
+    newRecords = []
+    for record in records:
+        tempDictionary = {}
+        for key, value in zip(record.keys(), record.values()):
+            tempDictionary[key] = value
+            if key == "yearReconstructed":
+                year_built = record['yearBuilt']
+                year = record['year']
+                if year_built < value:
+                    tempDictionary['deckAge'] = year - value
+                else:
+                    tempDictionary['deckAge'] = year - year_built
+        newRecords.append(tempDictionary)
+    return newRecords
+
 def query(fields, states, years, collection):
     """
     description: query mongodb and collects result
@@ -72,15 +93,11 @@ def query(fields, states, years, collection):
     return results
 
 def save_json(results, filename):
-    #TODO
     with open(filename, 'w') as jsonFile:
         for result in tqdm(results, desc='Saving JSON in file'):
-            #json.dump(result, jsonFile)
             jsonFile.write(json.dumps(result))
 
 def read_json(filename):
-    # TODO
-    #listOfJson = list()
     listOfJson = json.load(filename)
     return listOfJson
 
