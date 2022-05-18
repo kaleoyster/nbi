@@ -49,7 +49,10 @@ def fix_coordinates(records):
 
 def compute_deck_age(records):
     """
-    description:  return the computed deck age
+    description: returns the computed deck age
+    by computing the difference between the year
+    reported and the greater between year reconstructed
+    or year built.
     args: records (list of dictionaries)
     return: newRecords (list of new records)
     """
