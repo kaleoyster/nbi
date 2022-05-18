@@ -71,6 +71,29 @@ def compute_deck_age(records):
         newRecords.append(tempDictionary)
     return newRecords
 
+def compute_age_1(records):
+    """
+    Description: returns the computed deck age
+    by computing the difference between the year
+    reported and the greater between year reconstructed
+    or year built.
+
+    Args: records (list of dictionaries)
+
+    Return: newRecords (list of new records)
+    """
+    newRecords = []
+    for record in records:
+        tempDictionary = {}
+        for key, value in zip(record.keys(), record.values()):
+            tempDictionary[key] = value
+            if key == "yearBuilt":
+                year_built = record['yearBuilt']
+                year = record['year']
+                tempDictionary['Age'] = year - year_built
+        newRecords.append(tempDictionary)
+    return newRecords
+
 def query(fields, states, years, collection):
     """
     description: query mongodb and collects result
@@ -225,7 +248,7 @@ def integrate_ext_dataset_list(extDict,
     """
     newGroupedRecords = list()
     for record in groupedRecords:
-        structureNumber = record.get('structureNumber')
+        structureNumber = record.get('structureNumberSegment')
         record[fieldname] = extDict.get(structureNumber)
         newGroupedRecords.append(record)
     #for structureNumber in groupedRecords.keys():
@@ -617,8 +640,8 @@ def compute_deterioration_slope(groupedRecords, component='deck'):
     updatedGroupedRecords = defaultdict()
 
     logFile = 'slope-log.csv'
-    sys.stdout = open(logFile, 'w')
-    print("structure Number, conditionRatings, age, year built, year reported, slope")
+    #sys.stdout = open(logFile, 'w')
+    #print("structure Number, conditionRatings, age, year built, year reported, slope")
     for key, groupedRecord in zip(groupedRecords.keys(), groupedRecords.values()):
         conditionRatings = groupedRecord[component]
         ages = compute_age(groupedRecord['yearBuilt'], groupedRecord['year'])
@@ -636,10 +659,10 @@ def compute_deterioration_slope(groupedRecords, component='deck'):
             string_age = string_age + str(age) + '-'
             string_year = string_year + str(year) + '-'
             string_yearp = string_yearp + str(yearp) + '-'
-        print(key, ',', string_cr,',',string_age,',',string_year, ',',string_yearp,',',averageScore)
+    #    print(key, ',', string_cr,',',string_age,',',string_year, ',',string_yearp,',',averageScore)
         groupedRecord[componentName] = averageScore
         updatedGroupedRecords[key] = groupedRecord
-    sys.stdout.close()
+    #sys.stdout.close()
     return updatedGroupedRecords
 
 def convert_to_int(listOfStrings):

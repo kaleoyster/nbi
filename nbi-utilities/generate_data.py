@@ -61,26 +61,22 @@ def main():
     #structSnowMap, structFreezeMap = process_snowfall()
 
     # Query
-    individual_records = query(fields, states, years, collection)
-    #individual_records = sample_records()
+    #individual_records = query(fields, states, years, collection)
+    individual_records = sample_records()
 
     # Fixing geo-coordinate by reformating the default values
     individual_records = fix_coordinates(individual_records)
     individual_records = compute_deck_age(individual_records)
+    individual_records = compute_age_1(individual_records)
 
     # Group records
     groupedRecords = group_records(individual_records, fields)
     groupedRecords = segmentize(groupedRecords)
 
-    #print("After segementing")
-    pp = pprint.PrettyPrinter(indent=3)
-    ##pp.pprint(groupedRecords)
-
-    #print("After reorganizing")
     groupedRecords = reorganize_segmented_data(groupedRecords)
+    pp = pprint.PrettyPrinter(indent=3)
     #pp.pprint(groupedRecords)
     individual_records = create_individual_records(groupedRecords)
-    print(individual_records)
 
     # Compute baseline differnce score:
     groupedRecords, baselineDeck = compute_bds_score(groupedRecords,
@@ -137,6 +133,7 @@ def main():
     #                                               individual_records,
     #                                               'superstructureDeteriorationScore')
 
+    print(individual_records)
     ### Save to the file
     csvfile = 'testing-segmentation.csv'
     tocsv_list(individual_records, csvfile)
