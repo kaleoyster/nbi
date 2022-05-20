@@ -61,8 +61,8 @@ def main():
     #structSnowMap, structFreezeMap = process_snowfall()
 
     # Query
-    #individual_records = query(fields, states, years, collection)
-    individual_records = sample_records()
+    individual_records = query(fields, states, years, collection)
+    #individual_records = sample_records()
 
     # Fixing geo-coordinate by reformating the default values
     individual_records = fix_coordinates(individual_records)
@@ -133,7 +133,6 @@ def main():
     #                                               individual_records,
     #                                               'superstructureDeteriorationScore')
 
-    print(individual_records)
     ### Save to the file
     csvfile = 'testing-segmentation.csv'
     tocsv_list(individual_records, csvfile)

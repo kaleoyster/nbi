@@ -640,8 +640,8 @@ def compute_deterioration_slope(groupedRecords, component='deck'):
     updatedGroupedRecords = defaultdict()
 
     logFile = 'slope-log.csv'
-    #sys.stdout = open(logFile, 'w')
-    #print("structure Number, conditionRatings, age, year built, year reported, slope")
+    sys.stdout = open(logFile, 'w')
+    print("structure Number, conditionRatings, age, year built, year reported, slope")
     for key, groupedRecord in zip(groupedRecords.keys(), groupedRecords.values()):
         conditionRatings = groupedRecord[component]
         ages = compute_age(groupedRecord['yearBuilt'], groupedRecord['year'])
@@ -659,10 +659,10 @@ def compute_deterioration_slope(groupedRecords, component='deck'):
             string_age = string_age + str(age) + '-'
             string_year = string_year + str(year) + '-'
             string_yearp = string_yearp + str(yearp) + '-'
-    #    print(key, ',', string_cr,',',string_age,',',string_year, ',',string_yearp,',',averageScore)
+        print(key, ',', string_cr,',',string_age,',',string_year, ',',string_yearp,',',averageScore)
         groupedRecord[componentName] = averageScore
         updatedGroupedRecords[key] = groupedRecord
-    #sys.stdout.close()
+    sys.stdout.close()
     return updatedGroupedRecords
 
 def convert_to_int(listOfStrings):

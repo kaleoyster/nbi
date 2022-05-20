@@ -50,12 +50,12 @@ def stateCodeValidate(data,validation,structNumber,fieldErrorCountArray):
                       '20',
                       '45',
                       '22',
-                      '40', 
-                      '72', 
-                      '41', 
-                      '27', 
-                      '53', 
-                      '01', 
+                      '40',
+                      '72',
+                      '41',
+                      '27',
+                      '53',
+                      '01',
                       '31',
                       '02',
                       '49',
@@ -68,12 +68,12 @@ def stateCodeValidate(data,validation,structNumber,fieldErrorCountArray):
           fieldErrorCountArray[0] = fieldErrorCountArray[0] + 1
           print('StateCode Value ('+ data +') Invalid in Structure Number: ' + structNumber ,file = validation)
           error = 0
-          return data , error         
+          return data , error
 
 
 #Item No:5A (Inventory Route)(Fatal ERROR)
 def recordTypeValidate(data,validation,structNumber,fieldErrorCountArray):
-    validValues = ['1', 
+    validValues = ['1',
                    '2',
                    'A',
                    'B',
@@ -107,15 +107,15 @@ def recordTypeValidate(data,validation,structNumber,fieldErrorCountArray):
         error = 0
         return data, error
     else:
-        fieldErrorCountArray[2] = fieldErrorCountArray[2] + 1     
-        print('Record Type Validate Value ('+ data +') Invalid in Structure Number: ' + structNumber ,file = validation)         
+        fieldErrorCountArray[2] = fieldErrorCountArray[2] + 1
+        print('Record Type Validate Value ('+ data +') Invalid in Structure Number: ' + structNumber ,file = validation)
         error = 0
         data = 'NA'
-        return data , error 
+        return data , error
 
 #Item No: 5B 
 def routeSigningPrefixValidate(data,validation,structNumber,fieldErrorCountArray):
-    validValues = ['1', 
+    validValues = ['1',
                    '2',
                    '3',
                    '4',
@@ -127,8 +127,8 @@ def routeSigningPrefixValidate(data,validation,structNumber,fieldErrorCountArray
     if data in validValues:
         error = 0
         return data, error
-    else: 
-        fieldErrorCountArray[3] = fieldErrorCountArray[3] + 1     
+    else:
+        fieldErrorCountArray[3] = fieldErrorCountArray[3] + 1
         print('Routing Signing prefix Validate Value ('+ data +') Invalid in Structure Number: ' + structNumber ,file = validation)         
         error = 0
         data = '-1'

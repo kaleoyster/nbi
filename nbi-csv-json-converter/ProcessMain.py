@@ -326,7 +326,7 @@ def processFilesMongo(files):
 
 #driver function
 def main():
-    if (fillMongoDB == True):
+    if (fillMongoDB == False): # True
         processFilesMongo(files)
     else:
         processFilesJSON(files)
