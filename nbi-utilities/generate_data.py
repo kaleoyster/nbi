@@ -44,7 +44,8 @@ def main():
                 "yearReconstructed":1,
                 "structureType":"$structureTypeMain.typeOfDesignConstruction",
                 "material":"$structureTypeMain.kindOfMaterialDesign",
-                "wearingSurface":"$structureTypeMain.kindOfDesignConstruction",
+                "structureType":"$structureTypeMain.typeOfDesignConstruction",
+                "wearingSurface":"$wearingSurface/ProtectiveSystem.typeOfWearingSurface",
                 "coordinates":"$loc.coordinates"
             }
 
@@ -134,7 +135,7 @@ def main():
     #                                               'superstructureDeteriorationScore')
 
     ### Save to the file
-    csvfile = 'testing-segmentation.csv'
+    csvfile = 'nebraska-1992-2020.csv'
     tocsv_list(individual_records, csvfile)
     create_df(baselineDeck, baselineSubstructure, baselineSuperstructure)
 

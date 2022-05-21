@@ -90,7 +90,7 @@ def compute_age_1(records):
             if key == "yearBuilt":
                 year_built = record['yearBuilt']
                 year = record['year']
-                tempDictionary['Age'] = year - year_built
+                tempDictionary['age'] = year - year_built
         newRecords.append(tempDictionary)
     return newRecords
 
@@ -315,7 +315,7 @@ def create_individual_records(grouped_records):
             else:
                 temp_val[v_key] = v_val
         temp_df = pd.DataFrame(temp_val)
-        temp_df['structureNumberSegement'] = structure_numbers
+        temp_df['structureNumberSegment'] = structure_numbers
         individual_records.append(temp_df)
     individual_records = pd.concat(individual_records)
     individual_records = individual_records.to_dict('records')
@@ -625,7 +625,7 @@ def compute_deterioration_slope(groupedRecords, component='deck'):
     """
     Description: For each of the records split
     the condition ratings into monotonously
-    decreasing segements, by age.
+    decreasing segment, by age.
     Compute average deterioration slope or,
     score for each segement
 
@@ -745,8 +745,9 @@ def compute_bds_score(groupedRecords, component='deck'):
     for key, groupedRecord in zip(groupedRecords.keys(),
                                   groupedRecords.values()):
         conditionRatings = groupedRecord[component]
-        ages = compute_age(groupedRecord['yearBuilt'],
-                           groupedRecord['year'])
+        #ages = compute_age(groupedRecord['yearBuilt'],
+        #                   groupedRecord['year'])
+        ages = groupedRecord['deckAge']
 
         # Convert string to integer
         conditionRatingsInt = convert_to_int(conditionRatings)
@@ -762,8 +763,9 @@ def compute_bds_score(groupedRecords, component='deck'):
         differences = list()
         conditionRatings = groupedRecord[component]
         conditionRatingsInt = convert_to_int(conditionRatings)
-        ages = compute_age(groupedRecord['yearBuilt'],
-                           groupedRecord['year'])
+        #ages = compute_age(groupedRecord['yearBuilt'],
+        #                   groupedRecord['year'])
+        ages = groupedRecord['deckAge']
         for age, conditionRating in zip(ages,
                                         conditionRatingsInt):
             try:
