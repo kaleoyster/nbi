@@ -21,6 +21,8 @@ from collections import Counter
 #from precipitation import *
 #from snowfall_freezethaw import *
 
+#adding a comment for git practise
+
 def get_db():
     file = open("dbConnect.txt", 'r')
     dbConnectionString = str(file.read()).strip()
