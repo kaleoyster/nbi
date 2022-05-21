@@ -73,7 +73,6 @@ def main():
     # Group records
     groupedRecords = group_records(individual_records, fields)
     groupedRecords = segmentize(groupedRecords)
-
     groupedRecords = reorganize_segmented_data(groupedRecords)
     pp = pprint.PrettyPrinter(indent=3)
     #pp.pprint(groupedRecords)
