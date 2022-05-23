@@ -8,7 +8,7 @@ The Python script downloads CSV and zip file directly from the FHWA website. Thi
 
 ## Addition information
 
- The `nbi-csv-json-converter` divides the task into two: Download and Conversion. Each of the subdivided tasks is run by separate scripts. The Conversion script also performs cross-check, item check, validations mentioned by [FHWA](https://www.fhwa.dot.gov/bridge/nbi/checks/), and populates JSON objects into MongoDB.
+ The `nbi-csv-json-converter` divides the task into two: Download and Conversion. Each of the subdivided tasks is run by separate scripts. The conversion script also performs cross-check, item check, validations mentioned by [FHWA](https://www.fhwa.dot.gov/bridge/nbi/checks/), and populates JSON objects into MongoDB.
 
 
 ## Prerequisites libraries used by the scripts
@@ -62,7 +62,13 @@ To connect to mongodb instance `dbConnect.txt` is required. you may create the f
 ```python
 mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
 ```
-To now know more about the schema, [Click Here](https://docs.mongodb.com/manual/reference/connection-string/)
+To know more about the schema, [Click Here](https://docs.mongodb.com/manual/reference/connection-string/)
+
+Use the following schema to connect to the MongoDB instance installed on local machine:
+
+```
+mongodb://localhost:27017
+```
 
 ProcessMain.py output includes the following items:  
 1. `missinggeo.txt` This text file will include all structure Number and year, where geo coordinates are invalid
