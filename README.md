@@ -1,4 +1,4 @@
-# National Bridge Inventory CSV to JSON Converter
+# National Bridge Inventory CSV to JSON Convertor
 
 ## About
 
@@ -24,7 +24,7 @@ The Python script downloads CSV and zip file directly from the FHWA website. Thi
 
 ## Steps
 
-###  `nbi-csv-json-converter`
+###  `nbi-csv-json-convertor`
 
 This crawler creates a local copy of NBI files. This prevents unnecessary requests to the server during the processing stage.
 `
