@@ -240,22 +240,22 @@ def initializeValidationArray(validationArray,size):
 
 
 #function to validate NBI ROWS
-def validateNBIfields(temp, ErrorCheck, fieldErrorCountArray,validation,size,year):
-    
-    ErrorCheck = initializeValidationArray(ErrorCheck,size) # ErrorCheck will maintain a list of invalid error encountered in a row
+def validateNBIfields(temp, ErrorCheck, fieldErrorCountArray, validation, size, year):
+    ErrorCheck = initializeValidationArray(ErrorCheck, size)
+
+    print(temp)
+    # ErrorCheck will maintain a list of invalid error encountered in a row
     structNumber = temp[1]
     #Guide:  
-    # eg: temp[0], ErrorCheck[0] = stateCodeValidate(temp[0],validation,structNumber,fieldErrorCountArray)
-    #
+    # eg: temp[0], ErrorCheck[0] = stateCodeValidate(temp[0], validation, structNumber, fieldErrorCountArray)
     #    temp[0] = State Code (check nbiCoder)
     #    ErrorCheck[0] = If state code is invalid, this will mark '1' at index 0 of ErrorCheck to denote that StateCode is invalid
-    #
     #    stateCodeValidate takes following as the arguments:
+
     # 1. temp[0], the stateCode
     # 2. validation, instance of opened log file, which will record all invalid data
     # 3. structure Number, to identify there occurs an error
     # 4. fieldErrorCountArry, to keep a Total count of invalid field through a file
- 
     temp[0], ErrorCheck[0] = stateCodeValidate(temp[0],validation,structNumber,fieldErrorCountArray)
     temp[2], ErrorCheck[2] = recordTypeValidate(temp[2],validation,structNumber,fieldErrorCountArray)
     temp[3], ErrorCheck[3] = routeSigningPrefixValidate(temp[3],validation,structNumber,fieldErrorCountArray)
@@ -263,7 +263,7 @@ def validateNBIfields(temp, ErrorCheck, fieldErrorCountArray,validation,size,yea
     try:
        temp[5], ErrorCheck[5] = RouteNumberValidate(temp[5],validation,structNumber,fieldErrorCountArray)
     except:
-       pass  
+       pass 
     temp[6], ErrorCheck[6] = directionalSuffixValidate(temp[6],validation,structNumber,fieldErrorCountArray)
     temp[16], ErrorCheck[16] = baseHighwayNetwork(temp[16],validation,structNumber,fieldErrorCountArray)                    
     temp[20], temp[19], ErrorCheck[19] = LongitudeLatitudeValidate(temp[20],temp[19],validation,structNumber,fieldErrorCountArray)

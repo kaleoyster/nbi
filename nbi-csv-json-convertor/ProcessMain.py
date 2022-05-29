@@ -1,12 +1,11 @@
 '''
-Python
-Program ProcessMain.py
+Name: ProcessMain.py
 This program will convert CSV files to JSON file
 
 Author: Akshay Kale
 '''
-#Importing Modules
 
+#Importing Modules
 import csv
 import os
 from urllib.request import urlopen
