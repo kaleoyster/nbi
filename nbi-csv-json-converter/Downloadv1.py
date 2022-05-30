@@ -11,8 +11,8 @@ import io
 import os
 from urllib.request import urlopen
 
-# years global variable
-years = [
+#  years global variable
+"""years = [
          1992,
          1993,
          1994,
@@ -43,8 +43,8 @@ years = [
          2019,
          2020,
          2021
-        ]
-
+        ]"""
+years = [2010]
 
 #states global variable
 states = ["AK",
@@ -229,19 +229,25 @@ def main():
         Which suggest that even the data before 2010 can be used
         through same (url) naming convention.
     """
+
+    if (os.path.isdir("NBIDATA"))=="FALSE":
+        for f in os.listdir('NBIDATA'):
+            os.remove(os.path.join('NBIDATA', f))
+
+
     for year in years:
         if (year < 2010):
            zipUrl = createZipUrl(year)
            print('Downloading Zip file for ', year)
            downloadZipfile(zipUrl)
         else:
-           log = open("log.txt",'w')
+           log = open("log.txt",'w', encoding='utf-8')
            for state in states:
                y = year
                s = state
                url, filename = createURL(y,s)
                print("getting ...", filename)
-               f = open(os.path.join('NBIDATA',filename),'w')
+               f = open(os.path.join('NBIDATA',filename),'w', encoding='utf-8')
                with urlopen(url) as response:
                    for line in response:
                        try:
@@ -254,6 +260,12 @@ def main():
                f.close()
            log.close()
     rename(fileNameDict)
+
+    for f in os.listdir('NBIDATA'):
+        if(f[2]=='9'):
+            os.rename(os.path.join('NBIDATA',f),os.path.join('NBIDATA',f[0:2]+"19"+f[2:]))
+        elif(f[2]=='0'):
+            os.rename(os.path.join('NBIDATA',f),os.path.join('NBIDATA',f[0:2]+"20"+f[2:]))
 
 #main function
 if __name__ == "__main__":
