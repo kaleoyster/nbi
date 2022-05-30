@@ -9,6 +9,9 @@ __pycache__/
 # csv files
 *.csv
 
+# json files
+*.json
+
 # txt files
 *.txt
 
