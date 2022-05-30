@@ -100,7 +100,7 @@ states = ["AK",
           "WV",
           "WY"]
 
-#states = ['NE']
+states = ['NE']
 
 #Dictionary - for rename function
 fileNameDict = {'25fluna':'MA',

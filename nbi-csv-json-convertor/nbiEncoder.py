@@ -242,10 +242,10 @@ def initializeValidationArray(validationArray,size):
 #function to validate NBI ROWS
 def validateNBIfields(temp, ErrorCheck, fieldErrorCountArray, validation, size, year):
     ErrorCheck = initializeValidationArray(ErrorCheck, size)
-
     print(temp)
     # ErrorCheck will maintain a list of invalid error encountered in a row
     structNumber = temp[1]
+
     #Guide:  
     # eg: temp[0], ErrorCheck[0] = stateCodeValidate(temp[0], validation, structNumber, fieldErrorCountArray)
     #    temp[0] = State Code (check nbiCoder)
@@ -260,10 +260,11 @@ def validateNBIfields(temp, ErrorCheck, fieldErrorCountArray, validation, size, 
     temp[2], ErrorCheck[2] = recordTypeValidate(temp[2],validation,structNumber,fieldErrorCountArray)
     temp[3], ErrorCheck[3] = routeSigningPrefixValidate(temp[3],validation,structNumber,fieldErrorCountArray)
     temp[4], ErrorCheck[4] = DesignatedLevelServiceValidate(temp[4],validation,structNumber,fieldErrorCountArray)
+    #TODO: fix this don't let the error pass. 
     try:
        temp[5], ErrorCheck[5] = RouteNumberValidate(temp[5],validation,structNumber,fieldErrorCountArray)
     except:
-       pass 
+       pass
     temp[6], ErrorCheck[6] = directionalSuffixValidate(temp[6],validation,structNumber,fieldErrorCountArray)
     temp[16], ErrorCheck[16] = baseHighwayNetwork(temp[16],validation,structNumber,fieldErrorCountArray)                    
     temp[20], temp[19], ErrorCheck[19] = LongitudeLatitudeValidate(temp[20],temp[19],validation,structNumber,fieldErrorCountArray)
@@ -340,16 +341,16 @@ def crossCheckValidation(temp,crossValidation):
 
     #ITEM 102 - ITEM 28A EQUALS 1 SO ITEM 102 MUST EQUAL 1 OR 3.
     item102CrossValidationCheck1(temp[27],temp[101], crossValidation, structNumber)
-    
+
     #ITEM 102 - ITEM 28B = 1 -- SO ITEM 102 MUST = 1 OR 3.
     item102CrossValidationCheck2(temp[28],temp[101], crossValidation, structNumber)
 
     #ITEM 39 - ITEM 38 = 1 -- SO ITEM 39 MUST BE GREATER THAN ZERO.
-    item39CrossValidationCheck1(temp[41],temp[42], crossValidation, structNumber) 
-   
+    item39CrossValidationCheck1(temp[41],temp[42], crossValidation, structNumber)
+
     #ITEM 39 - ITEM 38 = 0 - SO ITEMS 39 AND 40 MUST = 0.
     item39CrossValidationCheck2(temp[41],temp[42], crossValidation, structNumber)
-    
+
     #ITEM 40 - ITEM 38 = 0 - SO ITEMS 40 MUST = 0.
     item40CrossValidationCheck1(temp[41],temp[43], crossValidation, structNumber)
 
@@ -388,10 +389,10 @@ def crossCheckValidation(temp,crossValidation):
 
     #ITEM 47 - A VALID ITEM 100 IS ENTERED -- SO ITEM 47 MUST BE > 0.
     item47CrossValidationCheck1(temp[53],temp[100], crossValidation, structNumber)
-  
+
     #ITEM 49 - ITEM 48 MUST NOT BE GREATER THAN ITEM 49.
     item49CrossValidationCheck1(temp[54],temp[55], crossValidation, structNumber)
-    
+
     #ITEM 49 - ITEM 48 MUST NOT BE GREATER THAN ITEM 49.
     item49CrossValidationCheck2(temp[55],temp[113], crossValidation, structNumber)
 
