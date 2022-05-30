@@ -12,7 +12,7 @@ import os
 from urllib.request import urlopen
 
 #  years global variable
-"""years = [
+years = [
          1992,
          1993,
          1994,
@@ -43,8 +43,8 @@ from urllib.request import urlopen
          2019,
          2020,
          2021
-        ]"""
-years = [2010]
+        ]
+
 
 #states global variable
 states = ["AK",
