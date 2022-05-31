@@ -58,7 +58,6 @@ years = [
          2020
        ]
 
-years = [2010]
 ### SELECT STATES 
 """
 states = ["AK",
@@ -116,7 +115,7 @@ states = ["AK",
 """
 
 # Global Variable
-states  = ["NE"]
+states  = ["MO"]
 
 # Global LIST
 files = [] #global variable for files
@@ -184,7 +183,13 @@ def countValidCoordinates(Longitude, Latitude, cvc, structureNumber, year,missin
         print('year: %d, Structure Number: %s' % (year, structureNumber),file=missingGeo)
     return cvc
 
-def processFilesJSON(files): # GLOBAL
+def processFilesJSON(files):
+    """
+    Function to process csv files to json file.
+    This function also executes several of validation
+    functions implemented in nbiEncoder and maintains
+    validation log of the conversion.
+    """
     directory = 'ValidationLog'
     crossValidationDirectory = 'CrossValidationLog'
     mergedFile = open('mergedJSON.json','w')
@@ -235,7 +240,6 @@ def processFilesJSON(files): # GLOBAL
                       IndexErrorCount = IndexErrorCount + 1
                       print("IndexError: ", i)
                       continue
-                   #print(x)
                    mergedFile.write(x)
             fieldSizeDict = {x: fieldSizeCount.count(x) for x in fieldSizeCount}
             print("===================================",file = summary)
@@ -324,13 +328,14 @@ def processFilesMongo(files):
     missingGeo.close()
     summary.close()
 
-#driver function
 def main():
+    """
+    Driver function
+    """
     if (fillMongoDB == False): # True
         processFilesMongo(files)
     else:
         processFilesJSON(files)
 
-#main function
 if __name__ == "__main__":
     main()

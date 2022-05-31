@@ -242,7 +242,6 @@ def initializeValidationArray(validationArray,size):
 #function to validate NBI ROWS
 def validateNBIfields(temp, ErrorCheck, fieldErrorCountArray, validation, size, year):
     ErrorCheck = initializeValidationArray(ErrorCheck, size)
-    print(temp)
     # ErrorCheck will maintain a list of invalid error encountered in a row
     structNumber = temp[1]
 
