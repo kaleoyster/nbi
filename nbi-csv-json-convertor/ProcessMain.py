@@ -115,7 +115,7 @@ states = ["AK",
 """
 
 # Global Variable
-states  = ["MO"]
+states  = ["NE"]
 
 # Global LIST
 files = [] #global variable for files
@@ -129,6 +129,7 @@ def get_db():
     file = open("dbConnect.txt", 'r')
     dbConnectionString = str(file.read()).strip()
     client = MongoClient(dbConnectionString)
+    print("printing mongobd instance", client)
     db = client.bridge
     return db
 
@@ -145,7 +146,7 @@ def createFileList(states, years):
             files.append(f)
     return files
 
-# Function Call 1: creatFileList
+# Function Call 1: createFileList
 files = createFileList(states, years)
 
 def convertLongLat(longitude,latitude):
@@ -332,7 +333,7 @@ def main():
     """
     Driver function
     """
-    if (fillMongoDB == False): # True
+    if (fillMongoDB == True): # True
         processFilesMongo(files)
     else:
         processFilesJSON(files)
