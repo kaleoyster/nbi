@@ -16,6 +16,7 @@ def download_zipfiles(url):
     returns: status
     """
     response = requests.get(url, stream=True)
+    print("printing the response:", response)
     filename = '../../data/nbe/' + url[49:]
     with open(filename, 'wb') as handle:
         for data in tqdm(response.iter_content()):
@@ -24,11 +25,41 @@ def download_zipfiles(url):
 
 def main():
    years = [2015, 2016, 2017, 2018, 2019]
-   state = ['AK', 'AL', 'AR', 'CO', 'DE', 'DC', 'HI',
-            'ID', 'KS', 'KY', 'LA', 'MD', 'MA', 'MI',
-            'MN', 'MS', 'MO', 'MT', 'NH', 'NJ', 'NM',
-            'NY', 'ND', 'OK', 'OR', 'PR', 'RI', 'SD',
-            'TN', 'TX', 'UT', 'VT', 'VA', 'WV', 'WY']
+   state = ['AK',
+            'AL',
+            'AR',
+            'CO',
+            'DE',
+            'DC',
+            'HI',
+            'ID',
+            'KS',
+            'KY',
+            'LA',
+            'MD',
+            'MA',
+            'MI',
+            'MN',
+            'MS',
+            'MO',
+            'MT',
+            'NH',
+            'NJ',
+            'NM',
+            'NY',
+            'ND',
+            'OK',
+            'OR',
+            'PR',
+            'RI',
+            'SD',
+            'TN',
+            'TX',
+            'UT',
+            'VT',
+            'VA',
+            'WV',
+            'WY']
 
    for year in years:
         for statename in state:
