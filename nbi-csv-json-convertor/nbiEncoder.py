@@ -79,7 +79,7 @@ def nbiEncoder(data,year,Longitude,Latitude):
    "navigationControl":convertToString(data[41]),                                                                               #item No:38  AN Navigation Control
    "navigationVeriticalClearance":convertNumeric(data[42]),                                                                     #item No:39  N Navigation Veritical Clearance (Need Conversion)
    "navigationHorizontalClearance":convertNumeric(data[43]),                                                                    #item No:40  N Navigation Horizontal Clearance (Need Conversion)
-   "strucutreOpenPostedClosed":convertToString(data[44]),                                                                       #item No:41  AN Strucutre Open/Posted/Closed
+   "structureOpenPostedClosed":convertToString(data[44]),                                                                       #item No:41  AN Strucutre Open/Posted/Closed
    "typeOfService":{                                                                                                            #item No:42  N Type of Service
                        "typeOfServiceOnBridge":convertNumeric(data[45]),                                                       #item No:42A N Type of Service On Bridge"
                        "typeOfServiceUnderBridge":convertNumeric(data[46])                                                     #item No:42B N Type of Service Under Bridge
@@ -104,10 +104,10 @@ def nbiEncoder(data,year,Longitude,Latitude):
                             "rightCurbSidewalkWidth":convertNumeric(data[57])                                                   #item No:50B N Right Curb/Sidewalk Width
                            },
 
-   "bridgeRoadwayWithCurbToCurb":convertNumeric(data[58]),                                                                      #item No:51  N Bridge Roadway with Curb-To-Curb
+   "bridgeRoadwayWidthCurbToCurb":convertNumeric(data[58]),                                                                      #item No:51  N Bridge Roadway with Curb-To-Curb
    "deckWidthOutToOut":convertNumeric(data[59]),                                                                                #item No:52  N Deck Width, Out-To-Out
    "minVertClearOverBridgeRoadway":convertNumeric(data[60]),                                                                    #item No:53  N Min Vert Clear Over Bridge Roadway 
-   "minimumVerticalUnderclearance": {                                                                                          #item No:54  AN Minimum Vertical Underclearance
+   "minVerticalUnderclearance": {                                                                                          #item No:54  AN Minimum Vertical Underclearance
                                         "referenceFeature":convertToString(data[61]),                                           #item No:54A AN Reference Feature
                                         "minimumVerticalUnderclearance":convertNumeric(data[62])                               #item No:54B N Minimum Vertical Underclearance
                                        },
