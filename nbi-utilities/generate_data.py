@@ -53,7 +53,8 @@ def main():
     states = ['31'] # Nebraska
 
     # years:
-    years = [year for year in range(2011, 2020)]
+    #years = [year for year in range(2011, 2020)]
+    years = [year for year in range(1992, 2020)]
 
     # process precipitation data
     #structBdsMap, structPrecipMap = process_precipitation()
@@ -69,15 +70,21 @@ def main():
     individual_records = fix_coordinates(individual_records)
     individual_records = compute_deck_age(individual_records)
     individual_records = compute_age_1(individual_records)
+    individual_records = compute_adt_cat(individual_records)
+    paved_ind_rec, gravel_ind_rec = filter_gravel_paved(individual_records)
+
+    individual_records = paved_ind_rec
 
     # Group records and segmentize
     groupedRecords = group_records(individual_records, fields)
     #groupedRecords = segmentize(groupedRecords)
     #groupedRecords = reorganize_segmented_data(groupedRecords)
     pp = pprint.PrettyPrinter(indent=3)
-
     #pp.pprint(groupedRecords)
     individual_records = create_individual_records(groupedRecords)
+
+    # Create a function to identify paved bridges and gravel bridges
+    #print(individual_records)
 
     # Compute baseline difference score:
     groupedRecords, baselineDeck = compute_bds_score(groupedRecords,

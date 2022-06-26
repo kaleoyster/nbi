@@ -920,8 +920,10 @@ def filter_gravel_paved(individual_records):
         if record['material'] != 7 and record['wearingSurface'] == '1':
             if record['owner'] == 1 and record['adtCategory'] == 'High':
                 paved.append(record)
+                print('paved')
             elif record['owner'] in not_state_owned and record['adtCategory'] == 'Ultra Light':
                 gravel.append(record)
+                print('gravel')
             else:
                 pass
     return paved, gravel
