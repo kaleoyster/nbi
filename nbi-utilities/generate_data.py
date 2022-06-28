@@ -37,6 +37,7 @@ def main():
                 "owner":1,
                 "maintainanceResponsibility":1,
                 "designLoad":1,
+                "deckWidthOutToOut":1,
                 "operatingRating":1,
                 "structureLength":1,
                 "numberOfSpansInMainUnit":1,
@@ -73,7 +74,7 @@ def main():
     individual_records = compute_adt_cat(individual_records)
     paved_ind_rec, gravel_ind_rec = filter_gravel_paved(individual_records)
 
-    individual_records = paved_ind_rec
+    #individual_records = paved_ind_rec
 
     # Group records and segmentize
     groupedRecords = group_records(individual_records, fields)
@@ -142,7 +143,7 @@ def main():
     #                                               'superstructureDeteriorationScore')
 
     ### Save to the file
-    csvfile = 'nebraska-2011-2020-slope.csv'
+    csvfile = 'nebraska-1992-2020-deck.csv'
     tocsv_list(individual_records, csvfile)
     create_df(baselineDeck, baselineSubstructure, baselineSuperstructure)
 
