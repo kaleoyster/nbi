@@ -18,8 +18,9 @@ __email__ = 'akale@unomaha.edu'
 
 def readXml(zipFile):
     """
-    Description: Function reads xml file from the zipfile,
-    and returns a xml object.
+    Description:
+        Function reads xml file from the zipfile,
+        and returns a xml object.
     Args:
         zipfile (string)
     Returns:
@@ -31,30 +32,32 @@ def readXml(zipFile):
     xml = arch.read(xmlfile)
     return xml
 
-
 def extractXml(directory):
     """
-    Description: Extracts XML zip files
+    Description:
+        Extracts XML zip files
     Args:
         directory (string): Path of the xml files
     Returns:
         None
     """
+
     extension = ".zip"
+    unzip_folder = 'empty-xml'
+    os.mkdir(unzip_folder)
     for zfile in tqdm(os.listdir(directory), desc='Extracting XML files'):
         if zfile.endswith(extension):
-            os.chdir(directory)
             filename = directory + '/' + zfile
-            filename = os.path.abspath(zfile)
+            filename = os.path.abspath(filename)
             zip_ref = ZipFile(filename)
             zip_ref.extractall(directory)
             zip_ref.close()
             os.remove(filename)
 
-
-def parseXml(directory, structCatDict):
+def parseXml(directory):
     """
-    Description:  Read and parses xml files
+    Description:
+        Read and parses xml files
     Args:
         directory (string): Path of the xml files
     Returns:
@@ -69,12 +72,16 @@ def parseXml(directory, structCatDict):
                                    'cs1',
                                    'cs2',
                                    'cs3',
-                                   'cs4',
-                                   'perfCat'])
+                                   'cs4'
+                                  ])
+
+    print("printing from function parse the directory")
+    print(os.getcwd())
+    directory_data = os.getcwd() + '/' +  directory
 
     for xmlfile in tqdm(os.listdir(directory), desc='Parsing XML files'):
         if xmlfile.endswith('.xml'):
-            os.chdir(directory)
+            os.chdir(directory_data)
             tree = ET.parse(xmlfile)
             root = tree.getroot()
             for element in root.findall('FHWAED'):
@@ -87,7 +94,6 @@ def parseXml(directory, structCatDict):
                 cs2 = element.find('CS2').text
                 cs3 = element.find('CS3').text
                 cs4 = element.find('CS4').text
-                perfCat = structCatDict.get(structure)
                 tempRecord = Record(year,
                                     state,
                                     structure,
@@ -96,16 +102,16 @@ def parseXml(directory, structCatDict):
                                     cs1,
                                     cs2,
                                     cs3,
-                                    cs4,
-                                    perfCat)
+                                    cs4)
                 elementList.append(tempRecord)
+    os.chdir("../")
     return elementList
-
 
 def getBSD(filename):
     """
-    Description: Function to read NBI file
-         and, extract structurenumber and baseline difference score
+    Description:
+        Function to read NBI file
+        and, extract structurenumber and baseline difference score
     Args:
         filename (string): Path of the xml files
     Returns:
@@ -122,10 +128,10 @@ def getBSD(filename):
             structBsdDict[structureNumber].append(bsd)
     return structBsdDict
 
-
 def calcDictMean(structBsdDict):
     """
-    Description: Calculates the mean of baseline difference scores
+    Description:
+        Calculates the mean of baseline difference scores
     Args:
         structuBsDict (dictionary): key (structure number)
                                     value (baseline difference score)
@@ -190,8 +196,7 @@ def toCSV(elementList, path, filename):
 
     csvFile = open(filename, 'w', newline='')
     fields = ['year', 'state', 'structure', 'totalQty',
-              'elementNo', 'cs1', 'cs2', 'cs3', 'cs4',
-              'perfCat']
+              'elementNo', 'cs1', 'cs2', 'cs3', 'cs4']
     csvWriter = csv.DictWriter(csvFile, fieldnames=fields)
     csvWriter.writeheader()
     csvWriter.writerows(listOfDict)
@@ -200,39 +205,30 @@ def toCSV(elementList, path, filename):
 
 def toJSON(elementList, path, filename):
     """
-    Description: Converts named tuples into a JSON file
+    Description:
+        Converts named tuples into a JSON file
     Args:
         elementList (list): A list of named tuples
         path (string): path to save the JSON file
-
     Returns:
         None
     """
-    filename = '2015-2019_nbe.json'
-    os.chdir(path)
+    filename = '2015-2021-nbe.json'
     with open(filename, 'w') as jsonFile:
         json.dump(filename, jsonFile)
 
 
 def main():
-    directory = '/Users/AkshayKale/Documents/github/data/nbi/'
-    directory_nbe = '/Users/AkshayKale/Documents/github/data/nbe/'
-    directory_nbe_pro = '/Users/AkshayKale/Documents/github/data/nbe_processed/'
-    csvFileName = '06-20-19-thesis-dataset_allstates_allstates.csv'
-    filename = directory + csvFileName
-
-    structBsdDict = getBSD(filename)
-    structBsdMeanDict = calcDictMean(structBsdDict)
-    structNums = list(structBsdDict.keys())
-    scores = list(structBsdMeanDict.values())
-    categories = getCategory(scores)
-    structCatDict = dict(zip(structNums, categories))
-    elementList = parseXml(directory_nbe, structCatDict)
-
+    directory_nbe = 'nbe-data'
+    directory_nbe_pro = 'nbe-data-processed'
+    try:
+        os.mkdir(directory_nbe_pro)
+    except:
+        pass
+    extractXml(directory_nbe)
+    elementList = parseXml(directory_nbe)
     print("Exporting files ...")
-    toCSV(elementList, directory_nbe_pro, '2015-2019_nbe.csv')
-    toJSON(elementList, directory_nbe_pro, '2015-2019_nbe.json')
-
+    toCSV(elementList, directory_nbe_pro, '2015-2021-nbe.csv')
 
 if __name__ == '__main__':
     main()
