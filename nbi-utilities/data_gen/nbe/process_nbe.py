@@ -190,7 +190,6 @@ def toCSV(elementList, path, filename):
     Returns:
         None
     """
-    filename = '2015-2019_nbe.csv'
     os.chdir(path)
     listOfDict = listOftupleToDict(elementList)
 
@@ -213,7 +212,6 @@ def toJSON(elementList, path, filename):
     Returns:
         None
     """
-    filename = '2015-2021-nbe.json'
     with open(filename, 'w') as jsonFile:
         json.dump(filename, jsonFile)
 

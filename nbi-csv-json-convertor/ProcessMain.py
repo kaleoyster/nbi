@@ -184,12 +184,102 @@ def countValidCoordinates(Longitude, Latitude, cvc, structureNumber, year,missin
         print('year: %d, Structure Number: %s' % (year, structureNumber),file=missingGeo)
     return cvc
 
+def process_files_csv(files):
+    """
+    Description:
+        - Function to process csv files to json file.
+        - This function also executes validation as per NBI
+        recording guide
+        - The function implemented in nbiEncoder and maintains
+        validation log of the conversion.
+    Args:
+        files
+
+    Returns:
+        Export csvfile
+    """
+    directory = 'ValidationLog'
+    crossValidationDirectory = 'CrossValidationLog'
+    mergedFile = open('mergedJSON.json','w')
+    summary = open('Summary.txt','w')
+    missingGeo = open('missingeo.txt','w')
+    if not os.path.exists(directory):
+       os.makedirs(directory)
+       os.makedirs(crossValidationDirectory)
+    for f in files: # GLOBAL
+        state , year = f[:2] , int(f[2:6])
+        with open(os.path.join('NBIDATA',f), 'r', encoding='utf-8', errors = 'ignore') as csvfile:
+            reader = csv.reader(csvfile,delimiter = ',')
+            headerRow = next(reader,None)
+            validationFileName = f[:6] + 'validationLog.txt'
+            crossValidationFileName = f[:6] + 'CrossValidationLog.txt'
+            validation = open(os.path.join(directory, validationFileName),'w')
+            crossValidation = open(os.path.join(crossValidationDirectory, crossValidationFileName),'w')
+            fieldErrorCountArray = []
+            size = 150
+            fieldErrorCountArray = initializeValidationArray(fieldErrorCountArray, size)
+            cvc = 0
+            RowCount = 0
+            IndexErrorCount = 0
+            fieldSizeCount = []
+            fieldSizeDict = {}
+            for row in reader:
+                temp = []
+                RowCount = RowCount + 1
+                for r in row:
+                    r = r.strip("'")
+                    r = r.strip(" ")
+                    temp.append(r)
+                ErrorCheck = []
+                temp, ErrorCheck = validateNBIfields(temp, ErrorCheck, fieldErrorCountArray, validation, size, year)
+                crossCheckValidation(temp, crossValidation)
+                fieldSize = len(temp)
+                fieldSizeCount.append(fieldSize)
+                fieldErrorCountArray[fieldSize] = fieldErrorCountArray[fieldSize] + 1
+                if 1 in ErrorCheck:
+                   pass
+                else:
+                   structureNumber = temp[1]
+                   Longitude, Latitude = convertLongLat(temp[20],temp[19])
+                   cvc = countValidCoordinates(Longitude, Latitude, cvc, structureNumber, year, missingGeo)
+                   try:
+                      x = nbiEncoder(temp, year, Longitude, Latitude)
+                   except IndexError as i:
+                      IndexErrorCount = IndexErrorCount + 1
+                      print("IndexError: ", i)
+                      continue
+                   mergedFile.write(x)
+            fieldSizeDict = {x: fieldSizeCount.count(x) for x in fieldSizeCount}
+            print("===================================",file = summary)
+            print('Year: %s, State: %s' %(year, state),file = summary)
+
+            #valid coordinates includes coordinates which have longitude latitude with in proper range.
+            print("Valid Coordinates:", RowCount - cvc, file = summary)
+
+            #Invalid coordinates includes coordinates which have value'0' or ' '
+            print("Invalid Coordinates:", cvc, file = summary)
+            print("Total Records:", RowCount, file = summary)
+            print('Index Error Count: ', IndexErrorCount)
+            print('Year: %s, State: %s' %(year, state))
+            print(fieldSizeDict)
+    validation.close()
+    missingGeo.close()
+    summary.close()
+    mergedFile.close()
+
 def processFilesJSON(files):
     """
-    Function to process csv files to json file.
-    This function also executes several of validation
-    functions implemented in nbiEncoder and maintains
-    validation log of the conversion.
+    Description:
+        Function to process csv files to json file.
+        This function also executes several of validation
+        functions implemented in nbiEncoder and maintains
+        validation log of the conversion.
+
+    Args:
+        files
+
+    Return:
+        Export csvfile
     """
     directory = 'ValidationLog'
     crossValidationDirectory = 'CrossValidationLog'
@@ -334,7 +424,7 @@ def main():
     """
     Driver function
     """
-    if (fillMongoDB == True): # True
+    if (fillMongoDB == False): # True
         processFilesMongo(files)
     else:
         processFilesJSON(files)
