@@ -5,7 +5,7 @@ This program will convert CSV files to JSON file
 Author: Akshay Kale
 '''
 
-#Importing Modules
+# Importing Modules
 import csv
 import os
 from urllib.request import urlopen
@@ -14,7 +14,7 @@ from nbiEncoder import *
 from validationFunctions import *
 from crossValidationFunctions import *
 
-### MongoDB
+# MongoDB
 fillMongoDB = True
 
 """
@@ -260,7 +260,6 @@ def processFilesJSON(files):
     summary.close()
     mergedFile.close()
 
-
 def processFilesMongo(files):
     myDb = get_db()
     myCollection = myDb['nbi']
@@ -318,9 +317,11 @@ def processFilesMongo(files):
             print("===================================", file = summary)
             print('Year: %s, State: %s' %(year, state), file = summary)
             print("Valid Coordinates:", RowCount - cvc, file = summary)
-            #valid coordinates includes coordinates which have longitude latitude with in proper range.
+
+            # Valid coordinates includes coordinates which have longitude latitude with in proper range.
             print("Invalid Coordinates:", cvc, file = summary)
-            #Invalid coordinates includes coordinates which have value'0' or ' '
+
+            # Invalid coordinates includes coordinates which have value'0' or ' '
             print("Total Records:", RowCount, file = summary)
             print('Index Error Count: ', IndexErrorCount)
             print('Year: %s, State: %s' %(year, state))
