@@ -3,7 +3,7 @@ NBE Data Acquistion Guide 🗺
 </h1>
 
 ## 📂 NBE survey files
-- The NBE downloader and process scripts are is located at [here](https://github.com/kaleoyster/nbi/tree/b5fb41950ee0a44c1d8967a1a672c0e3ea47b07f/nbi-utilities/data_gen/nbe).
+- The NBE downloader and process scripts are is located at [here](https://github.com/kaleoyster/nbi/tree/master/nbi-utilities/data_gen/nbe)
 - The raw data NBE is in XML format and it is located at the [FHWA website](https://www.fhwa.dot.gov/bridge/nbi/element.cfm).
 
 ## 👉 Steps
