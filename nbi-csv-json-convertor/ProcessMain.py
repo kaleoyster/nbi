@@ -58,7 +58,6 @@ years = [
          2020
        ]
 
-years = [1992, 2020]
 ### SELECT STATES 
 """
 states = ["AK",
