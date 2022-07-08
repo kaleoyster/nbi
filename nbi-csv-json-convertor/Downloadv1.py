@@ -255,6 +255,6 @@ def main():
            log.close()
     rename(fileNameDict)
 
-#main function
+# main function
 if __name__ == "__main__":
     main()
