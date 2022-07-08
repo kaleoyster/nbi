@@ -201,9 +201,6 @@ def nbiEncoder(data,year,Longitude,Latitude):
    return x
 
 
-
-
-
 #Function to convert string into int
 def convertNumeric(s):
     try:
@@ -211,8 +208,8 @@ def convertNumeric(s):
     except ValueError:
        #print("Error: values is expected to be Numeric for ", s)
        res = -1
-    return res     
-       
+    return res
+
 #Function to handle blank values by replacing it with "NA" 
 def convertToString(s):
     if(s ==""):

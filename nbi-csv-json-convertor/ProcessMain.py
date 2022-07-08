@@ -58,6 +58,7 @@ years = [
          2020
        ]
 
+years = [1992, 2020]
 ### SELECT STATES 
 """
 states = ["AK",
@@ -184,6 +185,23 @@ def countValidCoordinates(Longitude, Latitude, cvc, structureNumber, year,missin
         print('year: %d, Structure Number: %s' % (year, structureNumber),file=missingGeo)
     return cvc
 
+def to_csv(header, data, filename):
+    """
+    Description:
+       converts list into csv.
+    Args:
+        header (list)
+        data (list of list)
+
+    Returns:
+        returns a csv object
+    """
+    filename = 'processed-csv-files' + '/' + filename
+    with open(filename, 'w') as f:
+        write = csv.writer(f)
+        write.writerow(header)
+        write.writerows(data)
+
 def process_files_csv(files):
     """
     Description:
@@ -200,21 +218,29 @@ def process_files_csv(files):
     """
     directory = 'ValidationLog'
     crossValidationDirectory = 'CrossValidationLog'
-    mergedFile = open('mergedJSON.json','w')
+    csv_directory = 'processed-csv-files'
+    mergedFile = open('mergedJSON.csv','w')
     summary = open('Summary.txt','w')
     missingGeo = open('missingeo.txt','w')
+
     if not os.path.exists(directory):
        os.makedirs(directory)
        os.makedirs(crossValidationDirectory)
-    for f in files: # GLOBAL
+
+    if not os.path.exists(csv_directory):
+       os.makedirs(csv_directory)
+
+    for f in files:
         state , year = f[:2] , int(f[2:6])
         with open(os.path.join('NBIDATA',f), 'r', encoding='utf-8', errors = 'ignore') as csvfile:
-            reader = csv.reader(csvfile,delimiter = ',')
+            reader = csv.reader(csvfile, delimiter = ',')
             headerRow = next(reader,None)
             validationFileName = f[:6] + 'validationLog.txt'
             crossValidationFileName = f[:6] + 'CrossValidationLog.txt'
             validation = open(os.path.join(directory, validationFileName),'w')
             crossValidation = open(os.path.join(crossValidationDirectory, crossValidationFileName),'w')
+
+            # Initializing variables
             fieldErrorCountArray = []
             size = 150
             fieldErrorCountArray = initializeValidationArray(fieldErrorCountArray, size)
@@ -223,6 +249,13 @@ def process_files_csv(files):
             IndexErrorCount = 0
             fieldSizeCount = []
             fieldSizeDict = {}
+
+            # Append more columns to header row
+            additional_header = ['year', 'longitude', 'latitude']
+            headerRow = headerRow + additional_header
+
+            # Starts reading the csv 
+            processed_rows = []
             for row in reader:
                 temp = []
                 RowCount = RowCount + 1
@@ -230,38 +263,47 @@ def process_files_csv(files):
                     r = r.strip("'")
                     r = r.strip(" ")
                     temp.append(r)
+
+                # Initialize error checking
                 ErrorCheck = []
+
+                # Error checking
                 temp, ErrorCheck = validateNBIfields(temp, ErrorCheck, fieldErrorCountArray, validation, size, year)
                 crossCheckValidation(temp, crossValidation)
                 fieldSize = len(temp)
                 fieldSizeCount.append(fieldSize)
                 fieldErrorCountArray[fieldSize] = fieldErrorCountArray[fieldSize] + 1
+
                 if 1 in ErrorCheck:
                    pass
                 else:
                    structureNumber = temp[1]
                    Longitude, Latitude = convertLongLat(temp[20],temp[19])
                    cvc = countValidCoordinates(Longitude, Latitude, cvc, structureNumber, year, missingGeo)
-                   try:
-                      x = nbiEncoder(temp, year, Longitude, Latitude)
-                   except IndexError as i:
-                      IndexErrorCount = IndexErrorCount + 1
-                      print("IndexError: ", i)
-                      continue
-                   mergedFile.write(x)
+
+                   # Row by row iteration
+                   temp.append(year)
+                   temp.append(Longitude)
+                   temp.append(Latitude)
+                   processed_rows.append(temp)
             fieldSizeDict = {x: fieldSizeCount.count(x) for x in fieldSizeCount}
-            print("===================================",file = summary)
-            print('Year: %s, State: %s' %(year, state),file = summary)
+            print("===================================", file=summary)
+            print('Year: %s, State: %s' %(year, state), file=summary)
 
-            #valid coordinates includes coordinates which have longitude latitude with in proper range.
-            print("Valid Coordinates:", RowCount - cvc, file = summary)
+            # Valid coordinates includes coordinates which have longitude latitude with in proper range.
+            print("Valid Coordinates:", RowCount - cvc, file=summary)
 
-            #Invalid coordinates includes coordinates which have value'0' or ' '
-            print("Invalid Coordinates:", cvc, file = summary)
-            print("Total Records:", RowCount, file = summary)
+            # Invalid coordinates includes coordinates which have value'0' or ' '
+            print("Invalid Coordinates:", cvc, file=summary)
+            print("Total Records:", RowCount, file=summary)
             print('Index Error Count: ', IndexErrorCount)
             print('Year: %s, State: %s' %(year, state))
             print(fieldSizeDict)
+
+            # Save as a csv file
+            csv_filename = f[:-4] + '.csv'
+            to_csv(headerRow, processed_rows, csv_filename)
+
     validation.close()
     missingGeo.close()
     summary.close()
@@ -289,7 +331,7 @@ def processFilesJSON(files):
     if not os.path.exists(directory):
        os.makedirs(directory)
        os.makedirs(crossValidationDirectory)
-    for f in files: # GLOBAL
+    for f in files:
         state , year = f[:2] , int(f[2:6])
         with open(os.path.join('NBIDATA',f), 'r', encoding='utf-8', errors = 'ignore') as csvfile:
             reader = csv.reader(csvfile,delimiter = ',')
@@ -424,10 +466,11 @@ def main():
     """
     Driver function
     """
-    if (fillMongoDB == False): # True
-        processFilesMongo(files)
-    else:
-        processFilesJSON(files)
+    #if (fillMongoDB == False): # True
+    #    processFilesMongo(files)
+    #else:
+    #    processFilesJSON(files)
+    process_files_csv(files)
 
 if __name__ == "__main__":
     main()
