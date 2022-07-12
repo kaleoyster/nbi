@@ -9,6 +9,7 @@ import requests
 import zipfile
 import io
 import os
+from tqdm import tqdm
 from urllib.request import urlopen
 
 # Years
@@ -187,14 +188,18 @@ def rename(fileNameDict):
         fileNameDict
     """
     for root, dirs, filenames in os.walk('NBIDATA'):
-        for filename in filenames:
-            state, year, extention = filename[:2], filename[2:4], filename[-4:]
-            if year[0] == '0':
-                year = '20' + year
-                new_filename = state + year + extention
+        for filename in tqdm(filenames, desc='Renaming files'):
+            year = filename[:-4][2:]
+            if int(year) < 2010:
+               state, year, extention = filename[:2], filename[2:4], filename[-4:]
+               if year[0] == '0':
+                   year = '20' + year
+                   new_filename = state + year + extention
+               else:
+                   year = '19' + year
+                   new_filename = state + year + extention
             else:
-                year = '19' + year
-                new_filename = state + year + extention
+                new_filename = filename
             old_filename = root + os.sep + filename
             new_filename = root + os.sep + new_filename
             os.rename(old_filename, new_filename)
@@ -275,6 +280,7 @@ def main():
                        f.write(line)
                f.close()
            log.close()
+
     rename(fileNameDict)
 
 # main function
