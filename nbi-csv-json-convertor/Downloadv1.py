@@ -2,9 +2,9 @@
 Program: Download.py
 Version: 1
 Purpose: Downloads zip files and csvfiles from NBI and extracts them
-
 '''
-#Importing Modules
+
+# Import libraries
 import requests
 import zipfile
 import io
@@ -45,7 +45,7 @@ years = [
          2021
         ]
 
-#states global variable
+# States 
 states = ["AK",
           "AL",
           "AR",
@@ -99,9 +99,7 @@ states = ["AK",
           "WV",
           "WY"]
 
-states = ['NE']
-
-#Dictionary - for rename function
+# Dictionary - for rename function
 fileNameDict = {'25fluna':'MA',
                 '04fluna':'AZ',
                 '08fluna':'CO',
