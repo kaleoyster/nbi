@@ -99,6 +99,7 @@ states = ["AK",
           "WV",
           "WY"]
 
+states = ['NE']
 # Dictionary - for rename function
 fileNameDict = {'25fluna':'MA',
                 '04fluna':'AZ',
@@ -262,7 +263,7 @@ def main():
                s = state
                url, filename = createURL(y,s)
                print("getting ...", filename)
-               f = open(os.path.join('NBIDATA',filename),'w')
+               f = open(os.path.join('NBIDATA', filename),'w')
                with urlopen(url) as response:
                    for line in response:
                        try:
