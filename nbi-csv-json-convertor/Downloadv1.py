@@ -11,7 +11,7 @@ import io
 import os
 from urllib.request import urlopen
 
-# years global variable
+# Years
 years = [
          1992,
          1993,
@@ -45,7 +45,6 @@ years = [
          2021
         ]
 
-years = [1992, 1993]
 #states global variable
 states = ["AK",
           "AL",
@@ -157,7 +156,7 @@ fileNameDict = {'25fluna':'MA',
                 '49fluna':'UT'
                }
 
-def rename(fileNameDict):
+def rename_old(fileNameDict):
     """
     Description:
         Renames all downloaded files by using the above dictionary
@@ -168,14 +167,38 @@ def rename(fileNameDict):
     for root, dirs, filenames in os.walk('NBIDATA'):
         for f in filenames:
             try:
-               oldFileName, year = f[:7],f[10:14]
+
+               oldFileName, year = f[:7], f[10:14]
                if(oldFileName =='stfluna'):
-                  os.remove(root+os.sep+f)
+                  os.remove(root + os.sep + f)
+
                else:
-                  print('Renamed...',f)
+                  print('Renamed...', f)
                   os.rename(root+os.sep+f,root+os.sep+fileNameDict[oldFileName]+year+'.txt')
+
             except:
                pass
+
+def rename(fileNameDict):
+    """
+    Description:
+        Renames all downloaded files by using the above dictionary
+
+    Args:
+        fileNameDict
+    """
+    for root, dirs, filenames in os.walk('NBIDATA'):
+        for filename in filenames:
+            state, year, extention = filename[:2], filename[2:4], filename[-4:]
+            if year[0] == '0':
+                year = '20' + year
+                new_filename = state + year + extention
+            else:
+                year = '19' + year
+                new_filename = state + year + extention
+            old_filename = root + os.sep + filename
+            new_filename = root + os.sep + new_filename
+            os.rename(old_filename, new_filename)
 
 def createURL(year, state):
     """
@@ -189,12 +212,12 @@ def createURL(year, state):
     yr = year
     yr = str(yr)
     ste = state
-    filename = ste+ yr[2:] + ".txt"
-    fname = ste+ yr + ".txt"
+    filename = ste + yr[2:] + ".txt"
+    fname = ste + yr + ".txt"
     name , extention = os.path.splitext(fname)
     csvName = name + '.txt'
     link ="https://www.fhwa.dot.gov/bridge/nbi/"+yr+"/delimited/"+filename
-    return(link, csvName)
+    return (link, csvName)
 
 def createZipUrl(year):
     """
