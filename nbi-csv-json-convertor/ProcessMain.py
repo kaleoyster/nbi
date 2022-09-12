@@ -465,11 +465,11 @@ def main():
     """
     Driver function
     """
-    #if (fillMongoDB == False): # True
-    #    processFilesMongo(files)
-    #else:
-    #    processFilesJSON(files)
-    process_files_csv(files)
+    if (fillMongoDB == True): # True
+        processFilesMongo(files)
+    else:
+        processFilesJSON(files)
+    #process_files_csv(files)
 
 if __name__ == "__main__":
     main()
