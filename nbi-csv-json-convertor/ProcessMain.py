@@ -55,11 +55,12 @@ years = [
          2017,
          2018,
          2019,
-         2020
+         2020,
+         2021
        ]
 
 ### SELECT STATES 
-"""
+
 states = ["AK",
           "AZ",
           "AL",
@@ -112,10 +113,10 @@ states = ["AK",
           "WI",
           "WV",
           "WY"]
-"""
+
 
 # Global Variable
-states  = ["NE"]
+#states  = ["AK"]
 
 # Global LIST
 files = [] #global variable for files
