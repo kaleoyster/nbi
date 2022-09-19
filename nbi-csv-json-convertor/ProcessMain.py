@@ -59,7 +59,6 @@ years = [
        ]
 
 ### SELECT STATES 
-"""
 states = ["AK",
           "AZ",
           "AL",
@@ -112,10 +111,10 @@ states = ["AK",
           "WI",
           "WV",
           "WY"]
-"""
+
 
 # Global Variable
-states  = ["NE"]
+#states  = ["NE"]
 
 # Global LIST
 files = [] #global variable for files
@@ -465,11 +464,11 @@ def main():
     """
     Driver function
     """
-    if (fillMongoDB == True): # True
-        processFilesMongo(files)
-    else:
-        processFilesJSON(files)
-    #process_files_csv(files)
+    #if (fillMongoDB == True): # True
+    #    processFilesMongo(files)
+    #else:
+    #    processFilesJSON(files)
+    process_files_csv(files)
 
 if __name__ == "__main__":
     main()
