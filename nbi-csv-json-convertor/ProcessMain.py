@@ -128,13 +128,7 @@ def get_db():
     from pymongo import MongoClient
     file = open("dbConnect.txt", 'r')
     dbConnectionString = str(file.read()).strip()
-    print(dbConnectionString)
-    #username = urllib.parse.quote_plus('akale')
-    #password = urllib.parse.quote_plus('Kirti@1234')
-    #dbConnectionString = 'mongodb://%s:%s@127.0.0.1:27017' % (username, password)
-    #dbConnectionString = ''
     client = MongoClient(dbConnectionString)
-    print("printing mongobd instance", client)
     db = client.bridge
     return db
 
