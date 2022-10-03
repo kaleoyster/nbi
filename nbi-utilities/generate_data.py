@@ -74,7 +74,8 @@ def main():
     individual_records = compute_adt_cat(individual_records)
     paved_ind_rec, gravel_ind_rec = filter_gravel_paved(individual_records)
 
-    #individual_records = paved_ind_rec
+    # Paved bridges -> separate records
+    individual_records = gravel_ind_rec
 
     # Group records and segmentize
     groupedRecords = group_records(individual_records, fields)
@@ -143,7 +144,7 @@ def main():
     #                                               'superstructureDeteriorationScore')
 
     ### Save to the file
-    csvfile = 'nebraska-1992-2020-deck.csv'
+    csvfile = 'nebraska-1992-2020-deck-gravel.csv'
     tocsv_list(individual_records, csvfile)
     create_df(baselineDeck, baselineSubstructure, baselineSuperstructure)
 
