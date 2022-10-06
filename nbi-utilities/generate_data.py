@@ -8,7 +8,7 @@ Data: February 22, 2020
 __author__ = 'Akshay Kale'
 __copyright__ = 'GPL'
 __email__ = 'akale@unomaha.edu'
-
+__credits__ = ['Akhil Kodali']
 import csv
 import pprint
 from nbi_data_chef import *
